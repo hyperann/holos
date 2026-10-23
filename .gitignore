@@ -1,0 +1,8 @@
+# Xcode / SwiftPM
+.build/
+**/.swiftpm/xcode/
+xcuserdata/
+DerivedData/
+*.xcuserstate
+.DS_Store
+**/.swiftpm/playgrounds/
