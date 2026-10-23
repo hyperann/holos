@@ -55,10 +55,11 @@ To try the switch the way its users would, use a Bluetooth keyboard's Space bar,
 controller, or just tap anywhere on the board.
 
 > **Not yet compiled.** These prototypes were written and reviewed in a Linux environment with no
-> Swift toolchain, so nothing here has been built yet. Every file went through independent review
-> passes for Swift 6 and API correctness, then a final audit that found no errors by reading —
-> but reading is not compiling, so expect the first build in Xcode to surface a few things to fix
-> anyway (each prototype's doc lists its own risks).
+> Swift toolchain, so nothing here has been built yet. Every file of the first five went through
+> independent review passes for Swift 6 and API correctness, then a final audit that found no
+> errors by reading; the sixth has had one review pass, which found no compile errors and three
+> logic bugs, since fixed. Reading is not compiling, so expect the first build in Xcode to surface
+> a few things to fix anyway (each prototype's doc lists its own risks).
 >
 > One expected warning: each `Package.swift` uses `swiftLanguageVersions:`, which SwiftPM 6
 > deprecates in favour of `swiftLanguageModes:`. It is left as is on purpose, because that is the

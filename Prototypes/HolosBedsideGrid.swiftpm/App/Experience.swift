@@ -167,7 +167,7 @@ final class Experience {
         conversation.addPerson(phrase)
         services.feedback.speak()
         services.speaker.say(phrase.speech)
-        personSpoke(id: phrase.id, words: phrase.speech)
+        personSpoke(ids: [phrase.id], words: phrase.speech)
     }
 
     /// Something said on the whole board, which has already spoken it: a
@@ -178,16 +178,14 @@ final class Experience {
         if step == .conversation, conversation.isPartnerTurn { return }
         conversation.addPerson(phrases)
         if fromMessage { services.message.clear() }
-        // One cell keeps its own id, so the nurse can tell which it was; a
-        // longer message gets an id no answer has.
-        let id = phrases.map(\.id).joined(separator: "+")
-        personSpoke(id: id, words: Bilingual.joined(phrases.map(\.speech)))
+        personSpoke(ids: phrases.map(\.id), words: Bilingual.joined(phrases.map(\.speech)))
     }
 
-    /// After the person has said something, by any route. In the guided
-    /// story the nurse answers once they have finished; in free
-    /// conversation the question has its answer, and the board is home.
-    private func personSpoke(id: String, words: Bilingual) {
+    /// After the person has said something, by any route: `ids` are the
+    /// cells it was made of. In the guided story the nurse answers once
+    /// they have finished; in free conversation the question has its
+    /// answer, and the board is home.
+    private func personSpoke(ids: [String], words: Bilingual) {
         if step == .free {
             conversation.stopAsking()
             // Still on screen and scanning, now without "Back to the answers".
@@ -199,12 +197,14 @@ final class Experience {
             conversation.closeBoard()
             board.stopScanning()
         }
-        // The nurse hears what was said, whichever board it came from: the
-        // turn's word said from the board counts, and so does a board cell
-        // that says exactly the same sentence as the expected answer.
-        let target = Vocabulary.phrase(id: turn.target) ?? BoardVocabulary.phrase(id: turn.target)
-        let hitTarget = id == turn.target || target?.speech == words
-        lastAnswerID = hitTarget ? turn.target : id
+        // The nurse hears what was said, whichever board it came from. A
+        // board sentence that is one of the answers ("My chest hurts.")
+        // counts as that answer — matched in English, where both boards
+        // say it alike — and a message holding the turn's word counts as
+        // the word, extra words and all, as the guide counts it.
+        let heard = Vocabulary.all.first { $0.speech.en == words.en }?.id ?? ids.joined(separator: "+")
+        let hitTarget = ids.contains(turn.target) || heard == turn.target
+        lastAnswerID = hitTarget ? turn.target : heard
         cancelShowMe()
         conversation.isPartnerTurn = true
         let reply = hitTarget ? turn.replyToTarget : turn.replyToOther

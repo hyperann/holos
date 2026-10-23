@@ -170,9 +170,16 @@ struct ConversationScreen: View {
     /// bind again every time they come back.
     private func bindAnswers() {
         let story = experience
+        let answers = scanner
         scanner.bind(to: services, label: { id in
             BoardID.label(for: id)
-        }, onSelect: { [weak story] id in
+        }, onSelect: { [weak story, weak answers] id in
+            // "Something else" hands the switch to the whole board. Stopped
+            // here, not when the screen next draws, so Core does not read
+            // out the answers' first item as the board appears.
+            if id == Vocabulary.somethingElse.id {
+                answers?.stop()
+            }
             story?.activate(id)
         })
     }

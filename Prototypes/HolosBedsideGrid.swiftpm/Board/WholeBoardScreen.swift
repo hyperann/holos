@@ -23,6 +23,11 @@ struct WholeBoardScreen: View {
         }
         // A touch anywhere is the switch while scanning, as on the answers.
         .switchTapArea(isActive: isSwitch)
+        // What the board said before it last closed never reached the
+        // watcher below, which only runs while the board is on screen;
+        // left standing, it would be taken for the board's own words the
+        // next time the same message is spoken.
+        .onAppear { board.speechEnded() }
         // Core's message bar speaks by itself when its Speak is tapped, so
         // the board learns of that message from the Speaker. Only while the
         // board is on screen: an answer cell's words are not the board's.

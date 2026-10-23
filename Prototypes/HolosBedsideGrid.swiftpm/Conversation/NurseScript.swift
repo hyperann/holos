@@ -110,7 +110,10 @@ enum NurseScript {
             stage: .voice,
             asks: Copy.nurseHowBad,
             asksIfSurprised: Copy.nurseHowBadIfAny,
-            plainAfter: Set(Vocabulary.body.map(\.id)),
+            // Any place on the body. The whole board's places count as
+            // the answers' (they say the same sentences), except the
+            // throat, which only the board has.
+            plainAfter: Set(Vocabulary.body.map(\.id) + ["pain.throat"]),
             question: .painHowBad,
             target: "scale.lot",
             goal: Copy.goalALot,
