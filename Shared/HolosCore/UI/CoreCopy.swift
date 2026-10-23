@@ -59,8 +59,8 @@ enum CoreCopy {
     static let modeScanning = Bilingual("Scan with a switch", uk: "Сканування перемикачем")
     static let modeTouch = Bilingual("Touch the pictures", uk: "Торкатися малюнків")
     static let modeDetail = Bilingual(
-        "Scanning lights the cells one by one; a single press picks the lit one. When VoiceOver or Switch Control is on, Holos steps aside and lets them drive.",
-        uk: "Під час сканування клітинки підсвічуються по черзі; одне натискання обирає підсвічену. Коли ввімкнено VoiceOver або системне керування перемикачами, Holos вимикає власне сканування й передає керування їм."
+        "Scanning lights the cells one by one; a single press picks the lit one. When VoiceOver, Switch Control or AssistiveTouch (which Eye Tracking uses) is on, Holos steps aside and lets them drive.",
+        uk: "Під час сканування клітинки підсвічуються по черзі; одне натискання обирає підсвічену. Коли ввімкнено VoiceOver, системне керування перемикачами або AssistiveTouch (через нього працює відстеження очей), Holos вимикає власне сканування й передає керування їм."
     )
 
     static let sectionScanning = Bilingual("Scanning", uk: "Сканування")
