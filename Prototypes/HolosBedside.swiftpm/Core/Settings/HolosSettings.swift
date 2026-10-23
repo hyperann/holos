@@ -1,5 +1,6 @@
 import Foundation
 import Observation
+import UIKit
 
 /// How the person picks a cell.
 enum AccessMode: String, CaseIterable, Identifiable, Sendable {
@@ -54,8 +55,14 @@ final class HolosSettings {
         case haptics, sound, speechRate, headTurnDegrees, headHoldSeconds
     }
 
+    /// True while AssistiveTouch is on — which is how iPadOS Eye Tracking
+    /// and other pointer-and-dwell tools click. Kept here, observed, so the
+    /// board re-renders the moment it changes.
+    private(set) var assistiveTouchRunning = false
+
     @ObservationIgnored private let defaults: UserDefaults?
     @ObservationIgnored private let prefix: String
+    @ObservationIgnored private var assistiveTouchObserver: NSObjectProtocol?
 
     /// - Parameters:
     ///   - keyPrefix: Keeps each prototype's settings apart.
@@ -77,6 +84,16 @@ final class HolosSettings {
         speechRate = value(.speechRate) as? Double ?? 0.9
         headTurnDegrees = value(.headTurnDegrees) as? Double ?? 18
         headHoldSeconds = value(.headHoldSeconds) as? Double ?? 0.4
+        assistiveTouchRunning = UIAccessibility.isAssistiveTouchRunning
+        assistiveTouchObserver = NotificationCenter.default.addObserver(
+            forName: UIAccessibility.assistiveTouchStatusDidChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in
+                self?.assistiveTouchRunning = UIAccessibility.isAssistiveTouchRunning
+            }
+        }
     }
 
     /// Back to the shipped defaults. Language is kept: resetting timing
@@ -97,8 +114,14 @@ final class HolosSettings {
     /// The mode actually in force. When iOS's own VoiceOver or Switch
     /// Control is running, Holos steps aside: those tools drive the cells
     /// directly, and a second scanner running underneath would fight them.
+    ///
+    /// AssistiveTouch counts too. iPadOS Eye Tracking clicks through its
+    /// dwell pointer, and in scanning mode the whole screen is a switch — so
+    /// a person dwelling on the cell they want would instead choose whatever
+    /// the scan happened to light. In touch mode, the cell they look at is
+    /// the cell they get.
     func effectiveMode(voiceOver: Bool, switchControl: Bool) -> AccessMode {
-        voiceOver || switchControl ? .touch : accessMode
+        voiceOver || switchControl || assistiveTouchRunning ? .touch : accessMode
     }
 
     private func store(_ value: Any, _ key: Key) {

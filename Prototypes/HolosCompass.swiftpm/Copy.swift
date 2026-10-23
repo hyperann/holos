@@ -19,7 +19,6 @@ enum Copy {
         static let continueHint = Bilingual("Goes to the next part.", uk: "Переходить до наступної частини.")
         /// Under a narrative screen, so the judge knows any press works.
         static let pressAnywhere = Bilingual("Press anywhere to continue", uk: "Натисніть будь-де, щоб продовжити")
-        static let tapContinue = Bilingual("Tap Continue when you are ready", uk: "Торкніться «Далі», коли будете готові")
     }
 
     // MARK: - Step titles
@@ -41,7 +40,6 @@ enum Copy {
         static let nurseName = Bilingual("Nurse", uk: "Медсестра")
         static let nurseQuestion = Bilingual("How are you feeling?", uk: "Як ви почуваєтеся?")
         static let youName = Bilingual("You", uk: "Ви")
-        static let silence = Bilingual("…", uk: "…")
 
         static let title = Bilingual("You are Oleksandr", uk: "Ви — Олександр")
         static let body = Bilingual(

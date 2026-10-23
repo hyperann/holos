@@ -6,8 +6,9 @@ able to type, read easily, or tap a small screen. Every part of it works with **
 anywhere, the Space or Enter key, any game-controller button, or a deliberate turn of the head.
 
 This repository holds **five prototypes** of the Swift Student Challenge 2027 app playground. Each
-is a complete, runnable answer to the same brief, built on the same shared engine, so that the
-concept can be chosen by trying them rather than by imagining them.
+is a complete answer to the same brief, written to run as is (none has been compiled yet; see
+below), built on the same shared engine, so that the concept can be chosen by trying them rather
+than by imagining them.
 
 | Prototype | The idea in one line |
 | --- | --- |
@@ -23,27 +24,37 @@ concept can be chosen by trying them rather than by imagining them.
 
 Each prototype is a self-contained App Playground (`.swiftpm`), iOS/iPadOS 17 or later.
 
-- **Mac, Xcode 16 or later:** open `Prototypes/<Name>.swiftpm` (double-click it, or File › Open),
-  pick an iPad simulator or a connected device, and Run.
-- **iPad or Mac, Swift Playgrounds:** copy the `.swiftpm` folder into iCloud Drive (or AirDrop it),
-  open it in Swift Playgrounds, and tap Run.
+- **Start in Xcode 16 or later on a Mac:** open `Prototypes/<Name>.swiftpm` (double-click it, or
+  File › Open), pick an iPad simulator, and Run. Because nothing has been built yet, fix any
+  first-build errors here, where Xcode reports them clearly.
+- **On a connected device:** Xcode signs with the team named in `Package.swift`; if it is not
+  yours, choose your own team under Signing & Capabilities.
+- **iPad or Mac, Swift Playgrounds with Swift 6 support** (4.6 or later, as far as I know — check
+  the release notes): once a prototype builds, copy its `.swiftpm` folder into iCloud Drive (or
+  AirDrop it), open it in Swift Playgrounds, and tap Run.
 
 Things the simulator cannot show:
 
-- **Haptics** need an iPhone — iPads have no Taptic Engine, so every step also clicks.
+- **Haptics** need an iPhone — iPads and Macs have no Taptic Engine. Every step also clicks on
+  every device, so nothing is lost without them. To feel them: connect an iPhone, turn on
+  Settings › Privacy & Security › Developer Mode, choose it as the run destination in Xcode, and
+  Run. (Swift Playgrounds is not available on iPhone.)
 - **Head control** needs a real front camera. It is off until you turn it on, and Holos asks for
   camera permission only then.
-- **Ukrainian speech** needs a Ukrainian voice on the device: Settings › Accessibility › Spoken
-  Content › Voices › Ukrainian. Without one, the board stays in Ukrainian and speaks English,
-  and says so on screen.
+- **Ukrainian speech** needs a Ukrainian voice on the device. On iPad: Settings › Accessibility ›
+  Spoken Content › Voices › Ukrainian. On a Mac: System Settings › Accessibility › Spoken
+  Content › System voice › Manage Voices. Without one, the board stays in Ukrainian and speaks
+  English, and says so on screen. (Holos Words' step 4 instead shows its sentences in Ukrainian,
+  plays nothing, and explains why.)
 
 To try the switch the way its users would, use a Bluetooth keyboard's Space bar, a game
 controller, or just tap anywhere on the board.
 
 > **Not yet compiled.** These prototypes were written and reviewed in a Linux environment with no
 > Swift toolchain, so nothing here has been built yet. Every file went through independent review
-> passes for Swift 6 and API correctness, then a final audit that found no errors or warnings in
-> any Swift file — but expect the first build in Xcode to surface a few things to fix anyway.
+> passes for Swift 6 and API correctness, then a final audit that found no errors by reading —
+> but reading is not compiling, so expect the first build in Xcode to surface a few things to fix
+> anyway (each prototype's doc lists its own risks).
 >
 > One expected warning: each `Package.swift` uses `swiftLanguageVersions:`, which SwiftPM 6
 > deprecates in favour of `swiftLanguageModes:`. It is left as is on purpose, because that is the
@@ -56,6 +67,7 @@ Shared/HolosCore/       The engine every prototype shares (edit here, never in a
   Switch/               Tap, key, game controller and head turn → one "press"
   Scanning/             The single-switch scanner, and its standard feel
   Speech/               Ukrainian and English voices, with a safe English fallback
+  Language/             English and Ukrainian, bilingual strings and gendered Ukrainian forms
   Feedback/             Core Haptics patterns and synthesised clicks
   Settings/             Everything a person, carer or therapist can tune
   Vocabulary/           Phrases (picture + word + what to say) and the message being built
@@ -78,6 +90,11 @@ only has to produce a press to work everywhere at once.
 
 No account, no analytics, no network. The optional head switch reads camera frames on the device
 and never records, saves or sends them.
+
+## Licence
+
+Not chosen yet. The closing screens call Holos open source, which needs a licence file at the
+repository root before submission.
 
 ## Symbols
 

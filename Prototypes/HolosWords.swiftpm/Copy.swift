@@ -209,13 +209,12 @@ enum Copy {
         "Ukrainian changes a word to fit its sentence. “Wife” is «дружина», but “call my wife” needs «моїй дружині». Gluing a starter to a word would come out as broken Ukrainian. So Holos Words never glues: every sentence is stored whole, written for each starter, ready for a Ukrainian speech therapist to check.",
         uk: "В українській мові слово змінюється залежно від речення: «дружина», але «подзвоніть моїй дружині». Якщо просто приклеїти слово до початку речення, вийде ламана українська. Тому Holos Words нічого не склеює: кожне речення зберігається цілим, окремо для кожного початку, і його може перевірити український логопед."
     )
-    static let starterPlusWord = Bilingual("Starter + word", uk: "Початок + слово")
     /// Under Core's "No Ukrainian voice on this device". Core's own body says
     /// speech falls back to English, which is not true here: this page only
     /// ever plays Ukrainian, so without the voice it plays nothing.
     static let noVoiceStep4 = Bilingual(
-        "So the sentences below can’t be played here. They are shown in Ukrainian instead. To add the voice: Settings › Accessibility › Spoken Content › Voices › Ukrainian.",
-        uk: "Тому речення нижче тут не прозвучать — їх показано українською. Щоб додати голос: Параметри › Доступність › Усний контент › Голоси › Українська."
+        "So the sentences below can’t be played here. They are shown in Ukrainian instead. To add the voice on iPad: Settings › Accessibility › Spoken Content › Voices › Ukrainian. On a Mac: System Settings › Accessibility › Spoken Content › System voice › Manage Voices.",
+        uk: "Тому речення нижче тут не прозвучать — їх показано українською. Щоб додати голос на iPad: Параметри › Доступність › Усний контент › Голоси › Українська. На Mac: Системні параметри › Доступність › Усний контент › Системний голос › Керувати голосами."
     )
     static let hearAgain = Bilingual("Hear them again", uk: "Послухати ще раз")
     static let hearAgainHint = Bilingual(

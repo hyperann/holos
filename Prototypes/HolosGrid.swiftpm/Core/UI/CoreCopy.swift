@@ -41,8 +41,8 @@ enum CoreCopy {
         uk: "На цьому пристрої немає українського голосу"
     )
     static let noUkrainianVoiceBody = Bilingual(
-        "The board stays in Ukrainian; speech uses English for now. To add the voice: Settings › Accessibility › Spoken Content › Voices › Ukrainian.",
-        uk: "Дошка залишається українською, а озвучення поки що — англійською. Щоб додати голос: Параметри › Доступність › Усний контент › Голоси › Українська."
+        "The board stays in Ukrainian; speech uses English for now. To add the voice on iPad: Settings › Accessibility › Spoken Content › Voices › Ukrainian. On a Mac: System Settings › Accessibility › Spoken Content › System voice › Manage Voices.",
+        uk: "Дошка залишається українською, а озвучення поки що — англійською. Щоб додати голос на iPad: Параметри › Доступність › Усний контент › Голоси › Українська. На Mac: Системні параметри › Доступність › Усний контент › Системний голос › Керувати голосами."
     )
 
     // MARK: - Settings
