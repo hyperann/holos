@@ -470,7 +470,6 @@ body {
       ukF: fem ? list.map(function (b) { return b.ukF || b.uk; }).join(" ") : null,
     };
   }
-  function sameWords(a, b) { return !!a && !!b && a.en === b.en && a.uk === b.uk; }
   function esc(s) {
     return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; });
   }
@@ -768,14 +767,13 @@ body {
   const TOPIC_OF = {};
   QUICK.forEach(function (p) { BOARD[p.id] = p; });
   TOPIC_ORDER.forEach(function (t) { TOPICS[t].phrases.forEach(function (p) { BOARD[p.id] = p; TOPIC_OF[p.id] = t; }); });
-  function phraseFor(id) { return ANSWERS[id] || BOARD[id] || null; }
 
   /* The nurse's side of the guided story (Bedside's NurseScript); the last
      turn's word now lives on the whole board. */
   const TURNS = [
     { stage: 2, note: C.noteTenMinutes, asks: C.nurseBack, question: "feeling", target: "feel.pain", goal: C.goalPain, detail: C.goalPainDetail, yes: [C.nurseSorry], other: [C.nurseThanksForTelling] },
     { stage: 2, asks: C.nurseWhereHurts, surprised: C.nurseAnythingHurt, question: "painWhere", target: "body.head", goal: C.goalHead, detail: C.goalHeadDetail, yes: [C.nurseYourHead], other: [C.nurseThanks] },
-    { stage: 2, asks: C.nurseHowBad, surprised: C.nurseHowBadIfAny, plainAfter: V.body.map(function (p) { return p.id; }), question: "painHowBad", target: "scale.lot", goal: C.goalALot, detail: C.goalALotDetail, yes: [C.nurseMedicine], other: [C.nurseWillTellDoctor] },
+    { stage: 2, asks: C.nurseHowBad, surprised: C.nurseHowBadIfAny, plainAfter: V.body.map(function (p) { return p.id; }).concat(["pain.throat"]), question: "painHowBad", target: "scale.lot", goal: C.goalALot, detail: C.goalALotDetail, yes: [C.nurseMedicine], other: [C.nurseWillTellDoctor] },
     { stage: 2, asks: C.nurseAnythingElse, question: "needs", target: "need.water", goal: C.goalWater, yes: [C.nurseComingUp], other: [C.nurseThanksAllRight] },
     { stage: 3, note: C.noteLittleLater, asks: C.nurseTellMe, question: "anythingElse", target: "family.wife", goal: C.goalWife, detail: C.goalWifeDetail, yes: [C.nurseCallWife], other: [C.nurseHearYou] },
   ];
@@ -1350,7 +1348,7 @@ body {
     conv.addPerson(phrase.speech, phrase.symbol, phrase.id);
     Sound.play("speak");
     Speaker.say(phrase.speech);
-    afterPersonSpoke(phrase.speech, phrase.id);
+    afterPersonSpoke(phrase.speech, [phrase.id]);
   }
 
   /* A message from the whole board, already said by the board itself. */
@@ -1359,10 +1357,11 @@ body {
     conv.addPerson(words, phrases[0] ? phrases[0].symbol : null, phrases.length === 1 ? phrases[0].id : null);
     if (!isQuick) board.message = [];
     conv.boardOpen = false;
-    afterPersonSpoke(words, phrases.length === 1 ? phrases[0].id : "board.message");
+    afterPersonSpoke(words, phrases.map(function (p) { return p.id; }));
   }
 
-  function afterPersonSpoke(words, id) {
+  /* `ids` are the cells the words were made of. */
+  function afterPersonSpoke(words, ids) {
     if (S.step === "free") {
       // Answered: nobody is asking any more, so the whole board is home again.
       conv.awaiting = false;
@@ -1373,10 +1372,15 @@ body {
     if (S.step !== "conversation") { changed(); return; }
     const turn = TURNS[S.turnIndex];
     if (!turn) return;
-    const target = phraseFor(turn.target);
-    // The nurse hears what was said, whichever board it came from.
-    const hit = id === turn.target || (!!target && sameWords(words, target.speech));
-    S.lastAnswerID = hit ? turn.target : id;
+    // The nurse hears what was said, whichever board it came from: a board
+    // sentence that is one of the answers counts as that answer (matched in
+    // English, where both boards say it alike), and a message holding the
+    // turn's word counts as the word, as the guide counts it.
+    const same = Object.keys(ANSWERS).map(function (k) { return ANSWERS[k]; })
+      .find(function (p) { return p.speech.en === words.en; });
+    const heard = same ? same.id : ids.join("+");
+    const hit = ids.indexOf(turn.target) >= 0 || heard === turn.target;
+    S.lastAnswerID = hit ? turn.target : heard;
     cancelShowMe();
     conv.isPartnerTurn = true;
     const job = newJob();
