@@ -1,0 +1,227 @@
+/* Holos design kit — HTML stand-ins for the SwiftUI views in Shared/HolosCore.
+ *
+ * Every value here is copied from the Swift source so a mockup looks like what
+ * the code describes: WordKind tints and inks (Vocabulary/Phrase.swift),
+ * HolosTheme (UI/ScanHighlight.swift), SymbolCell, BackCell, MessageBar,
+ * LanguageToggle, VoiceNotice, HeadTryPanel and SettingsSheet (UI/).
+ *
+ * Stand-ins, because Apple's own assets cannot ship here:
+ *   SF Pro      → Inter            SF Rounded → Nunito
+ *   New York    → Source Serif 4   SF Symbols → Phosphor Icons (+ a few drawn)
+ */
+
+@font-face { font-family: "Nunito"; font-weight: 400; src: url(fonts/nunito-latin-400-normal.woff2) format("woff2"); unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122, U+2190-21FF; }
+@font-face { font-family: "Nunito"; font-weight: 400; src: url(fonts/nunito-cyrillic-400-normal.woff2) format("woff2"); unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: "Nunito"; font-weight: 600; src: url(fonts/nunito-latin-600-normal.woff2) format("woff2"); unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122, U+2190-21FF; }
+@font-face { font-family: "Nunito"; font-weight: 600; src: url(fonts/nunito-cyrillic-600-normal.woff2) format("woff2"); unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: "Nunito"; font-weight: 700; src: url(fonts/nunito-latin-700-normal.woff2) format("woff2"); unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122, U+2190-21FF; }
+@font-face { font-family: "Nunito"; font-weight: 700; src: url(fonts/nunito-cyrillic-700-normal.woff2) format("woff2"); unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: "Nunito"; font-weight: 800; src: url(fonts/nunito-latin-800-normal.woff2) format("woff2"); unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122, U+2190-21FF; }
+@font-face { font-family: "Nunito"; font-weight: 800; src: url(fonts/nunito-cyrillic-800-normal.woff2) format("woff2"); unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: "Nunito"; font-weight: 900; src: url(fonts/nunito-latin-900-normal.woff2) format("woff2"); unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122, U+2190-21FF; }
+@font-face { font-family: "Nunito"; font-weight: 900; src: url(fonts/nunito-cyrillic-900-normal.woff2) format("woff2"); unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: "Source Serif 4"; font-weight: 400; src: url(fonts/source-serif-4-latin-400-normal.woff2) format("woff2"); unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122, U+2190-21FF; }
+@font-face { font-family: "Source Serif 4"; font-weight: 400; src: url(fonts/source-serif-4-cyrillic-400-normal.woff2) format("woff2"); unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: "Source Serif 4"; font-weight: 600; src: url(fonts/source-serif-4-latin-600-normal.woff2) format("woff2"); unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122, U+2190-21FF; }
+@font-face { font-family: "Source Serif 4"; font-weight: 600; src: url(fonts/source-serif-4-cyrillic-600-normal.woff2) format("woff2"); unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: "Source Serif 4"; font-weight: 700; src: url(fonts/source-serif-4-latin-700-normal.woff2) format("woff2"); unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122, U+2190-21FF; }
+@font-face { font-family: "Source Serif 4"; font-weight: 700; src: url(fonts/source-serif-4-cyrillic-700-normal.woff2) format("woff2"); unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+
+:root {
+  /* Fonts */
+  --sf: "Inter", "DejaVu Sans", sans-serif;
+  --rounded: "Nunito", "Inter", sans-serif;
+  --serif: "Source Serif 4", "DejaVu Serif", serif;
+
+  /* iOS text styles at the default Dynamic Type size (pt = px here). */
+  --largeTitle: 34px; --title: 28px; --title2: 22px; --title3: 20px; --headline: 17px;
+  --body: 17px; --callout: 16px; --subheadline: 15px; --footnote: 13px; --caption: 12px; --caption2: 11px;
+
+  /* HolosTheme (UI/ScanHighlight.swift) */
+  --highlight: #FFCC00;
+  --keyline: #000000;
+  --ink: #12141A;
+  --paper: #FFFFFF;
+
+  /* WordKind tints and inks (Vocabulary/Phrase.swift) */
+  --social-tint: #FCD6E6;  --social-ink: #9E1A5C;
+  --people-tint: #FFED9E;  --people-ink: #7A5C00;
+  --action-tint: #C7EDC2;  --action-ink: #1F6B24;
+  --describing-tint: #C7E0FF; --describing-ink: #1A4D9E;
+  --thing-tint: #FFD9AD;   --thing-ink: #994D05;
+  --question-tint: #E0D1FA; --question-ink: #5C339E;
+  --urgent-tint: #FFC2BD;  --urgent-ink: #A81414;
+  --control-tint: #E0E3E8; --control-ink: #40454D;
+
+  /* iOS system colours used by system controls (light appearance). */
+  --ios-blue: #007AFF; --ios-orange: #FF9500; --ios-teal: #30B0C7; --ios-yellow: #FFCC00; --ios-green: #34C759;
+  --ios-red: #FF3B30; --ios-grouped: #F2F2F7; --ios-separator: rgba(60, 60, 67, 0.29);
+  --ios-secondary: rgba(60, 60, 67, 0.6); --ios-tertiary: rgba(60, 60, 67, 0.3);
+  --accent: var(--ios-blue);
+}
+
+/* WordKind classes: put one on a cell, chip or anything tinted. */
+.k-social { --tint: var(--social-tint); --kind-ink: var(--social-ink); }
+.k-people { --tint: var(--people-tint); --kind-ink: var(--people-ink); }
+.k-action { --tint: var(--action-tint); --kind-ink: var(--action-ink); }
+.k-describing { --tint: var(--describing-tint); --kind-ink: var(--describing-ink); }
+.k-thing { --tint: var(--thing-tint); --kind-ink: var(--thing-ink); }
+.k-question { --tint: var(--question-tint); --kind-ink: var(--question-ink); }
+.k-urgent { --tint: var(--urgent-tint); --kind-ink: var(--urgent-ink); }
+.k-control { --tint: var(--control-tint); --kind-ink: var(--control-ink); }
+
+/* ---------- Page and device ---------- */
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--sf);
+  font-size: var(--body);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  position: relative;
+  background: #fff;
+}
+/* kit.js sizes <body> from data-device: ipad (1194×834, the 11-inch iPad Pro in
+   landscape), ipad-portrait (834×1194) or iphone (393×852). */
+.safe { position: absolute; inset: 24px 0 20px 0; }          /* iPad safe area */
+body[data-device="iphone"] .safe { inset: 59px 0 34px 0; }   /* Dynamic Island + home bar */
+body[data-device="ipad-portrait"] .safe { inset: 24px 0 20px 0; }
+
+.statusbar {
+  position: absolute; top: 0; left: 0; right: 0; height: 24px; z-index: 1000;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 22px; font: 600 14px/1 var(--sf); pointer-events: none;
+}
+body[data-device="iphone"] .statusbar { height: 54px; padding: 0 34px 0 44px; font-size: 17px; }
+.statusbar .right { display: flex; gap: 7px; align-items: center; }
+.statusbar.light { color: #fff; } .statusbar.dark { color: #000; }
+.statusbar .battery { width: 26px; height: 12px; border: 1.5px solid currentColor; border-radius: 4px; padding: 1.5px; opacity: 0.95; position: relative; }
+.statusbar .battery::before { content: ""; display: block; height: 100%; width: 80%; background: currentColor; border-radius: 1.5px; }
+.statusbar .battery::after { content: ""; position: absolute; right: -4px; top: 3px; width: 2px; height: 4px; background: currentColor; border-radius: 0 1px 1px 0; opacity: .6; }
+.homeindicator { position: absolute; bottom: 7px; left: 50%; transform: translateX(-50%); width: 300px; height: 5px; border-radius: 3px; z-index: 1000; pointer-events: none; }
+body[data-device="iphone"] .homeindicator { width: 134px; bottom: 8px; }
+.homeindicator.dark { background: rgba(0,0,0,.85); } .homeindicator.light { background: rgba(255,255,255,.85); }
+
+/* ---------- Icons ---------- */
+
+/* kit.js swaps <i data-sf="pills.fill"></i> for an inline SVG in this span. */
+.sf { display: inline-block; width: 1em; height: 1em; vertical-align: -0.14em; flex: none; }
+.sf svg { width: 100%; height: 100%; display: block; overflow: visible; }
+
+/* ---------- Scan highlight (View.scanHighlight) ---------- */
+
+/* A thick yellow ring with a black keyline on both sides — 2 pt black, 7 pt
+   yellow, 2 pt black, inside the shape — and a 1.04 lift. */
+.lit { position: relative; transform: scale(1.04); z-index: 5; }
+.lit::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 6;
+  box-shadow: inset 0 0 0 2px var(--keyline), inset 0 0 0 9px var(--highlight), inset 0 0 0 11px var(--keyline);
+}
+.lit.nolift { transform: none; }
+/* For shapes whose rounded corner lives on a child, set --r on the element. */
+.ring-only::after { content: ""; position: absolute; inset: 0; border-radius: var(--r, 18px); pointer-events: none;
+  box-shadow: inset 0 0 0 2px var(--keyline), inset 0 0 0 9px var(--highlight), inset 0 0 0 11px var(--keyline); }
+/* Rows not in play while a row is entered (Grid, Words). */
+.dim { opacity: 0.45; }
+
+/* ---------- SymbolCell / BackCell ---------- */
+
+/* <div class="cell k-thing"><i data-sf="drop.fill"></i><b>Water</b></div>
+   Size the cell from its board (grid track, flex, or explicit width/height). */
+.cell {
+  position: relative; display: flex; flex-direction: column; gap: 6px; padding: 10px;
+  border-radius: 18px; background: var(--tint, var(--control-tint)); min-width: 0; min-height: 0;
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--kind-ink, var(--control-ink)) 35%, transparent);
+}
+.cell > .sf { flex: 1 1 auto; width: 100%; height: auto; min-height: 0; padding: 0 8px; color: var(--kind-ink); }
+.cell > b {
+  font: 700 var(--title3)/1.18 var(--rounded); color: var(--ink); text-align: center;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; flex: none;
+}
+.cell.small > b { font-size: 16px; }   /* stands in for minimumScaleFactor on long labels */
+.cell.xsmall > b { font-size: 13px; }
+.backcell { --tint: var(--control-tint); --kind-ink: var(--control-ink); justify-content: center; align-items: center; color: var(--control-ink); box-shadow: none; }
+.backcell > .sf { flex: none; width: 30px; height: 30px; padding: 0; }
+.backcell > b { font: 700 var(--headline)/1.2 var(--rounded); color: var(--control-ink); -webkit-line-clamp: 1; }
+
+/* ---------- MessageBar ---------- */
+
+.msgbar {
+  display: flex; align-items: center; gap: 12px; padding: 10px; background: #fff; border-radius: 22px;
+  box-shadow: inset 0 0 0 1.5px rgba(60, 60, 67, 0.35); position: relative;
+}
+.msgbar.entered { box-shadow: inset 0 0 0 4px var(--highlight); }
+.msg-sentence { flex: 1; min-width: 0; min-height: 64px; display: flex; align-items: center; gap: 8px; padding: 0 4px; overflow: hidden; white-space: nowrap; }
+.msg-empty { font: 400 var(--title3)/1.2 var(--sf); color: var(--ios-secondary); }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 999px; background: var(--tint); flex: none; }
+.chip > .sf { color: var(--kind-ink); font-size: 18px; }
+.chip > b { font: 600 var(--title3)/1.1 var(--rounded); color: var(--ink); }
+.msg-ctl {
+  position: relative; width: 88px; min-height: 64px; padding: 6px 4px; border-radius: 16px; flex: none;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  background: var(--control-tint); color: var(--ink);
+}
+.msg-ctl > .sf { font-size: 24px; }
+.msg-ctl > b { font: 700 var(--caption)/1.15 var(--rounded); text-align: center; }
+.msg-ctl.prominent { background: var(--ink); color: #fff; }
+.msg-ctl.back { width: 72px; color: var(--control-ink); }
+
+/* ---------- LanguageToggle ---------- */
+
+.langtoggle { display: inline-flex; padding: 4px; background: var(--paper); border-radius: 999px; box-shadow: inset 0 0 0 2px var(--ink); position: relative; }
+.langtoggle > span { font: 900 var(--headline)/1 var(--rounded); padding: 10px 14px; border-radius: 999px; color: var(--ink); }
+.langtoggle > span.on { background: var(--ink); color: #fff; }
+
+/* ---------- VoiceNotice ---------- */
+
+.voicenotice { display: flex; gap: 12px; align-items: flex-start; padding: 14px; border-radius: 16px; background: var(--people-tint); color: var(--ink); }
+.voicenotice > .sf { font-size: var(--title2); flex: none; }
+.voicenotice h4 { margin: 0 0 4px; font: 600 var(--headline)/1.25 var(--sf); }
+.voicenotice p { margin: 0; font: 400 var(--subheadline)/1.35 var(--sf); }
+
+/* ---------- Press flash (View.switchPressFlash) ---------- */
+
+.pressflash { position: absolute; inset: 0; pointer-events: none; z-index: 900; box-shadow: inset 0 0 0 4px var(--keyline), inset 0 0 0 14px var(--highlight), inset 0 0 0 16px var(--keyline); opacity: 0.9; }
+
+/* ---------- HeadTryPanel ---------- */
+
+.headpanel { width: 640px; max-width: 100%; padding: 24px; border-radius: 26px; background: #fff; box-shadow: inset 0 0 0 1.5px rgba(60, 60, 67, 0.3); display: flex; flex-direction: column; gap: 18px; color: var(--ink); }
+.headpanel h3 { margin: 0; font: 700 var(--title2)/1.2 var(--rounded); display: flex; gap: 10px; align-items: center; }
+.headpanel h3 .sf { color: var(--accent); }
+.headpanel p { margin: 0; font: 400 var(--title3)/1.35 var(--sf); }
+.headpanel .buttons { display: flex; gap: 14px; }
+.panelbtn { position: relative; flex: 1; min-height: 64px; padding: 0 18px; border-radius: 16px; background: var(--control-tint); display: flex; align-items: center; justify-content: center; gap: 10px; font: 700 var(--title3)/1.15 var(--rounded); color: var(--ink); }
+.panelbtn .sf { color: var(--accent); }
+.headmeter { display: flex; gap: 14px; align-items: center; font: 400 var(--subheadline)/1.3 var(--sf); }
+.headmeter .ring { width: 56px; height: 56px; flex: none; }
+
+/* ---------- iOS chrome for SettingsSheet and other system UI ---------- */
+
+.dimmed { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.35); z-index: 50; }
+.formsheet { position: absolute; z-index: 60; background: var(--ios-grouped); border-radius: 12px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,.25); }
+.navbar { height: 56px; display: flex; align-items: center; justify-content: center; position: relative; font: 600 var(--headline)/1 var(--sf); background: rgba(249, 249, 249, 0.94); border-bottom: 0.5px solid var(--ios-separator); }
+.navbar .trailing { position: absolute; right: 16px; color: var(--accent); font-weight: 600; }
+.navbar .leading { position: absolute; left: 16px; color: var(--accent); font-weight: 400; }
+.form { padding: 0 20px 20px; overflow: hidden; }
+.form-header { font: 400 var(--footnote)/1.3 var(--sf); text-transform: uppercase; color: var(--ios-secondary); padding: 22px 16px 7px; letter-spacing: 0.02em; }
+.form-footer { font: 400 var(--footnote)/1.35 var(--sf); color: var(--ios-secondary); padding: 7px 16px 0; }
+.form-section { background: #fff; border-radius: 10px; overflow: hidden; }
+.form-row { min-height: 44px; padding: 11px 16px; display: flex; align-items: center; gap: 12px; position: relative; font: 400 var(--body)/1.3 var(--sf); }
+.form-row + .form-row::before { content: ""; position: absolute; top: 0; left: 16px; right: 0; height: 0.5px; background: var(--ios-separator); }
+.form-row .grow { flex: 1; min-width: 0; }
+.form-row .detail { color: var(--ios-secondary); }
+.form-row .sub { display: block; font: 400 var(--footnote)/1.3 var(--sf); color: var(--ios-secondary); margin-top: 2px; }
+.form-row .check { color: var(--accent); font-weight: 600; }
+.form-row .icon { color: var(--accent); font-size: 20px; width: 24px; text-align: center; }
+.form-row.button { color: var(--accent); }
+.form-row.destructive { color: var(--ios-red); }
+.toggle { width: 51px; height: 31px; border-radius: 16px; background: #E9E9EA; position: relative; flex: none; }
+.toggle::after { content: ""; position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 50%; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,.2); }
+.toggle.on { background: var(--ios-green); }
+.toggle.on::after { left: 22px; }
+.slider { height: 28px; position: relative; flex: 1; }
+.slider::before { content: ""; position: absolute; left: 0; right: 0; top: 12px; height: 4px; border-radius: 2px; background: #E3E3E8; }
+.slider .fill { position: absolute; left: 0; top: 12px; height: 4px; border-radius: 2px; background: var(--accent); }
+.slider .thumb { position: absolute; top: 0; width: 28px; height: 28px; margin-left: -14px; border-radius: 50%; background: #fff; box-shadow: 0 0.5px 4px rgba(0,0,0,.12), 0 6px 13px rgba(0,0,0,.12); }

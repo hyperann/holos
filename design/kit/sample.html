@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Kit sample</title>
+<link rel="stylesheet" href="kit.css"></head>
+<body data-device="ipad" data-statusbar="dark" style="background:#F6F7F9">
+<div class="safe" style="padding:24px; display:flex; flex-direction:column; gap:18px">
+  <div class="msgbar entered">
+    <div class="msg-sentence"><span class="chip k-urgent"><i data-sf="bandage.fill"></i><b>I'm in pain</b></span><span class="chip k-thing"><i data-sf="pills.fill"></i><b>Medicine</b></span></div>
+    <div class="msg-ctl prominent lit"><i data-sf="speaker.wave.2.fill"></i><b>Speak</b></div>
+    <div class="msg-ctl"><i data-sf="delete.left.fill"></i><b>Delete last</b></div>
+    <div class="msg-ctl"><i data-sf="xmark"></i><b>Clear</b></div>
+    <div class="msg-ctl back"><i data-sf="arrow.uturn.backward"></i><b>Go back</b></div>
+  </div>
+  <div style="display:grid; grid-template-columns: repeat(6, 1fr); gap:14px; height:150px">
+    <div class="cell k-urgent lit"><i data-sf="hand.raised.fill"></i><b>Help</b></div>
+    <div class="cell k-social"><i data-sf="checkmark.circle.fill"></i><b>Yes</b></div>
+    <div class="cell k-urgent"><i data-sf="xmark.circle.fill"></i><b>No</b></div>
+    <div class="cell k-thing"><i data-sf="lungs.fill"></i><b>Hard to breathe</b></div>
+    <div class="cell k-describing"><i data-sf="zzz"></i><b>Bored</b></div>
+    <div class="cell backcell"><i data-sf="arrow.uturn.backward"></i><b>Go back</b></div>
+  </div>
+  <div style="display:grid; grid-template-columns: repeat(6, 1fr); gap:14px; height:150px">
+    <div class="cell k-people"><i data-sf="person.fill"></i><b>Wife</b></div>
+    <div class="cell k-action"><i data-sf="figure.walk"></i><b>Сісти</b></div>
+    <div class="cell k-question"><i data-sf="clock.fill"></i><b>Котра година?</b></div>
+    <div class="cell k-thing"><i data-sf="mouth.fill"></i><b>Throat</b></div>
+    <div class="cell k-social"><i data-sf="tortoise.fill"></i><b>Please speak slowly</b></div>
+    <div class="cell k-thing"><i data-sf="10.circle.fill"></i><b>Ten</b></div>
+  </div>
+  <div style="display:flex; gap:18px; align-items:flex-start">
+    <span class="langtoggle lit" style="border-radius:999px"><span class="on">EN</span><span>УКР</span></span>
+    <div class="voicenotice" style="width:520px"><i data-sf="speaker.slash.fill"></i><div><h4>No Ukrainian voice on this device</h4><p>The board stays in Ukrainian; speech uses English for now. To add the voice on iPad: Settings › Accessibility › Spoken Content › Voices › Ukrainian.</p></div></div>
+    <p style="font:400 24px/1.3 var(--serif); margin:0">Подзвоніть, будь ласка, моїй дружині.</p>
+  </div>
+</div>
+<script src="icons.js"></script><script src="kit.js"></script>
+</body></html>
