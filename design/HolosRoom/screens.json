@@ -1,0 +1,44 @@
+[
+  {
+    "file": "01-problem.png",
+    "title": "The problem",
+    "step": "Step 1a",
+    "caption": "The ward is dark except for the nurse in the doorway, who asks “How are you feeling?”, while the card makes the judge Mykola, with one button and no words."
+  },
+  {
+    "file": "02-ward-scan.png",
+    "title": "Scan the room",
+    "step": "Step 2",
+    "caption": "The lights are up and the scan has reached the bed: the rest of the room dims, the bed gets the yellow ring and pill, and the yellow arrow and the top bar say to press now, under the goal “I'm in pain. Medicine, please.”"
+  },
+  {
+    "file": "03-bed-ring.png",
+    "title": "The bed's phrases",
+    "step": "Step 2",
+    "caption": "One press opened the bed, so its four phrases and Go back bloom around it on dotted threads, and the scan lights “I'm in pain” first, where the arrow waits."
+  },
+  {
+    "file": "04-home-photo.png",
+    "title": "The photo offers the word",
+    "step": "Step 3b",
+    "caption": "At home the family photo has opened onto its people rather than its sentences, with “My wife” lit, so Yuriy picks her instead of recalling the word."
+  },
+  {
+    "file": "05-ukrainian.png",
+    "title": "Hear it in Ukrainian",
+    "step": "Step 4",
+    "caption": "After the press the whole board behind the card has switched to Ukrainian, while the card stays in English, shows «Мені боляче. Ліки, будь ласка.» as the line now spoken, and lights “Say it again”."
+  },
+  {
+    "file": "06-closing.png",
+    "title": "Closing",
+    "step": "Closing",
+    "caption": "The closing card says who Holos is for, why a keyboard is not enough and that it is free, private and open source, with “Keep talking” lit first."
+  },
+  {
+    "file": "07-iphone.png",
+    "title": "On an iPhone",
+    "step": "Step 2 · iPhone",
+    "caption": "On an iPhone in portrait the room shrinks to the screen's width and the bed's phrases leave the picture for a three-column panel of cells, with “I'm in pain” lit."
+  }
+]
