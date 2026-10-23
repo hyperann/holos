@@ -1,0 +1,50 @@
+[
+  {
+    "file": "01-problem.png",
+    "title": "The problem",
+    "step": "Step 1",
+    "caption": "The nurse asks how you are feeling and waits (\"…\", \"Take your time.\"), but where your reply should be there is only an empty grey box: a press finds nothing to choose."
+  },
+  {
+    "file": "02-feeling.png",
+    "title": "One switch, a whole conversation",
+    "step": "Step 2",
+    "caption": "The nurse is back, and the board offers only the five answers that fit her question above the Yes · No · Not sure · Something else strip; the scan has lit In pain, the answer the terracotta \"This one\" tag marks."
+  },
+  {
+    "file": "03-body-map.png",
+    "title": "Where does it hurt?",
+    "step": "Step 2",
+    "caption": "After \"I'm in pain.\" the board turns into a body, and the scan lights the head on the drawn figure and the labelled Head cell at the same moment."
+  },
+  {
+    "file": "04-pain-scale.png",
+    "title": "How bad is it?",
+    "step": "Step 2",
+    "caption": "The answers become an ordered scale of faces, smile to frown, and the scan has moved on to A lot, the third of the four and the one the guide marks."
+  },
+  {
+    "file": "05-something-else.png",
+    "title": "When the word won't come",
+    "step": "Step 3",
+    "caption": "The open question has no predicted answer, so the person chose Something else, then the Talk topic, then the top row, and inside the row the scan now lights Call my wife under the guide's tag."
+  },
+  {
+    "file": "06-ukrainian.png",
+    "title": "Hear it in Ukrainian",
+    "step": "Step 4",
+    "caption": "The whole conversation is redrawn in Ukrainian, nurse and person alike, while the screen around it stays in English, and each answer is spoken again; «Подзвоніть, будь ласка, моїй дружині.» is being said now."
+  },
+  {
+    "file": "07-closing.png",
+    "title": "Who it is for",
+    "step": "Closing",
+    "caption": "The closing card says who Holos is for and why it is free, private and open source, and the scan has lit Keep talking, which opens the free board a carer drives with question cards."
+  },
+  {
+    "file": "08-iphone.png",
+    "title": "On iPhone",
+    "step": "Step 2",
+    "caption": "The same conversation on an iPhone in portrait: the chat shrinks to a fifth of the height above \"Do you need anything else?\" and its six answers, with Water lit and tagged."
+  }
+]

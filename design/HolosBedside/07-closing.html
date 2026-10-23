@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Bedside · 07 Closing</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<link rel="stylesheet" href="style.css">
+<style>
+  .screen { gap: 18px; align-items: center; }
+  .closingbar { align-self: stretch; flex: none; display: flex; justify-content: flex-end; align-items: center; gap: 8px; }
+  .scroll { align-self: stretch; flex: 1; min-height: 0; overflow: hidden; display: flex; justify-content: center; align-items: flex-start; }
+  .card {
+    width: 760px; display: flex; flex-direction: column; gap: 20px; padding: 28px; border-radius: 30px;
+    background: var(--bs-card); box-shadow: 0 6px 28px var(--bs-shadow);
+  }
+  .card h1 { margin: 0; font: 700 34px/41px var(--rounded); color: var(--ink); }
+  .para { display: flex; align-items: flex-start; gap: 14px; }
+  .para > .sf { width: 34px; font-size: 24px; height: 25px; color: var(--bs-rust); }
+  .para > p { margin: 0; flex: 1; min-width: 0; font: 400 20px/25px var(--rounded); color: var(--ink); }
+  .card .source { font: 400 13px/18px var(--rounded); color: var(--bs-softink); }
+  .choices { flex: none; width: 760px; height: 96px; display: flex; gap: 16px; }
+  .choices > .bigbtn { flex: 1 1 0; border-radius: 22px; }
+  .choices > .bigbtn.peach { background: var(--bs-peach); color: var(--ink); }
+</style></head>
+<body data-device="ipad" data-statusbar="dark">
+<div class="safe"><div class="screen">
+
+  <div class="closingbar">
+    <span class="langtoggle"><span class="on">EN</span><span>УКР</span></span>
+    <div class="gear"><i data-sf="gearshape.fill"></i></div>
+  </div>
+
+  <div class="scroll">
+    <div class="card">
+      <h1>For people who understand far more than they can say.</h1>
+      <div class="para"><i data-sf="person.2.fill"></i><p>Rehabilitation centres in Ukraine treat many service members recovering from brain injuries and strokes who struggle to communicate, often through aphasia or dysarthria. Aphasia can take reading and spelling as well as speech, so a keyboard is not enough.</p></div>
+      <div class="para"><i data-sf="bubble.left.and.bubble.right.fill"></i><p>Holos starts from the partner's question and offers only the answers that fit, so nobody has to find a word from nothing. One switch is enough: a tap, a key, a controller button or a turn of the head.</p></div>
+      <div class="para"><i data-sf="lock.fill"></i><p>Free, because a voice should not be a subscription. Private: no account, no analytics, nothing leaves this device. Open source, so speech therapists can check it, translate it and keep it alive.</p></div>
+      <div class="source">On rehabilitation in Ukraine: Talk! (Говори!) NGO.</div>
+    </div>
+  </div>
+
+  <div class="choices">
+    <div class="bigbtn lit"><i data-sf="bubble.left.fill"></i><span data-fit="1" data-min="0.6">Keep talking</span></div>
+    <div class="bigbtn peach"><i data-sf="arrow.counterclockwise"></i><span data-fit="1" data-min="0.6">Start again</span></div>
+  </div>
+
+</div></div>
+<script src="../kit/icons.js"></script><script src="../kit/kit.js"></script><script src="bedside.js"></script>
+</body></html>

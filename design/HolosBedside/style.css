@@ -1,0 +1,208 @@
+/* Holos Bedside mockups — the prototype's own views, on top of ../kit/kit.css.
+ *
+ * Values come from HolosBedside.swiftpm:
+ *   App/BedsideTheme.swift   the warm palette (SwiftUI RGB 0–1 → hex below)
+ *   App/Chrome.swift         TopBar, StepHeader, SettingsButton, SplitLayout
+ *   Board/*.swift            ChatView, ChatBubble, AnswerArea, AnswerCell,
+ *                            BodyMap, MiniBoardView, GoalBanner
+ *   Steps/*.swift            ProblemStep, ReplayStep, ClosingStep
+ * Text uses SF Rounded (Font.bedside) → Nunito, at the iOS text-style sizes
+ * and line heights of the default Dynamic Type size.
+ */
+
+:root {
+  --bs-bg: #FCF5E8;          /* background     (0.99, 0.96, 0.91) */
+  --bs-chat: #F7EBD9;        /* chatBackground (0.97, 0.92, 0.85) */
+  --bs-card: #FFFCF7;        /* card           (1.00, 0.99, 0.97) */
+  --bs-terracotta: #B85438;  /* terracotta     (0.72, 0.33, 0.22) */
+  --bs-rust: #8F3821;        /* rust           (0.56, 0.22, 0.13) */
+  --bs-peach: #FFDBC2;       /* peach          (1.00, 0.86, 0.76) */
+  --bs-softink: #594A42;     /* softInk        (0.35, 0.29, 0.26) */
+  --bs-outline: #CCAD99;     /* outline        (0.80, 0.68, 0.60) */
+  --bs-shadow: rgba(115, 64, 38, 0.14); /* shadow (0.45, 0.25, 0.15) @ 14 % */
+  --sys-gray: 142, 142, 147; /* SwiftUI Color.gray (systemGray, light) */
+}
+
+body { background: var(--bs-bg); }
+
+/* The screen inside the safe area: every step pads 16 and stacks at 14. */
+.screen { position: absolute; inset: 16px; display: flex; flex-direction: column; gap: 14px; }
+
+/* ---------- Text styles: Font.bedside(style, weight:) ---------- */
+.r { font-family: var(--rounded); }
+.t-largeTitle { font-size: 34px; line-height: 41px; }
+.t-title2 { font-size: 22px; line-height: 28px; }
+.t-title3 { font-size: 20px; line-height: 25px; }
+.t-headline { font-size: 17px; line-height: 22px; }
+.t-body { font-size: 17px; line-height: 22px; }
+.t-subheadline { font-size: 15px; line-height: 20px; }
+.t-footnote { font-size: 13px; line-height: 18px; }
+.w4 { font-weight: 400; } .w6 { font-weight: 600; } .w7 { font-weight: 700; } .w8 { font-weight: 800; }
+
+/* ---------- TopBar, StepHeader, SettingsButton (Chrome.swift) ---------- */
+.topbar { display: flex; align-items: flex-start; gap: 14px; flex: none; }
+.topbar > .content { flex: 1; min-width: 0; }
+.controls { display: flex; align-items: center; gap: 12px; flex: none; }
+.gear {
+  width: 52px; height: 52px; border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center;
+  background: var(--bs-card); box-shadow: inset 0 0 0 1.5px var(--bs-outline); color: var(--ink); font-size: 25px;
+}
+/* StepHeader and GoalBanner share one column: step label, title, detail. */
+.header { display: flex; flex-direction: column; gap: 6px; }
+.header .step { font: 800 15px/20px var(--rounded); color: var(--bs-rust); }
+.header .title { font: 700 22px/28px var(--rounded); color: var(--ink); }
+.header .detail { font: 400 17px/22px var(--rounded); color: var(--bs-softink); }
+.header .how { display: flex; align-items: center; gap: 12px; }
+.header .how > span { display: inline-flex; align-items: center; gap: 6px; font: 600 15px/20px var(--rounded); color: var(--bs-rust); }
+.header .how .sf { font-size: 16px; }
+
+/* ---------- SplitLayout: chat 0.38 of the width beside the board ---------- */
+.split { flex: 1; min-height: 0; display: flex; gap: 16px; }
+.split > .chatcol { flex: none; width: 38%; position: relative; }
+.split > .boardcol { flex: 1; min-width: 0; position: relative; }
+/* Stacked (a phone): chat on top at chatShare of the height, gap 12. */
+.split.stacked { flex-direction: column; gap: 12px; }
+.split.stacked > .chatcol { width: auto; }
+.split.stacked > .boardcol { min-height: 0; }
+
+/* ---------- ChatView ---------- */
+/* The rounded background is the ScrollView's background; the ScrollView
+   itself clips to its plain rectangle, so content can reach the corners. */
+.chatwrap { position: absolute; inset: 0; }
+.chatwrap > .chatbg { position: absolute; inset: 0; background: var(--bs-chat); border-radius: 28px; }
+.chatwrap > .chat { position: absolute; inset: 0; overflow: hidden; }
+.chat > .lines { display: flex; flex-direction: column; gap: 12px; padding: 16px; }
+
+.line { display: flex; align-items: flex-end; gap: 10px; }
+.line.partner::after { content: ""; flex: 1 0 36px; }       /* Spacer(minLength: 36) */
+.line.person::before { content: ""; flex: 1 0 36px; }
+.avatar {
+  width: 46px; height: 46px; border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center;
+  background: var(--bs-peach); box-shadow: inset 0 0 0 2px var(--bs-rust); color: var(--bs-rust); font-size: 20px;
+}
+.nbubble {
+  min-width: 0; padding: 12px 16px; background: var(--bs-card); color: var(--ink);
+  font: 600 20px/25px var(--rounded);
+  border-radius: 22px 22px 22px 6px;                       /* TL TR BR BL: bottomLeading 6 */
+  box-shadow: inset 0 0 0 1px var(--bs-outline), 0 3px 12px var(--bs-shadow);
+}
+.pbubble {
+  position: relative; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 12px 16px;
+  background: var(--bs-terracotta); color: #fff; font: 700 20px/25px var(--rounded);
+  border-radius: 22px 22px 6px 22px;                       /* bottomTrailing 6 */
+  box-shadow: 0 3px 12px var(--bs-shadow);
+}
+.pbubble > .sf { font-size: 22px; }
+.pbubble > .face { width: 30px; height: 30px; flex: none; }
+.pbubble > .speaking { font-size: 20px; }
+/* scanHighlight(isReplaying, cornerRadius: 22): a uniform 22 pt ring over the
+   bubble's uneven corners. */
+.pbubble.lit::after { border-radius: 22px; }
+.note {
+  align-self: center; max-width: 100%; padding: 6px 14px; border-radius: 999px; text-align: center;
+  background: rgba(252, 245, 232, 0.8); color: var(--bs-softink); font: italic 600 15px/20px var(--rounded);
+}
+
+/* ---------- AnswerArea ---------- */
+.answers { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 14px; }
+.qheader {
+  flex: none; display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-radius: 18px;
+  background: rgba(255, 219, 194, 0.55); box-shadow: inset 0 0 0 1px rgba(204, 173, 153, 0.5);
+}
+.qheader > .sf { font-size: 27px; color: var(--bs-rust); }
+.qheader > .q { flex: 0 1 auto; min-width: 0; margin-right: 12px; font: 700 22px/28px var(--rounded); color: var(--ink); }
+
+.grid { flex: 1; min-height: 0; display: grid; gap: 14px; }
+.strip { flex: none; display: flex; gap: 12px; }
+.strip > .acell { flex: 1 1 0; }
+
+/* AnswerCell: a card with the picture on its Fitzgerald disc and the word. */
+.acell {
+  position: relative; min-width: 0; min-height: 0; display: flex; flex-direction: column; gap: 10px; padding: 14px;
+  border-radius: 24px; background: var(--bs-card);
+  box-shadow: inset 0 0 0 1.5px rgba(204, 173, 153, 0.6), 0 4px 16px var(--bs-shadow);
+}
+.acell.guide { box-shadow: inset 0 0 0 4px var(--bs-terracotta), 0 4px 16px var(--bs-shadow); }
+.acell > .art { flex: 1 1 0; min-height: 0; container-type: size; display: flex; align-items: center; justify-content: center; }
+.acell .disc {
+  width: min(100cqw, 100cqh); height: min(100cqw, 100cqh); border-radius: 50%; flex: none;
+  display: flex; align-items: center; justify-content: center; background: var(--tint); color: var(--kind-ink);
+}
+/* scaleEffect(0.56) on a symbol that fills the disc; Phosphor glyphs carry
+   about 6 % padding of their own, so the stand-in is drawn a little larger. */
+.acell .disc > .sf { width: 61%; height: 61%; }
+/* PainFace in place of the disc (bedside.js draws it). */
+.facewrap { display: block; flex: none; }
+.facewrap > svg { display: block; width: 100%; height: 100%; }
+.acell .disc.face { background: none; }
+.acell .disc.face > .facewrap { width: 100%; height: 100%; }
+.pbubble > .facewrap { width: 30px; height: 30px; }
+.acell > .word { flex: none; font: 700 34px/41px var(--rounded); color: var(--ink); text-align: center; }
+/* Compact (the Yes / No strip): padding 10, title3. */
+.acell.compact { padding: 10px; }
+.acell.compact > .word { font-size: 20px; line-height: 25px; }
+/* Horizontal: picture beside the word, for wide, short cells. */
+.acell.h { flex-direction: row; align-items: stretch; gap: 14px; }
+.acell.h > .art { flex: none; width: 52px; }
+.acell.h > .word { flex: 1; min-width: 0; align-self: center; text-align: left; }
+
+/* GuideMarker: "This one". */
+.tag {
+  position: absolute; top: 8px; right: 8px; z-index: 2; display: flex; align-items: center; gap: 4px;
+  padding: 6px 10px; border-radius: 999px; white-space: nowrap; pointer-events: none;
+  background: var(--bs-rust); color: #fff; box-shadow: inset 0 0 0 2px #fff; font: 800 15px/20px var(--rounded);
+}
+.tag .sf { font-size: 16px; }
+.acell.compact > .tag { top: 4px; right: 4px; }
+
+/* ---------- Body map ---------- */
+.bodymap { display: flex; gap: 14px; flex: 1; min-height: 0; }
+.bodymap > .figure { flex: none; width: 200px; display: flex; align-items: center; justify-content: center; }
+.bodymap > .grid { flex: 1; min-width: 0; }
+
+/* ---------- MiniBoardView ---------- */
+.mini { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 12px; }
+.mini > .help { flex: none; font: 600 15px/20px var(--rounded); color: var(--bs-softink); }
+.mrow {
+  position: relative; flex: 1 1 0; min-height: 64px; display: flex; gap: 10px; padding: 8px; border-radius: 22px;
+  background: rgba(255, 252, 247, 0.7);
+}
+.mrow > .cell { flex: 1 1 0; }
+/* SymbolCell's label is fitted by bedside.js (lineLimit 2, minimumScaleFactor
+   0.55), so it is measured unclamped. */
+.mrow .cell > b[data-fit] { display: block; -webkit-line-clamp: unset; line-height: 25px; }
+.mrow > .backcell { flex: 0 0 96px; }
+.mrow > .outline { position: absolute; inset: 0; border-radius: 22px; pointer-events: none; z-index: 8;
+  box-shadow: inset 0 0 0 1px rgba(204, 173, 153, 0.5); }
+.mrow.entered > .outline { box-shadow: inset 0 0 0 2px #000, inset 0 0 0 6px var(--highlight), inset 0 0 0 8px #000; }
+.mrow.guiderow > .outline { box-shadow: inset 0 0 0 4px var(--bs-terracotta); }
+/* A cell with its own tag overlay: the tag sits above the cell's ring, at
+   the cell's unscaled corner. */
+/* Basis 20 px: a plain cell's padding floors its flex base at 20, so the
+   wrapper starts from the same place and all four words get equal widths. */
+.mrow > .tagged { position: relative; flex: 1 1 20px; min-width: 0; display: flex; }
+.mrow > .tagged > .cell { flex: 1; }
+.mrow > .tagged > .tag { top: 6px; right: 6px; z-index: 7; }
+.tabs { flex: none; height: 84px; display: flex; gap: 10px; }
+.tabbtn {
+  position: relative; flex: 1 1 0; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 0 10px; border-radius: 18px; background: var(--bs-card); color: var(--ink);
+  box-shadow: inset 0 0 0 1.5px var(--bs-outline);
+}
+.tabbtn > .sf { font-size: 22px; }
+.tabbtn > b { font: 700 20px/25px var(--rounded); white-space: nowrap; }
+.tabbtn.current { background: var(--bs-terracotta); color: #fff; }
+.closebtn {
+  position: relative; flex: 0 0 110px; display: flex; align-items: center; justify-content: center; border-radius: 18px;
+  background: var(--control-tint); color: var(--control-ink); font-size: 27px;
+}
+
+/* ---------- Buttons on the one-press screens ---------- */
+.bigbtn {
+  position: relative; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 20px;
+  background: var(--bs-terracotta); color: #fff; font: 700 22px/28px var(--rounded);
+}
+.bigbtn > .sf { font-size: 17px; }
+
+/* A dashed strokeBorder, drawn as SVG so the dash pattern is the code's. */
+svg.dash { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
