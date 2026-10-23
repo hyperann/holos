@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Room · The photo offers the word</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<link rel="stylesheet" href="style.css">
+<!-- Stage .familiar (step 3b), scanning: the photo (3rd stop) has been opened,
+     so its ring holds the people, not sentences — My wife, My children, My mum,
+     each with the "opens more" badge, then Go back. "My wife" is lit first and
+     carries the guide marker (route home.photo → home.photo.wife → …wife.call).
+     The open photo keeps its 4-pt outline; the veil is 0.62. -->
+</head>
+<body data-device="ipad" data-statusbar="light">
+<div class="safe"><div class="root">
+  <header class="topbar">
+    <div class="words">
+      <div class="heading">
+        <div class="partdots"><i class="on"></i><i class="on"></i><i class="on cur"></i><i></i><span>Familiar places</span></div>
+        <h1 class="title">Familiar places</h1>
+      </div>
+      <div class="details">
+        <div class="goal">Ask: “Please call my wife.”</div>
+        <div class="checklist"><span><i data-sf="phone.fill"></i>Call my wife</span></div>
+        <div class="how">The word “wife” will not come to Yuriy. The family photo offers it.</div>
+        <div class="hint"><i data-sf="hand.point.up.left.fill"></i>Now press when “My wife” lights up.</div>
+      </div>
+    </div>
+    <div class="controls">
+      <span class="langtoggle"><span class="on">EN</span><span lang="uk">УКР</span></span>
+      <span class="gear"><i data-sf="gearshape.fill"></i></span>
+    </div>
+  </header>
+  <main class="stage">
+    <div class="slot"><div class="room" id="room"><img class="art" src="home.svg" alt=""></div></div>
+    <div class="bottombar">
+      <div class="roomchip"><span class="sym"><i data-sf="cross.case.fill"></i></span><b>To the ward</b></div>
+      <div class="roomchip"><span class="sym"><i data-sf="globe"></i><span class="badge" lang="uk">УКР</span></span><b>Ukrainian</b></div>
+      <div class="strip">
+        <div class="sentence"><span class="empty">Your message appears here</span></div>
+        <div class="ctl prominent"><i data-sf="speaker.wave.2.fill"></i><b>Speak</b></div>
+        <div class="ctl"><i data-sf="delete.left.fill"></i><b>Delete last</b></div>
+        <div class="ctl"><i data-sf="xmark"></i><b>Clear</b></div>
+      </div>
+    </div>
+  </main>
+</div></div>
+<script src="../kit/icons.js"></script>
+<script src="room.js"></script>
+<script>
+  Room.render({
+    place: "home",
+    spotlight: { id: "home.photo", dim: 0.62 },
+    open: "home.photo",
+    ringLit: "home.photo.wife",
+    guide: "home.photo.wife",
+    ring: [                                    // Vocabulary.home[2].choices (people), then Go back
+      { id: "home.photo.wife", label: "My wife", symbol: "person.fill", kind: "people", more: true },
+      { id: "home.photo.children", label: "My children", symbol: "figure.and.child.holdinghands", kind: "people", more: true },
+      { id: "home.photo.mum", label: "My mum", symbol: "person.crop.circle.fill", kind: "people", more: true },
+      { id: "home.photo#back", back: true },
+    ],
+  });
+</script>
+<script src="../kit/kit.js"></script>
+</body></html>

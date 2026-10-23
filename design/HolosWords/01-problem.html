@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Words · The problem</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<!-- Step 1, in the first five seconds, just after one press: every press is
+     routed to the scene and gets only a dull knock and a shake, and the line
+     under the scene has changed from "You can’t speak or type. You can only
+     press one button. Try it." to Copy.problemNothing (icon face.dashed).
+     The ghost "wife" sits inside the blank, blurred (radius 6) at 22 % ink;
+     the blank is shown at full opacity (it pulses to 0.3). After 5 s the line
+     gives way to a lit "Press anywhere, or Space, to begin". The text fits,
+     so NarrativePage uses its non-scrolling branch. -->
+<body data-device="ipad" data-statusbar="dark">
+<div class="safe">
+  <div class="narr">
+    <div class="topbar">
+      <div class="brand"><i data-sf="text.bubble.fill"></i><b>Holos Words</b></div>
+      <div class="spacer"></div>
+      <span class="langtoggle"><span class="on">EN</span><span>УКР</span></span>
+      <div class="roundicon"><i data-sf="gearshape.fill"></i></div>
+    </div>
+    <div class="scroll">
+      <div class="page">
+        <div class="kicker">Step 1 of 4 · The problem</div>
+        <div class="nurse">
+          <div class="avatar"><i data-sf="cross.case.fill"></i></div>
+          <div class="bubble">
+            <div class="who">Nurse</div>
+            <div class="asks">Who should we call?</div>
+          </div>
+        </div>
+        <div class="callrow">
+          <span class="stem">Call my</span>
+          <span class="blank" style="width:210px"><span class="ghost">wife</span></span>
+        </div>
+        <p class="title">The word is right there. It won’t come.</p>
+        <p class="body3">After a stroke or a brain injury, many people know exactly what they mean, but the word will not come. It is called anomia, the most common sign of aphasia. Typing does not help: aphasia can take spelling and reading too.</p>
+        <p class="callout">For example, Yuriy, 48: he can read, but after his stroke he cannot find his words.</p>
+      </div>
+    </div>
+    <div class="actions">
+      <div class="tryline"><i data-sf="face.dashed"></i><b>Nothing. The word won’t come.</b></div>
+    </div>
+  </div>
+</div>
+<script src="../kit/icons.js"></script><script src="icons-words.js"></script><script src="../kit/kit.js"></script><script src="fit.js"></script>
+</body></html>

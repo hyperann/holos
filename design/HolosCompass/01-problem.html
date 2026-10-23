@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Compass · The problem</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-device="ipad" data-statusbar="light" class="compass">
+<div class="safe app">
+  <header class="topbar">
+    <span class="needle" data-size="34" data-dir="north"></span>
+    <div class="tb-text">
+      <div class="tb-name"><span>Holos</span><span class="sub">Compass</span></div>
+      <div class="tb-step">Step 1 of 4 · The problem</div>
+    </div>
+    <div class="dots"><span class="on"></span><span></span><span></span><span></span></div>
+    <div class="tb-spacer"></div>
+    <span class="langtoggle"><span class="on">EN</span><span>УКР</span></span>
+    <span class="gear"><i data-sf="gearshape.fill"></i></span>
+  </header>
+
+  <!-- ProblemStep before the first press, once its 2 s read gate has opened:
+       the one button is lit and the footer is at full strength. -->
+  <main class="step problem">
+    <div class="problem-col">
+      <section class="bedside card">
+        <div class="bs-row">
+          <span class="portrait k-people"><i data-sf="stethoscope"></i></span>
+          <div class="bs-col">
+            <span class="bs-name">Nurse</span>
+            <span class="bubble nurse">How are you feeling?</span>
+          </div>
+        </div>
+        <div class="bs-row you">
+          <div class="bs-col right">
+            <span class="bs-name">You</span>
+            <span class="bubble you">…</span>
+          </div>
+          <span class="portrait k-describing"><i data-sf="bed.double.fill"></i></span>
+        </div>
+      </section>
+      <div class="pb-text">
+        <h1 class="pb-title">You are Oleksandr</h1>
+        <p class="pb-body">Oleksandr, 41, is in early rehabilitation after a brain injury. He understands every word. He cannot speak, write or point with his hands. What he still has is his head — and one movement.</p>
+        <p class="pb-example">Oleksandr is an example, not a real patient. But rehabilitation centres in Ukraine treat many service members recovering from brain injuries and strokes who struggle to communicate.</p>
+      </div>
+      <p class="pb-prompt">The nurse is waiting. Your one movement is this button. Answer her.</p>
+      <div class="pb-buttonrow">
+        <div class="onebutton lit"><i data-sf="hand.point.up.left.fill"></i><b>Press</b></div>
+      </div>
+      <p class="pb-footer">Press anywhere to continue</p>
+    </div>
+  </main>
+</div>
+<script src="../kit/icons.js"></script><script src="../kit/kit.js"></script><script src="compass.js"></script>
+<script>Compass.ready(() => {});</script>
+</body></html>

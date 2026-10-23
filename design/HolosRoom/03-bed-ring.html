@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Room · The bed's ring</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<link rel="stylesheet" href="style.css">
+<!-- Stage .scanRoom, one press later: the scan has entered the bed's group, so
+     its first child, "I'm in pain", is lit. The ring is RingLayout.positions
+     for 5 cells (4 phrases + Go back) around the bed's centre, radius 228·scale,
+     cells at RingLayout.cellSize(scale) — 108 × 90.7 pt here, the minimum width.
+     The open bed keeps a 4-pt yellow outline instead of the scan ring; the veil
+     darkens to 0.62. guideID is now the phrase, so the marker sits on its cell. -->
+</head>
+<body data-device="ipad" data-statusbar="light">
+<div class="safe"><div class="root">
+  <header class="topbar">
+    <div class="words">
+      <div class="heading">
+        <div class="partdots"><i class="on"></i><i class="on cur"></i><i></i><i></i><span>One switch</span></div>
+        <h1 class="title">One switch, any message</h1>
+      </div>
+      <div class="details">
+        <div class="goal">Tell the nurse: “I'm in pain. Medicine, please.”</div>
+        <div class="checklist"><span><i data-sf="bandage.fill"></i>I'm in pain</span><span><i data-sf="pills.fill"></i>Medicine</span></div>
+        <div class="how">The light moves around the room. One press opens a place; the next says a phrase.</div>
+        <div class="hint"><i data-sf="hand.point.up.left.fill"></i>Now press when “I'm in pain” lights up.</div>
+      </div>
+    </div>
+    <div class="controls">
+      <span class="langtoggle"><span class="on">EN</span><span lang="uk">УКР</span></span>
+      <span class="gear"><i data-sf="gearshape.fill"></i></span>
+    </div>
+  </header>
+  <main class="stage">
+    <div class="slot"><div class="room" id="room"><img class="art" src="ward.svg" alt=""></div></div>
+    <div class="bottombar">
+      <div class="roomchip"><span class="sym"><i data-sf="house.fill"></i></span><b>Go home</b></div>
+      <div class="roomchip"><span class="sym"><i data-sf="globe"></i><span class="badge" lang="uk">УКР</span></span><b>Ukrainian</b></div>
+      <div class="strip">
+        <div class="sentence"><span class="empty">Your message appears here</span></div>
+        <div class="ctl prominent"><i data-sf="speaker.wave.2.fill"></i><b>Speak</b></div>
+        <div class="ctl"><i data-sf="delete.left.fill"></i><b>Delete last</b></div>
+        <div class="ctl"><i data-sf="xmark"></i><b>Clear</b></div>
+      </div>
+    </div>
+  </main>
+</div></div>
+<script src="../kit/icons.js"></script>
+<script src="room.js"></script>
+<script>
+  Room.render({
+    place: "ward",
+    spotlight: { id: "ward.bed", dim: 0.62 },  // an open hotspot
+    open: "ward.bed",
+    ringLit: "ward.bed.pain",
+    guide: "ward.bed.pain",
+    nurse: "How are you feeling?",
+    ring: [                                    // Vocabulary.ward[1].choices, then Go back
+      { id: "ward.bed.pain", label: "I'm in pain", symbol: "bandage.fill", kind: "urgent" },
+      { id: "ward.bed.sitUp", label: "Help me sit up", symbol: "chair.fill", kind: "action" },
+      { id: "ward.bed.lieDown", label: "I want to lie down", symbol: "bed.double.fill", kind: "action" },
+      { id: "ward.bed.sleep", label: "I can't sleep", symbol: "moon.zzz.fill", kind: "describing" },
+      { id: "ward.bed#back", back: true },
+    ],
+  });
+</script>
+<script src="../kit/kit.js"></script>
+</body></html>

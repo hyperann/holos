@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Compass · iPhone</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-device="iphone" data-statusbar="light" class="compass">
+<div class="safe app">
+  <!-- TopBar: neither ViewThatFits candidate fits 361 pt, so the last (compact)
+       one is used: no dial, no dots, and a step line of up to two lines. -->
+  <header class="topbar compact">
+    <div class="tb-text">
+      <div class="tb-name"><span>Holos</span><span class="sub">Compass</span></div>
+      <div class="tb-step" id="stepline">Step 2 of 4 · Four choices, any sentence</div>
+    </div>
+    <div class="tb-spacer"></div>
+    <span class="langtoggle"><span class="on">EN</span><span>УКР</span></span>
+    <span class="gear"><i data-sf="gearshape.fill"></i></span>
+  </header>
+
+  <main class="step compose">
+    <div class="compose-geo tall">
+      <div class="goal card" id="goal">
+        <h2 class="goal-title">Say this to the nurse</h2>
+        <div class="goal-line said"><i data-sf="checkmark.circle.fill"></i><span>My head hurts a lot.</span></div>
+        <div class="goal-line"><i data-sf="2.circle.fill"></i><span>I need medicine, please.</span></div>
+        <p class="howto">The light sweeps clockwise — up, right, down, left, the centre, then the buttons under it. Press when it reaches the choice you want. The marked choice shows the way.</p>
+      </div>
+      <div id="dial"></div>
+    </div>
+  </main>
+</div>
+<script src="../kit/icons.js"></script><script src="../kit/kit.js"></script><script src="compass.js"></script>
+<script>
+  // ComposeStep on a phone in portrait (not wide): the goal card at its natural
+  // height above the board. Sentence 1 has been said, so the board is back home
+  // with "My head hurts a lot." in the hub, Clear has joined the language chip,
+  // and the "Next" tag sits on South ("I need…"), which the scan has reached.
+  Compass.ready(() => {
+    // The step line: .lineLimit(2).minimumScaleFactor(0.7) in what the bar leaves it.
+    const bar = document.querySelector(".topbar").getBoundingClientRect();
+    const toggle = document.querySelector(".langtoggle").getBoundingClientRect().width;
+    const textW = bar.width - 32 - 3 * 10 - 8 - toggle - 52;
+    Compass.fitText(document.getElementById("stepline"), 15, { lines: 2, minScale: 0.7, width: textW });
+    const geo = document.querySelector(".compose-geo").getBoundingClientRect();
+    const goalH = document.getElementById("goal").getBoundingClientRect().height;
+    Compass.dial(document.getElementById("dial"), {
+      width: geo.width, height: geo.height - goalH - 12,
+      lit: "south", guide: "south", message: "My head hurts a lot.",
+    });
+  });
+</script>
+</body></html>

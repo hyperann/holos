@@ -1,0 +1,44 @@
+[
+  {
+    "file": "01-problem.png",
+    "title": "The problem",
+    "step": "Step 1",
+    "caption": "The nurse asks “How are you feeling?”, the page introduces Oleksandr, who has only his head and one movement, and that movement is one big lit button whose first press will say nothing."
+  },
+  {
+    "file": "02-home.png",
+    "title": "Four choices",
+    "step": "Step 2",
+    "caption": "The home level offers Yes, No, I need… and I feel… around the hub; the scan has reached I feel… on the left, which also carries the “Next” tag towards the goal card's first sentence, and the hub's needle points at it."
+  },
+  {
+    "file": "03-how-much.png",
+    "title": "How much?",
+    "step": "Step 2",
+    "caption": "Three presses in, after I feel › Pain › Head, the hub shows that trail and the yellow draft “My head hurts…”, and the light is on “A lot”, which speaks “My head hurts a lot.” the moment it is chosen."
+  },
+  {
+    "file": "04-head-pointing.png",
+    "title": "Point with your head",
+    "step": "Step 3",
+    "caption": "With head pointing on and the head tipped up, the Yes petal is lit and its hold ring is filling, the needle points up, and the status line reads “Up — hold to choose” while the panel's own scan sits on Skip."
+  },
+  {
+    "file": "05-ukrainian.png",
+    "title": "Hear it in Ukrainian",
+    "step": "Step 4",
+    "caption": "One press has switched the whole app to Ukrainian and it is speaking the step-2 message, so the Ukrainian card is ringed in yellow, and «Далі» (Continue) is lit to bring English back."
+  },
+  {
+    "file": "06-closing.png",
+    "title": "Who it is for",
+    "step": "Closing",
+    "caption": "The closing card says who Holos is for, why aphasia rules out a keyboard, why four choices, that it is free, private and open source, and that an Apple Watch comes next, with “Keep talking” lit."
+  },
+  {
+    "file": "07-iphone.png",
+    "title": "On an iPhone",
+    "step": "Step 2",
+    "caption": "Step 2 on an iPhone in portrait after the first sentence: the cross shrinks to fit under the goal card, the language and Clear chips move to a full-width row below it, and the light is on “I need…”."
+  }
+]

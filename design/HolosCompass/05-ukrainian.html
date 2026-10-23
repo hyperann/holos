@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="uk"><head><meta charset="utf-8"><title>Compass · Hear it in Ukrainian</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-device="ipad" data-statusbar="light" class="compass">
+<div class="safe app">
+  <header class="topbar">
+    <span class="needle" data-size="34" data-dir="north"></span>
+    <div class="tb-text">
+      <div class="tb-name"><span>Holos</span><span class="sub">Компас</span></div>
+      <div class="tb-step">Крок 4 з 4 · Почуйте українською</div>
+    </div>
+    <div class="dots"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span></div>
+    <div class="tb-spacer"></div>
+    <span class="langtoggle"><span lang="en">EN</span><span class="on">УКР</span></span>
+    <span class="gear"><i data-sf="gearshape.fill"></i></span>
+  </header>
+
+  <!-- UkrainianStep just after "Hear it in Ukrainian": settings.language is now
+       Ukrainian, the step-2 message is being spoken by a Ukrainian voice (so no
+       VoiceNotice), and its card is ringed in yellow. heard = true, so Continue
+       («Далі») is drawn first, prominent, and lit first by the scan. -->
+  <main class="step ukrainian">
+    <div class="uk-col">
+      <h1 class="uk-title">Почуйте українською</h1>
+      <p class="uk-body">Holos створено для українських лікарень. Кожен варіант має своє українське речення, написане повністю, з правильною граматикою для чоловіка чи жінки.</p>
+      <div class="uk-cards">
+        <div class="uk-card card" lang="en"><span class="lang">English</span><span class="uk-words">My head hurts a lot. I need medicine, please.</span></div>
+        <div class="uk-card card speaking"><span class="lang">Українська</span><span class="uk-words">Дуже болить голова. Мені потрібні ліки, будь ласка.</span></div>
+      </div>
+      <div class="uk-switched">
+        <span>Уся дошка тепер українською. «Далі» поверне англійську.</span>
+        <span lang="en">The whole board is now in Ukrainian. The «Далі» (Continue) button brings English back.</span>
+      </div>
+      <div class="uk-buttons">
+        <div class="stopbtn prominent lit"><i data-sf="chevron.right"></i><b>Далі</b></div>
+        <div class="stopbtn"><i data-sf="speaker.wave.2.fill"></i><b>Почути ще раз</b></div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="../kit/icons.js"></script><script src="../kit/kit.js"></script><script src="compass.js"></script>
+<script>Compass.ready(() => {});</script>
+</body></html>

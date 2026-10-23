@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Room · Hear it in Ukrainian</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<link rel="stylesheet" href="style.css">
+<!-- Stage .ukrainian, a few seconds after the press: sayInUkrainian() has set the
+     board's language to Ukrainian, so the top bar, the room's pills, the chips
+     and the strip behind the card are relabelled; the card keeps the judge's
+     reading language (readingLanguage = English). The board's line is now the
+     current one (voice colour, title2 bold), Copy.ukrainianAfter has appeared,
+     and the card scan lights "Say it again" first. The person's bubble has
+     faded (4 s); the veil is the even 0.38 of a story card. This device has a
+     Ukrainian voice, so MissingVoiceNotice draws nothing. -->
+</head>
+<body data-device="ipad" data-statusbar="light">
+<div class="safe"><div class="root">
+  <header class="topbar">
+    <div class="words">
+      <div class="heading">
+        <div class="partdots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on cur"></i><span lang="uk">Українською</span></div>
+        <h1 class="title" lang="uk">Почуйте українською</h1>
+      </div>
+      <div class="details"></div>
+    </div>
+    <div class="controls">
+      <span class="langtoggle"><span>EN</span><span class="on" lang="uk">УКР</span></span>
+      <span class="gear"><i data-sf="gearshape.fill"></i></span>
+    </div>
+  </header>
+  <main class="stage">
+    <div class="slot"><div class="room" id="room"><img class="art" src="ward.svg" alt=""></div></div>
+    <div class="bottombar inert" lang="uk">
+      <div class="roomchip"><span class="sym"><i data-sf="house.fill"></i></span><b>Додому</b></div>
+      <div class="roomchip"><span class="sym"><i data-sf="globe"></i><span class="badge" lang="en">EN</span></span><b>Англійська</b></div>
+      <div class="strip">
+        <div class="sentence">
+          <span class="chip k-urgent"><i data-sf="bandage.fill"></i><b>Мені боляче</b></span>
+          <span class="chip k-thing"><i data-sf="pills.fill"></i><b>Ліки</b></span>
+        </div>
+        <div class="ctl prominent"><i data-sf="speaker.wave.2.fill"></i><b>Сказати</b></div>
+        <div class="ctl"><i data-sf="delete.left.fill"></i><b>Стерти останнє</b></div>
+        <div class="ctl"><i data-sf="xmark"></i><b>Очистити</b></div>
+      </div>
+    </div>
+    <div class="overlay">
+      <div class="card">
+        <div class="content">
+          <h2>Hear it in Ukrainian</h2>
+          <p>Your message, the same presses — now in the language of the people Holos is for.</p>
+          <div class="msglines">
+            <div class="msgline"><span class="badge">EN</span><span class="words">I'm in pain. Medicine, please.</span></div>
+            <div class="msgline current"><span class="badge" lang="uk">УКР</span><span class="words" lang="uk">Мені боляче. Ліки, будь ласка.</span></div>
+          </div>
+          <p class="body">Every phrase is written and spoken in both languages, so the same room works in a Kyiv hospital and a UK clinic.</p>
+        </div>
+        <div class="footer">
+          <div class="cardbuttons">
+            <div class="cardbtn prominent lit"><i data-sf="speaker.wave.2.fill"></i>Say it again</div>
+            <div class="cardbtn"><i data-sf="chevron.right"></i>Continue</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div></div>
+<script src="../kit/icons.js"></script>
+<script src="room.js"></script>
+<script>
+  Room.render({
+    place: "ward",
+    lang: "uk",                                // the board's language after the press
+    spotlight: { id: null, dim: 0.38 },        // Experience.spotlight under a story card
+  });
+</script>
+<script src="../kit/kit.js"></script>
+</body></html>

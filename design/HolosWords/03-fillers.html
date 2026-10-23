@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Words · The words that fit</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<!-- Step 2, just after "I feel…": the starter opened a blank, so the scan
+     tree now starts at its words (WordsBoard.scanTree, pendingFrame != nil).
+     One press entered the first words row; "Pain" is its first item, lit for
+     2.1 s. The Next tag moved to Pain (target .filler("feel.pain")). The
+     sentence row and the starters are scanRows outside the path, so they are
+     at 45 % — the blank included. -->
+<body data-device="ipad" data-statusbar="dark">
+<div class="safe">
+  <div class="board">
+    <div class="topbar">
+      <div class="brand"><i data-sf="text.bubble.fill"></i><b>Holos Words</b></div>
+      <div class="spacer"></div>
+      <span class="langtoggle"><span class="on">EN</span><span>УКР</span></span>
+      <div class="roundicon"><i data-sf="gearshape.fill"></i></div>
+    </div>
+    <div class="inner">
+      <div class="goal">
+        <div class="kicker">Step 2 of 4 · Two choices, one sentence</div>
+        <div class="goaltext" data-fit="0.6" data-lines="2">Say: “I feel pain. I need medicine.”</div>
+        <div class="help" data-fit="0.7" data-lines="2">Pick a starter, and the board offers only the words that fit it. The yellow ring moves by itself: press when it reaches what you want. Follow the Next tag.</div>
+      </div>
+
+      <div class="scanrow dim">
+        <div class="sbar">
+          <div class="sentence">
+            <div class="stemrow"><span class="stem" data-fit="0.5">I feel</span><span class="blank" style="width:150px"></span></div>
+          </div>
+          <div class="ctls">
+            <div class="msg-ctl prominent"><i data-sf="speaker.wave.2.fill"></i><b data-fit="0.7" data-lines="2">Speak</b></div>
+            <div class="msg-ctl"><i data-sf="delete.left.fill"></i><b data-fit="0.7" data-lines="2">Delete last</b></div>
+            <div class="msg-ctl"><i data-sf="xmark"></i><b data-fit="0.7" data-lines="2">Clear</b></div>
+            <div class="backpill"><i data-sf="arrow.uturn.backward"></i><b data-fit="0.6">Go back</b></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="scanrow dim">
+        <div class="starters" style="--cols: 8">
+          <div class="pill k-people"><i data-sf="exclamationmark.bubble.fill"></i><b data-fit="0.5" data-lines="2">I need…</b></div>
+          <div class="pill k-people open"><i data-sf="heart.fill"></i><b data-fit="0.5" data-lines="2">I feel…</b></div>
+          <div class="pill k-people"><i data-sf="star.fill"></i><b data-fit="0.5" data-lines="2">I want…</b></div>
+          <div class="pill k-people"><i data-sf="phone.fill"></i><b data-fit="0.5" data-lines="2">Call my…</b></div>
+          <div class="pill k-question"><i data-sf="questionmark.circle.fill"></i><b data-fit="0.5" data-lines="2">Can you…</b></div>
+          <div class="pill k-question"><i data-sf="location.fill"></i><b data-fit="0.5" data-lines="2">Where is…</b></div>
+          <div class="pill lang"><i data-sf="globe"></i><b lang="uk" data-fit="0.6">Українська</b></div>
+          <div class="backpill"><i data-sf="arrow.uturn.backward"></i><b data-fit="0.6">Go back</b></div>
+        </div>
+      </div>
+
+      <div class="fillers">
+        <div class="hdr" data-fit="0.7">Words for “I feel…”</div>
+        <div class="scanrow entered">
+          <div class="frow">
+            <div class="guided">
+              <div class="cell k-urgent lit"><i data-sf="bandage.fill"></i><b data-fit="0.55" data-lines="2" data-maxh="half">Pain</b></div>
+              <span class="nexttag"><i data-sf="arrow.down"></i>Next</span>
+            </div>
+            <div class="cell k-describing"><i data-sf="moon.zzz.fill"></i><b data-fit="0.55" data-lines="2" data-maxh="half">Tired</b></div>
+            <div class="cell k-describing"><i data-sf="thermometer.snowflake"></i><b data-fit="0.55" data-lines="2" data-maxh="half">Cold</b></div>
+            <div class="cell k-describing"><i data-sf="thermometer.sun.fill"></i><b data-fit="0.55" data-lines="2" data-maxh="half">Hot</b></div>
+            <div class="cell backcell"><i data-sf="arrow.uturn.backward"></i><b data-fit="0.6">Go back</b></div>
+          </div>
+        </div>
+        <div class="scanrow dim">
+          <div class="frow">
+            <div class="cell k-describing"><i data-sf="face.dashed"></i><b data-fit="0.55" data-lines="2" data-maxh="half">Sick</b></div>
+            <div class="cell k-describing"><i data-sf="exclamationmark.triangle.fill"></i><b data-fit="0.55" data-lines="2" data-maxh="half">Scared</b></div>
+            <div class="cell k-describing"><i data-sf="cloud.rain.fill"></i><b data-fit="0.55" data-lines="2" data-maxh="half">Sad</b></div>
+            <div class="cell k-describing"><i data-sf="sun.max.fill"></i><b data-fit="0.55" data-lines="2" data-maxh="half">Better</b></div>
+            <div class="cell backcell"><i data-sf="arrow.uturn.backward"></i><b data-fit="0.6">Go back</b></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="findstrip">
+        <i class="mag" data-sf="magnifyingglass"></i>
+        <div class="txt">
+          <div class="t" data-fit="0.7">Not here? Find a word</div>
+          <div class="d" data-fit="0.7">Describe it: a person, a thing, a place…</div>
+        </div>
+        <i class="chev" data-sf="chevron.right"></i>
+        <svg class="dashline" aria-hidden="true"><rect width="100%" height="100%" rx="18" ry="18"/></svg>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../kit/icons.js"></script><script src="icons-words.js"></script><script src="../kit/kit.js"></script><script src="fit.js"></script>
+</body></html>

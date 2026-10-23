@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Words · Hear it in Ukrainian</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<!-- Step 4, about 1.5 s in, on a device with a Ukrainian voice: after the 1 s
+     settle the scan starts with Continue lit, and the person's own sentences
+     (Experience.sentencesForUkrainian: feel.pain, need.medicine, call.wife)
+     begin to play — the first card is playing (4 pt yellow border, green
+     speaker). Each card: English (headline, pencil), starter + word as
+     Ukrainian chips, then the stored Ukrainian sentence (title serif bold).
+     The page is taller than the space above the buttons on an 11-inch iPad in
+     landscape, so NarrativePage's ViewThatFits falls back to its ScrollView:
+     this is the top of the scroll, and the third card continues below. -->
+<body data-device="ipad" data-statusbar="dark">
+<div class="safe">
+  <div class="narr">
+    <div class="topbar">
+      <div class="brand"><i data-sf="text.bubble.fill"></i><b>Holos Words</b></div>
+      <div class="spacer"></div>
+      <span class="langtoggle"><span class="on">EN</span><span>УКР</span></span>
+      <div class="roundicon"><i data-sf="gearshape.fill"></i></div>
+    </div>
+    <div class="scroll">
+      <div class="page">
+        <div class="kicker">Step 4 of 4 · Hear it in Ukrainian</div>
+        <h1>Every sentence whole, and correct</h1>
+        <p class="body3">Ukrainian changes a word to fit its sentence. “Wife” is <span lang="uk">«дружина»</span>, but “call my wife” needs <span lang="uk">«моїй дружині»</span>. Gluing a starter to a word would come out as broken Ukrainian. So Holos Words never glues: every sentence is stored whole, written for each starter, ready for a Ukrainian speech therapist to check.</p>
+
+        <div class="scard playing">
+          <div class="en">I feel pain.</div>
+          <div class="parts"><span class="part k-people" lang="uk">Я почуваюся…</span><i data-sf="plus"></i><span class="part k-urgent" lang="uk">Біль</span></div>
+          <div class="uk playing"><i data-sf="speaker.wave.2.fill"></i><b lang="uk">Мені боляче.</b></div>
+        </div>
+        <div class="scard">
+          <div class="en">I need medicine.</div>
+          <div class="parts"><span class="part k-people" lang="uk">Мені потрібно…</span><i data-sf="plus"></i><span class="part k-thing" lang="uk">Ліки</span></div>
+          <div class="uk"><i data-sf="arrow.right"></i><b lang="uk">Мені потрібні ліки.</b></div>
+        </div>
+        <div class="scard">
+          <div class="en">Please call my wife.</div>
+          <div class="parts"><span class="part k-people" lang="uk">Подзвоніть…</span><i data-sf="plus"></i><span class="part k-people" lang="uk">Дружина</span></div>
+          <div class="uk"><i data-sf="arrow.right"></i><b lang="uk">Подзвоніть, будь ласка, моїй дружині.</b></div>
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <div class="bigrow">
+        <div class="bigbtn prominent lit"><i data-sf="chevron.right"></i><b data-fit="0.7" data-lines="2">Continue</b></div>
+        <div class="bigbtn"><i data-sf="speaker.wave.2.fill"></i><b data-fit="0.7" data-lines="2">Hear them again</b></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../kit/icons.js"></script><script src="icons-words.js"></script><script src="../kit/kit.js"></script><script src="fit.js"></script>
+</body></html>

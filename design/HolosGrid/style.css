@@ -1,0 +1,277 @@
+/* Holos Grid — the prototype's own look, on top of ../kit/kit.css.
+ *
+ * Every value is taken from the Swift source of Prototypes/HolosGrid.swiftpm:
+ *   GridTheme.swift   paper, navy, line, quietInk, gridCard, ContinueButton, OverlayCard
+ *   TopBar.swift      name, step line, language toggle, round buttons
+ *   GoalCard.swift    the goal card
+ *   GridBoardView     BoardMetrics (row heights, gutters, gaps)
+ *   BoardRows/Pieces  rows, ScanRowFrame, TopicTab, LanguageCell, GuideBadge
+ *   Steps/*.swift     the step screens
+ * Text uses line-height 1.193: the height SF Pro gives a line (ascender +
+ * descender), which is what SwiftUI lays text out with.
+ */
+
+:root {
+  --grid-paper: #F6F7F9;            /* GridTheme.paper  (0.965, 0.969, 0.976) */
+  --navy: #142B5C;                  /* GridTheme.navy   (0.08, 0.17, 0.36) */
+  --line: #C7CFDB;                  /* GridTheme.line   (0.78, 0.81, 0.86) */
+  --quiet: rgba(18, 20, 26, 0.75);  /* GridTheme.quietInk = HolosTheme.ink at 75 % */
+  --label2: rgba(60, 60, 67, 0.6);  /* Color.secondary (light) */
+  --navy35: rgba(20, 43, 92, 0.35); /* GridTheme.navy.opacity(0.35), tab outlines */
+}
+
+body { background: var(--grid-paper); }
+.safe { display: flex; flex-direction: column; }
+
+/* ---------- TopBar ---------- */
+
+.topbar { flex: none; display: flex; align-items: center; gap: 12px; padding: 6px 16px; }
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 0 1 auto; }
+.brand > .sf { font-size: 25px; color: var(--navy); }        /* square.grid.3x3.fill, .title2 */
+.brand .names { display: flex; flex-direction: column; min-width: 0; }
+.brand .name { font: 800 17px/1.193 var(--rounded); color: var(--navy); }
+.brand .stepline { font: 600 15px/1.193 var(--rounded); color: var(--quiet); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.topbar .spacer { flex: 1 1 auto; min-width: 8px; }
+.roundbtn { flex: none; width: 48px; height: 48px; border-radius: 50%; background: #fff; box-shadow: inset 0 0 0 1.5px var(--line);
+  display: flex; align-items: center; justify-content: center; color: var(--navy); font-size: 25px; }
+/* Core LanguageToggle: .headline rounded .heavy, padding 14 × 10, 4 pt inside a 2 pt ink capsule. */
+.langtoggle { flex: none; }
+.langtoggle > span { font: 800 17px/1.193 var(--rounded); padding: 10px 14px; }
+
+/* ---------- Step area ---------- */
+
+.step { position: relative; flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+/* BoardStep: VStack(spacing: 10) { header; board } .padding(.horizontal, 16) .padding(.bottom, 8) */
+.boardstep { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 10px; padding: 0 16px 8px; }
+
+/* .gridCard(): white, radius 24, a 1.5 pt hairline of GridTheme.line inside the edge. */
+.gridcard { background: #fff; border-radius: 24px; box-shadow: inset 0 0 0 1.5px var(--line); }
+
+/* ---------- GoalCard ---------- */
+
+.goal { flex: none; padding: 14px; display: flex; flex-direction: column; gap: 6px; }
+.goal .r1, .goal .r2, .goal .r3 { display: flex; align-items: baseline; }
+.goal .r1 { gap: 12px; }
+.goal .r2 { gap: 8px; }
+.goal .r3 { gap: 16px; }
+.goal .r3.stack { flex-direction: column; align-items: flex-start; gap: 4px; }
+.goal .title { font: 700 20px/1.193 var(--rounded); color: var(--navy); }
+.goal .sp { flex: 1 1 auto; min-width: 8px; }
+.goal .presses { flex: none; font: 700 17px/1.193 var(--rounded); color: var(--navy); padding: 4px 12px; border-radius: 999px;
+  background: var(--grid-paper); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.goal .say { font: 600 17px/1.193 var(--sf); color: var(--quiet); flex: none; }
+.goal .sentence { font: 700 20px/1.193 var(--rounded); color: var(--ink); }
+.goal .next { font: 700 17px/1.193 var(--rounded); color: var(--navy); }
+.goal .next > .sf { font-size: 17px; margin-right: 7px; vertical-align: -0.12em; }
+.goal .status { font: 400 15px/1.193 var(--sf); color: var(--quiet); }
+
+/* ---------- Board ---------- */
+
+/* GridBoardView: VStack(spacing: gutter) .padding(.vertical, 4). The two topic
+   rows share what is left, as BoardMetrics.cellRowHeight does. */
+.board { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 8px; padding: 4px 0; }
+.board > * { flex: none; }
+
+/* ScanRowFrame: 8 pt padding, radius 24; lit = keyline ring without the lift;
+   entered = 16 % yellow fill and a 4 pt yellow outline; others dim to 45 %. */
+.srow { position: relative; padding: 8px; border-radius: 24px; }
+.srow > .in { display: flex; gap: 12px; height: 100%; }
+.srow.entered { background: rgba(255, 204, 0, 0.16); box-shadow: inset 0 0 0 4px var(--highlight); }
+.srow.ringed::after { content: ""; position: absolute; inset: 0; border-radius: 24px; pointer-events: none; z-index: 6;
+  box-shadow: inset 0 0 0 2px var(--keyline), inset 0 0 0 9px var(--highlight), inset 0 0 0 11px var(--keyline); }
+.quickrow { height: 104px; }                 /* quickHeight 88 + 2 × 8 */
+.topicsrow { height: 72px; }                 /* topicsLineHeight 56 + 2 × 8 */
+.board > .prow { flex: 1 1 0; min-height: 0; }
+
+/* A cell's place in its row, so a "Next" tag can sit on it without lifting with it. */
+.slot { position: relative; flex: 1 1 0; min-width: 0; display: flex; }
+.slot > .cell, .slot > .tab, .slot > .langcell { flex: 1 1 auto; }
+.in > .cell { flex: 1 1 0; }
+.in > .backcell, .slot.back { flex: 0 0 100px; }    /* BoardMetrics.backWidth */
+.cell > b { line-height: 1.193; }
+.backcell { padding: 8px; }
+
+/* Quick phrases: a small speaker at the top trailing corner, .caption bold, 12 pt in. */
+.qspk { position: absolute; top: 12px; right: 12px; font-size: 15px; color: var(--urgent-ink); z-index: 7; }
+
+/* Hierarchical symbol rendering inside SymbolCell (see icons-grid.js). */
+.sf .hier { display: none; }
+.cell .sf .hier { display: inline; }
+.cell .sf .mono { display: none; }
+
+/* TopicTab: white (navy when open), radius 16, navy outline at 35 %; icon and
+   name side by side in .headline rounded bold. */
+.tab { position: relative; border-radius: 16px; background: #fff; box-shadow: inset 0 0 0 1.5px var(--navy35); color: var(--navy);
+  display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0 8px; min-width: 0;
+  font: 700 17px/1.193 var(--rounded); white-space: nowrap; }
+.tab.sel { background: var(--navy); color: #fff; }
+.tab > .sf { font-size: 20px; }
+
+/* LanguageCell: globe (.title3) and two chips (.headline rounded heavy, 10 × 6). */
+.langcell { position: relative; border-radius: 16px; background: #fff; box-shadow: inset 0 0 0 1.5px var(--navy35);
+  display: flex; align-items: center; justify-content: center; gap: 8px; min-width: 0; }
+.langcell > .sf { font-size: 23px; color: var(--navy); }
+.langcell .chips { display: flex; gap: 2px; }
+.langcell .chips > span { font: 800 17px/1.193 var(--rounded); color: var(--navy); padding: 6px 10px; border-radius: 999px; }
+.langcell .chips > span.on { background: var(--navy); color: #fff; }
+
+/* TopicHeader: 30 pt high, 8 pt in, symbol .title2 and name .title2 rounded bold, navy. */
+.theader { height: 30px; padding: 0 8px; display: flex; align-items: center; gap: 10px; color: var(--navy); }
+.theader > .sf { font-size: 25px; }
+.theader > b { font: 700 22px/1.193 var(--rounded); white-space: nowrap; }
+
+/* GuideBadge: navy capsule, white 2 pt edge, .caption rounded heavy, 10 × 4,
+   12 pt above the top of its target. */
+.nexttag { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); z-index: 20;
+  display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 999px;
+  background: var(--navy); color: #fff; box-shadow: inset 0 0 0 2px #fff; white-space: nowrap; pointer-events: none;
+  font: 800 12px/1.193 var(--rounded); }
+.nexttag > .sf { font-size: 13px; }
+
+/* ---------- Core MessageBar, as the code draws it ---------- */
+
+/* Color.secondary.opacity(0.35): the secondary label colour (60, 60, 67 at 60 %) at 35 %. */
+.msgbar { flex: none; box-shadow: inset 0 0 0 1.5px rgba(60, 60, 67, 0.21); }
+.msgbar.entered { box-shadow: inset 0 0 0 4px var(--highlight); }
+.msg-sentence { padding: 0 4px; }
+.msg-empty { line-height: 1.193; color: var(--label2); }
+.chip > .sf { font-size: 19px; }
+.chip > b { line-height: 1.193; }
+.msg-ctl { padding: 0 4px; }
+.msg-ctl > b { line-height: 1.193; }
+.msg-ctl.back > .sf { font-size: 22px; }
+.msgwrap { position: relative; flex: none; }
+/* MessageRow: GuideBadge in an 88 pt frame, as far from the bar's trailing edge as Speak is. */
+.tagbox { position: absolute; top: -12px; width: 88px; display: flex; justify-content: center; z-index: 20; pointer-events: none; }
+.tagbox > .nexttag { position: static; transform: none; }
+
+/* ---------- Overlays (OverlayCard) ---------- */
+
+/* Black at 28 % over the step — not over the top bar, which is a sibling of
+   the step in RootView's VStack — and down under the home indicator. */
+.scrim { position: absolute; left: 0; right: 0; top: 0; bottom: -20px; background: rgba(0, 0, 0, 0.28); z-index: 30; }
+.overlay { position: absolute; inset: 0; z-index: 31; display: flex; align-items: center; justify-content: center; padding: 20px; }
+
+/* ContinueButton: navy capsule, .title3 rounded bold, 28 pt sides, at least 60 high, always lit. */
+.continue { position: relative; display: inline-flex; align-items: center; gap: 10px; padding: 0 28px; min-height: 60px;
+  border-radius: 30px; background: var(--navy); color: #fff; font: 700 20px/1.193 var(--rounded); white-space: nowrap; }
+.continue > .sf { font-size: 18px; }
+
+/* ---------- Press flash (Core .switchPressFlash) ---------- */
+
+/* 14 pt keyline with a 10 pt yellow band inset by 2, round the whole screen. */
+.pressflash { box-shadow: inset 0 0 0 2px var(--keyline), inset 0 0 0 12px var(--highlight), inset 0 0 0 14px var(--keyline); }
+
+/* ---------- Step 1 · ProblemStep ---------- */
+
+/* ScrollView { VStack(spacing: 28) .frame(maxWidth: 720) .padding(24) } over BigSwitch().padding(.vertical, 20). */
+.pscroll { flex: 1 1 auto; min-height: 0; overflow: hidden; }
+.pcol { width: 720px; margin: 0 auto; padding: 24px 0; display: flex; flex-direction: column; gap: 28px; }
+/* NurseScene: HStack(spacing: 18) { avatar; tail + bubble }, centred. */
+.nurse { display: flex; align-items: center; justify-content: center; gap: 18px; }
+.avatar { position: relative; width: 104px; height: 104px; flex: none; }
+.avatar .disc { position: absolute; inset: 0; border-radius: 50%; background: var(--people-tint); color: var(--people-ink);
+  display: flex; align-items: center; justify-content: center; font-size: 58px; }
+.avatar .badge { position: absolute; right: 0; bottom: 0; width: 38px; height: 38px; border-radius: 50%; background: var(--urgent-ink); color: #fff;
+  display: flex; align-items: center; justify-content: center; font-size: 23px; }
+.bubblewrap { display: flex; align-items: center; }
+/* The tail: a 20 pt white square turned 45°, moved 11 pt right, under the bubble. */
+.bubblewrap .tail { flex: none; width: 20px; height: 20px; background: #fff; transform: translateX(11px) rotate(45deg); }
+.bubble { position: relative; min-width: 220px; padding: 16px 22px; background: #fff; border-radius: 22px; display: flex; flex-direction: column; gap: 4px; }
+.bubble .who { font: 600 15px/1.193 var(--rounded); color: var(--quiet); }
+.bubble .line { font: 600 28px/1.193 var(--rounded); color: var(--ink); }
+.ptext { display: flex; flex-direction: column; gap: 12px; }
+.ptext p { margin: 0; }
+.ptext .persona { font: 700 22px/1.193 var(--rounded); color: var(--navy); }
+.ptext .pbody { font: 400 20px/1.193 var(--sf); color: var(--ink); }
+.ptext .reveal { font: 700 28px/1.193 var(--rounded); color: var(--navy); text-align: center; }
+/* BigSwitch: a 168 pt navy disc, a 6 pt ring of white at 35 % inset by 10. */
+.bigswitchwrap { flex: none; padding: 20px 0; display: flex; justify-content: center; }
+.bigswitch { position: relative; width: 168px; height: 168px; border-radius: 50%; background: var(--navy); color: #fff;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
+.bigswitch::before { content: ""; position: absolute; inset: 10px; border-radius: 50%; box-shadow: inset 0 0 0 6px rgba(255, 255, 255, 0.35); }
+.bigswitch > .sf { font-size: 44px; }
+.bigswitch > b { font: 800 22px/1.193 var(--rounded); }
+
+/* ---------- Core HeadTryPanel, as the code draws it ---------- */
+
+/* Its text has no foregroundStyle, so it is the primary label colour; the Label
+   icons are not given a font, so they stay at .body size; the buttons are .plain
+   with an ink foreground, so their icons are ink, not the accent colour. */
+.headpanel { color: #000; box-shadow: inset 0 0 0 1.5px rgba(60, 60, 67, 0.18); }
+.headpanel h3 { font: 700 22px/1.193 var(--rounded); gap: 8px; }
+.headpanel h3 .sf { color: inherit; font-size: 19px; }
+.headpanel p { line-height: 1.193; }
+.panelbtn { color: var(--ink); gap: 8px; font: 700 20px/1.193 var(--rounded); }
+.panelbtn .sf { color: inherit; font-size: 19px; }
+
+/* ---------- Step 4 · UkrainianCard ---------- */
+
+.ukcard { width: 680px; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+.ukcard .lbl { margin: 0; display: flex; align-items: center; gap: 8px; color: var(--navy); font: 700 34px/1.193 var(--rounded); }
+.ukcard .lbl > .sf { font-size: 19px; }
+.ukcard .ukbody { margin: 0; font: 400 20px/1.193 var(--sf); color: var(--ink); }
+.ukmsg { padding: 18px; border-radius: 18px; background: var(--people-tint); display: flex; flex-direction: column; gap: 10px; }
+.ukline { display: flex; align-items: baseline; gap: 12px; }
+.ukline > .sf { font-size: 27px; color: var(--navy); flex: none; vertical-align: 0; }
+.ukline > span { font: 700 34px/1.193 var(--rounded); color: var(--ink); }
+.ukgloss { display: flex; align-items: baseline; gap: 6px; font: 400 17px/1.193 var(--sf); color: var(--quiet); }
+.cardfoot { display: flex; justify-content: flex-end; }
+
+/* ---------- Closing ---------- */
+
+.cscroll { flex: 1 1 auto; min-height: 0; overflow: hidden; }
+.ccol { width: 820px; margin: 0 auto; padding: 24px 0; display: flex; flex-direction: column; gap: 20px; }
+.ccol h1 { margin: 0; font: 700 34px/1.193 var(--rounded); color: var(--navy); }
+.ccol .cbody { margin: 0; font: 400 20px/1.193 var(--sf); color: var(--ink); }
+.ccol .csource { margin: 0; font: 400 13px/1.193 var(--sf); color: var(--quiet); }
+/* ViewThatFits picks the VStack: the HStack's ideal (one-line) width is wider than 820. */
+.pillars { display: flex; flex-direction: column; gap: 12px; }
+.pillars.row { flex-direction: row; gap: 14px; align-items: flex-start; }
+.pillars.row > .pillar { flex: 1 1 0; }
+.pillar { padding: 18px; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.pillar > .sf { font-size: 32px; margin: -2px 0; color: var(--navy); }   /* .title: a 28 pt symbol */
+.pillar > b { font: 700 20px/1.193 var(--rounded); color: var(--navy); }
+.pillar > p { margin: 0; font: 400 17px/1.193 var(--sf); color: var(--ink); }
+.cchoices { flex: none; width: 820px; margin: 0 auto; padding: 20px 0; display: flex; flex-direction: column; gap: 10px; }
+.cstatus { font: 700 17px/1.193 var(--rounded); color: var(--navy); text-align: center; }
+.cbuttons { display: flex; gap: 16px; }
+.choice { position: relative; flex: 1 1 0; min-height: 72px; padding: 0 24px; border-radius: 20px; display: flex; align-items: center; justify-content: center; gap: 12px;
+  font: 700 22px/1.193 var(--rounded); background: #fff; color: var(--navy); box-shadow: inset 0 0 0 2px var(--navy); white-space: nowrap; }
+.choice.prominent { background: var(--navy); color: #fff; box-shadow: none; }
+.choice > .sf { font-size: 25px; }
+
+/* ---------- iPhone: BoardMetrics(compact) and the board's own message row ---------- */
+
+/* TopBar: the step line's minimumScaleFactor(0.7) reached, then truncated. */
+body[data-device="iphone"] .brand .stepline { font-size: 10.5px; }
+/* gutter 6, cellGap 6; rows keep their minimum height and the board scrolls. */
+.cboard { flex: 1 1 auto; min-height: 0; overflow: hidden; position: relative; }
+.compact.board { flex: none; gap: 6px; }
+.compact .srow > .in { gap: 6px; }
+.compact .quickrow { height: 92px; }                  /* quickHeight 76 + 2 × 8 */
+.compact .topicsrow { height: 114px; }                /* 2 lines × 46 + 6, + 2 × 8 */
+.compact .topicsrow > .in { flex-direction: column; gap: 6px; }
+.compact .topicsrow .line { display: flex; gap: 6px; height: 46px; }
+.compact .topicsrow .line > .slot, .compact .topicsrow .line > .cell { flex: 1 1 0; }
+.compact .prow { height: 100px; }                     /* cellRowHeight 84 (its minimum) + 2 × 8 */
+.compact .in > .backcell { flex: 0 0 56px; }          /* backWidth 56 */
+.compact .theader { height: 28px; }
+.compact .theader > .sf { font-size: 23px; }
+.compact .theader > b { font-size: 20px; }
+/* A stacked TopicTab (ViewThatFits' second choice): icon over a name of up to two lines. */
+.tab.stack { flex-direction: column; gap: 2px; white-space: normal; text-align: center; }
+.tab.stack > .sf { font-size: 19px; }
+.tab.stack > span { display: block; width: 100%; line-height: 1.193; }
+/* LanguageCell's last choice: the two chips stacked — taller than the cell. */
+.langcell.stack .chips { flex-direction: column; gap: 2px; align-items: center; }
+/* MessageRow on a phone: a 44 pt sentence strip over the compact controls. */
+.cmsg > .in { flex-direction: column; gap: 6px; height: auto; }
+.strip { height: 44px; padding: 0 14px; background: #fff; border-radius: 14px; display: flex; align-items: center;
+  font: 600 20px/1.193 var(--rounded); color: var(--ink); white-space: nowrap; overflow: hidden; }
+.cbar { display: flex; gap: 6px; }
+.cctl { position: relative; flex: 1 1 0; min-width: 60px; min-height: 60px; padding: 6px 4px; border-radius: 14px; background: var(--control-tint); color: var(--ink);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; }
+.cctl.prominent { background: var(--ink); color: #fff; }
+.cctl > .sf { font-size: 22px; }
+.cctl > b { font: 700 12px/1.193 var(--rounded); text-align: center; }

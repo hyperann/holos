@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Compass · Point with your head</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-device="ipad" data-statusbar="light" class="compass">
+<div class="safe app">
+  <header class="topbar">
+    <span class="needle" data-size="34" data-dir="north"></span>
+    <div class="tb-text">
+      <div class="tb-name"><span>Holos</span><span class="sub">Compass</span></div>
+      <div class="tb-step">Step 3 of 4 · Point with your head</div>
+    </div>
+    <div class="dots"><span class="on"></span><span class="on"></span><span class="on"></span><span></span></div>
+    <div class="tb-spacer"></div>
+    <span class="langtoggle"><span class="on">EN</span><span>УКР</span></span>
+    <span class="gear"><i data-sf="gearshape.fill"></i></span>
+  </header>
+
+  <main class="step headpoint">
+    <div class="hp-geo">
+      <div class="panel-scroller">
+        <div class="panel card">
+          <h1 class="p-title">Or point with your head</h1>
+          <p class="p-body">Four choices sit in four directions, so a head can point: up, right, down or left. Hold it there for a second to choose, then come back to the middle. No scanning, no waiting.</p>
+          <p class="p-try">Try it: turn on head pointing, then tip your head up and hold it there to say “Yes”.</p>
+          <p class="p-opt">Optional. The camera stays off unless you turn it on, and nothing is recorded.</p>
+          <div class="pstatus">
+            <span class="pring" id="pring"><i data-sf="arrow.up"></i></span>
+            <div class="ptext">
+              <span class="pline">Point with your head, then hold</span>
+              <span class="phold">Up — hold to choose</span>
+            </div>
+          </div>
+          <div class="stopbtn" id="skip"><i data-sf="chevron.right"></i><b>Skip</b></div>
+          <div class="stopbtn"><i data-sf="xmark.circle.fill"></i><b>Turn off head pointing</b></div>
+          <div class="stopbtn"><i data-sf="arrow.left.arrow.right"></i><b>Swap left and right</b></div>
+          <div class="stopbtn"><i data-sf="arrow.up.arrow.down"></i><b>Swap up and down</b></div>
+          <div class="stopbtn"><i data-sf="arrow.counterclockwise"></i><b>Set my centre again</b></div>
+        </div>
+      </div>
+      <div id="dial"></div>
+    </div>
+  </main>
+</div>
+<script src="../kit/icons.js"></script><script src="../kit/kit.js"></script><script src="compass.js"></script>
+<script>
+  // HeadPointStep with pointing on and a face tracked: the head is tipped up and
+  // holding, so the pointer lights North ("Yes") and both rings fill with its
+  // progress. The display board is the home level (never scanned, no chips); its
+  // hub still shows the message built in step 2. The panel's own scan carries on
+  // with Skip, its first stop, lit, and the panel scrolls the lit button to the
+  // centre (scrollTo anchor .center), as HeadPointStep.panelScroller does.
+  const PROGRESS = 0.6;
+  Compass.ready(() => {
+    const geo = document.querySelector(".hp-geo").getBoundingClientRect();
+    const panelW = Math.min(460, geo.width * 0.42);
+    const scroller = document.querySelector(".panel-scroller");
+    scroller.style.width = panelW + "px";
+    document.getElementById("pring").insertAdjacentHTML("afterbegin", Compass.ringSVG(56, PROGRESS,
+      [{ color: "var(--highlight)", width: 8 }], { color: "rgba(199, 204, 214, 0.35)", width: 8 }));
+    Compass.dial(document.getElementById("dial"), {
+      width: geo.width - panelW - 20, height: geo.height, showsChips: false,
+      pointer: { dir: "north", progress: PROGRESS }, guide: "north",
+      message: "My head hurts a lot. I need medicine, please.",
+    });
+    const skip = document.getElementById("skip");
+    window.__compassLog.push("panel scrolled by " + Compass.reveal(scroller, document.querySelector(".panel"), skip, "center").toFixed(1) +
+      "pt; content " + document.querySelector(".panel").getBoundingClientRect().height.toFixed(1) + "pt in " + scroller.getBoundingClientRect().height.toFixed(1));
+    skip.classList.add("lit");
+  });
+</script>
+</body></html>

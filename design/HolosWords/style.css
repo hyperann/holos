@@ -1,0 +1,267 @@
+/* Holos Words mockups: the notebook theme and the board, recreated from the Swift code.
+ *
+ * Every value is copied from Prototypes/HolosWords.swiftpm:
+ *   WordsTheme (App/WordsTheme.swift), BoardScreen, SentenceBar, StarterRow,
+ *   FillerGrid + FindStrip, FindPanel, GoalBanner (Board/), TopBar, NarrativePage +
+ *   StepKicker, BlankSlot, GuideMarker, BigButton, ScanRowStyle + BackPill (UI/),
+ *   ProblemStep, UkrainianStep, ClosingStep (Steps/).
+ * Kit classes (kit.css) are used for Core's own views: .cell, .backcell, .msg-ctl,
+ * .langtoggle, .lit, .dim, and the WordKind .k-* tints.
+ *
+ * Text boxes use SwiftUI's line height (about 1.193 × the point size, as UIFont
+ * reports it for every text style) so that stacks add up to the same heights as
+ * on device.
+ */
+
+:root {
+  --w-paper: #FAF5EA;       /* WordsTheme.paper     (0.980, 0.961, 0.918) */
+  --w-paper-deep: #EFE8D8;  /* WordsTheme.paperDeep (0.937, 0.910, 0.847) */
+  --w-rule: #8CA3C7;        /* WordsTheme.rule      (0.55, 0.64, 0.78)    */
+  --w-margin: #CC4747;      /* WordsTheme.margin    (0.80, 0.28, 0.28)    */
+  --w-pencil: #544F47;      /* WordsTheme.pencil    (0.33, 0.31, 0.28)    */
+}
+
+/* RootView paints WordsTheme.page under everything, safe area included. */
+body { background: var(--w-paper); }
+
+/* ---------- Kit adjustments ---------- */
+
+/* LanguageToggle: .headline rounded .heavy is weight 800, and a SwiftUI Text box
+   is one line height tall (20.3 pt), which makes the toggle 48 pt — level with
+   the 48 pt Settings circle beside it. */
+.langtoggle > span { font-weight: 800; line-height: 20.3px; }
+
+/* ---------- Shared pieces ---------- */
+
+/* StepKicker: subheadline rounded heavy, uppercased, pencil. */
+.kicker { font: 800 15px/17.9px var(--rounded); text-transform: uppercase; color: var(--w-pencil); }
+
+/* GuideMarker: the small "Next" tag, top-trailing, offset (6, −12). It sits on a
+   wrapper, outside the lit view's 1.04 lift, as the overlay does in SwiftUI. */
+.guided { position: relative; display: flex; min-width: 0; }
+.guided > * { flex: 1 1 0; min-width: 0; }
+.guided > .nexttag { flex: none; }
+.nexttag {
+  position: absolute; top: -12px; right: -6px; z-index: 30;
+  display: inline-flex; align-items: center; gap: 4px; padding: 5px 10px;
+  border-radius: 999px; background: var(--describing-ink); color: #fff;
+  box-shadow: inset 0 0 0 2px #fff;
+  font: 800 12px/14.3px var(--rounded); white-space: nowrap;
+}
+.nexttag > .sf { font-size: 12px; }
+
+/* TopBar: name, language toggle, Settings (and restart on the free board). */
+.topbar { display: flex; align-items: center; gap: 12px; height: 48px; flex: none; }
+.topbar .brand { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.topbar .brand > .sf { font-size: 20px; color: var(--people-ink); }
+.topbar .brand > b { font: 700 20px/23.9px var(--serif); color: var(--ink); white-space: nowrap; }
+.topbar .spacer { flex: 1; min-width: 8px; }
+.roundicon {
+  width: 48px; height: 48px; flex: none; border-radius: 50%; background: var(--control-tint);
+  box-shadow: inset 0 0 0 1px rgba(18, 20, 26, 0.25); display: grid; place-items: center; color: var(--ink);
+}
+.roundicon > .sf { font-size: 20px; }
+
+/* BlankSlot: the gap in "Call my ____". A 5 pt ink capsule at the bottom of a
+   52 pt frame; an optional ghost word sits 10 pt above it, faint and blurred.
+   (It pulses between full and 0.3 opacity; the mockups show it at full.) */
+.blank {
+  position: relative; flex: none; height: 52px;
+  display: flex; flex-direction: column; justify-content: flex-end; align-items: center;
+}
+.blank::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 5px; border-radius: 3px; background: var(--ink); }
+.blank .ghost {
+  margin-bottom: 10px; font: 700 34px/40.6px var(--serif); color: rgba(18, 20, 26, 0.22);
+  filter: blur(6px); white-space: nowrap;
+}
+
+/* BigButton: wide tour buttons, at least 64 pt tall, radius 18. */
+.bigrow { display: flex; gap: 12px; }
+.bigbtn {
+  position: relative; flex: 1 1 0; min-width: 0; min-height: 64px; padding: 0 20px; border-radius: 18px;
+  background: var(--control-tint); color: var(--ink); box-shadow: inset 0 0 0 1px rgba(18, 20, 26, 0.2);
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+}
+.bigbtn.prominent { background: var(--ink); color: #fff; }
+.bigbtn > .sf { font-size: 20px; }
+.bigbtn > b { font: 700 20px/23.9px var(--rounded); min-width: 0; text-align: center; }
+
+/* ---------- The board (BoardScreen) ---------- */
+
+.board { position: absolute; inset: 0; padding: 12px 20px; display: flex; flex-direction: column; gap: 10px; }
+.board.compact { padding: 12px 12px; }
+.board > .inner { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; gap: 12px; }
+
+/* ScanRowStyle: darker paper behind each scanned row, a faint rule outline,
+   yellow 4 pt while entered, 45 % while the scan is inside another row. */
+.scanrow {
+  position: relative; flex: none; padding: 6px; border-radius: 24px;
+  background: rgba(239, 232, 216, 0.7);
+  box-shadow: inset 0 0 0 1px rgba(140, 163, 199, 0.45);
+}
+.scanrow.entered { box-shadow: inset 0 0 0 4px var(--highlight); }
+
+/* GoalBanner */
+.goal {
+  flex: none; padding: 12px 16px; border-radius: 20px; display: flex; flex-direction: column; gap: 8px;
+  background: rgba(255, 237, 158, 0.45);                 /* WordKind.people.tint at 45 % */
+  box-shadow: inset 0 0 0 1px rgba(18, 20, 26, 0.15);
+}
+.goal .goaltext { font: 700 22px/26.25px var(--serif); color: var(--ink); }
+.compact .goal .goaltext { font-size: 20px; line-height: 23.9px; }
+.goal .help { font: 400 16px/19.1px var(--sf); color: var(--w-pencil); }
+
+/* SentenceBar: the notebook line, then Speak · Delete last · Clear (· Go back). */
+.sbar { display: flex; align-items: center; gap: 14px; }
+.compact .sbar { flex-direction: column; align-items: stretch; gap: 10px; }
+.compact .sbar > .sentence { flex: none; }
+.sentence {
+  position: relative; flex: 1 1 0; min-width: 0; min-height: 76px; padding: 8px 8px 8px 22px;
+  background: #fff; border-radius: 18px;
+  display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 6px;
+}
+.sentence::before { content: ""; position: absolute; left: 12px; top: 6px; bottom: 6px; width: 2px; background: rgba(204, 71, 71, 0.5); }
+.sentence .said { font: 600 28px/33.4px var(--serif); color: var(--ink); max-width: 100%; }
+.sentence .stemrow { display: flex; align-items: last baseline; gap: 12px; max-width: 100%; }
+.sentence .stem { font: 700 34px/40.6px var(--serif); color: var(--ink); min-width: 0; }
+.sentence .placeholder { font: 400 22px/26.25px var(--serif); color: var(--w-pencil); max-width: 100%; }
+.ctls { display: flex; gap: 10px; flex: none; }
+.ctls > .msg-ctl > b { line-height: 14.3px; }
+.compact .ctls > .msg-ctl { flex: 1 1 0; width: auto; }
+
+/* BackPill: "Go back" at the end of a pill-shaped row, only while scanning. */
+.backpill {
+  position: relative; min-width: 0; min-height: 50px; padding: 0 10px; border-radius: 25px;
+  background: var(--control-tint); color: var(--control-ink);
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.backpill > .sf { font-size: 17px; }
+.backpill > b { font: 700 15px/17.9px var(--rounded); min-width: 0; overflow: hidden; }
+.ctls > .backpill { flex: none; width: 80px; height: 64px; }
+.compact .ctls > .backpill { width: 64px; }
+
+/* StarterRow: six starter pills, the language cell, and Go back. */
+.starters { display: grid; grid-template-columns: repeat(var(--cols, 8), minmax(0, 1fr)); gap: 10px; }
+.pill {
+  position: relative; min-width: 0; min-height: 50px; padding: 0 12px; border-radius: 999px;
+  background: var(--tint); display: flex; align-items: center; justify-content: center; gap: 8px;
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--kind-ink) 35%, transparent);
+}
+.pill.open { box-shadow: inset 0 0 0 3px var(--ink); }   /* the open starter: whose words are below */
+.pill > .sf { font-size: 17px; color: var(--kind-ink); }
+.pill > b { font: 700 17px/20.3px var(--serif); color: var(--ink); text-align: center; min-width: 0; }
+.compact .pill { padding: 0 6px; }
+.pill.lang { --tint: var(--control-tint); box-shadow: inset 0 0 0 1.5px rgba(18, 20, 26, 0.5); }
+.pill.lang > .sf { color: var(--ink); }
+.pill.lang > b { font: 800 17px/20.3px var(--rounded); }
+.compact .pill.lang { padding: 0 12px; }
+
+/* FillerGrid: "Words for …", then two rows of four, each ending in Go back. */
+.fillers { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; gap: 8px; }
+.fillers > .hdr { flex: none; padding-left: 8px; font: 600 15px/17.9px var(--serif); color: var(--w-pencil); }
+.fillers > .scanrow { flex: 1 1 0; min-height: 0; display: flex; }
+.frow { flex: 1 1 0; min-width: 0; display: flex; gap: 10px; }
+/* One shared small basis, at least any cell's padding: with 0 a padded cell starts
+   from its padding and an unpadded wrapper from nothing; with a large one the row
+   shrinks, and CSS weights shrinking by content size. Growing from 24 px, every
+   item gets an equal share, as an HStack gives its equally flexible cells. */
+.frow > .cell, .frow > .guided { flex: 1 1 24px; }
+/* Core's BackCell pads by 8 pt (the kit's .cell uses 10). */
+.backcell { padding: 8px; }
+.frow > .backcell { flex: none; width: 96px; }
+.compact .frow > .backcell { width: 58px; }
+.frow .cell:not(.backcell) > b { font-size: 20px; line-height: 23.9px; }   /* title3 rounded bold */
+
+/* FindStrip: "Not here? Find a word", dashed, full width, last in the scan. */
+.findstrip {
+  position: relative; flex: none; min-height: 60px; padding: 0 18px; border-radius: 18px;
+  background: var(--question-tint); display: flex; align-items: center; gap: 14px;
+}
+.findstrip > .sf.mag { font-size: 22px; color: var(--question-ink); }
+.findstrip .txt { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.findstrip .t { font: 700 17px/20.3px var(--serif); color: var(--ink); }
+.findstrip .d { font: 400 15px/17.9px var(--sf); color: var(--w-pencil); }
+.findstrip > .sf.chev { font-size: 17px; color: var(--question-ink); }
+/* StrokeStyle(lineWidth: 1.5, dash: [6, 4]) inside the shape. */
+.dashline { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; clip-path: inset(0 round 18px); }
+.dashline rect { fill: none; stroke: rgba(92, 51, 158, 0.4); stroke-width: 3; stroke-dasharray: 6 4; }
+
+/* FindPanel: path, question, a row of big answers and Back. */
+.findpanel {
+  flex: 1 1 0; min-height: 0; padding: 16px; border-radius: 24px; background: #fff;
+  box-shadow: inset 0 0 0 1.5px rgba(92, 51, 158, 0.35);
+  display: flex; flex-direction: column; gap: 12px;
+}
+.findpanel .crumb { flex: none; font: 800 15px/17.9px var(--rounded); color: var(--w-pencil); }
+.findpanel .question { flex: none; font: 700 34px/40.6px var(--serif); color: var(--ink); }
+.findpanel .frows { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; gap: 12px; }
+.findpanel .frows > .r { flex: 1 1 0; min-height: 0; display: flex; gap: 12px; }
+.findpanel .frows > .r > * { flex: 1 1 24px; min-width: 0; }
+.fcell {
+  position: relative; min-width: 0; padding: 12px; border-radius: 20px; background: var(--tint);
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--kind-ink) 35%, transparent);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.fcell.word { gap: 6px; }
+.fcell > .sf { flex: 1 1 auto; width: 100%; height: auto; min-height: 0; padding: 0 12px; color: var(--kind-ink); }
+.fcell > b { flex: none; max-width: 100%; font: 700 22px/26.25px var(--serif); color: var(--ink); text-align: center; }
+.fcell > .says { flex: none; max-width: 100%; font: 400 13px/15.5px var(--serif); color: var(--w-pencil); text-align: center; }
+/* The first-letter cue: title3 serif heavy in a white capsule, top-leading. */
+.fcell > .cue {
+  position: absolute; top: 8px; left: 8px; padding: 4px 10px; border-radius: 999px; background: #fff;
+  box-shadow: inset 0 0 0 1.5px var(--kind-ink); font: 700 20px/23.9px var(--serif); color: var(--ink);
+}
+.findpanel .frows .backcell { border-radius: 18px; }
+
+/* ---------- Reading screens (NarrativePage) ---------- */
+
+.narr { position: absolute; inset: 0; display: flex; flex-direction: column; }
+.narr > .topbar { margin: 12px 20px 0; }
+.narr > .scroll { flex: 1 1 0; min-height: 0; overflow: hidden; position: relative; }
+.narr .page { width: 760px; margin: 0 auto; padding: 20px 0; display: flex; flex-direction: column; gap: 20px; }
+.narr > .actions { flex: none; width: 760px; margin: 0 auto; padding: 16px 0; display: flex; flex-direction: column; gap: 12px; }
+
+.narr h1 { margin: 0; font: 700 34px/40.6px var(--serif); color: var(--ink); }
+.narr .title { margin: 0; font: 700 28px/33.4px var(--serif); color: var(--ink); }
+.narr .body3 { margin: 0; font: 400 20px/23.9px var(--sf); color: var(--ink); }
+.narr .body3.pencil { color: var(--w-pencil); }
+.narr .serif3 { margin: 0; font: 600 20px/23.9px var(--serif); color: var(--ink); }
+.narr .callout { margin: 0; font: 400 16px/19.1px var(--sf); color: var(--w-pencil); }
+
+/* ProblemStep: the nurse's question, "Call my ____" with the ghost word, the try line. */
+.nurse { display: flex; align-items: flex-start; gap: 12px; }
+.nurse > .avatar {
+  width: 52px; height: 52px; flex: none; border-radius: 50%; background: var(--people-tint);
+  color: var(--people-ink); display: grid; place-items: center;
+}
+.nurse > .avatar > .sf { font-size: 22px; }
+.nurse > .bubble {
+  padding: 14px; border-radius: 18px; background: #fff; display: flex; flex-direction: column; gap: 4px;
+  box-shadow: inset 0 0 0 1px rgba(140, 163, 199, 0.6);
+}
+.nurse .who { font: 800 12px/14.3px var(--rounded); color: var(--w-pencil); }
+.nurse .asks { font: 600 22px/26.25px var(--rounded); color: var(--ink); }
+.callrow { display: flex; align-items: last baseline; gap: 12px; }
+.callrow > .stem { font: 700 34px/40.6px var(--serif); color: var(--ink); white-space: nowrap; }
+/* Label { title3 rounded semibold } icon: the icon keeps the default body size. */
+.tryline { min-height: 64px; display: flex; align-items: center; gap: 8px; }
+.tryline > .sf { font-size: 17px; color: var(--control-ink); }
+.tryline > b { font: 600 20px/23.9px var(--rounded); color: var(--ink); }
+
+/* UkrainianStep's SentenceCard: English, starter + word, then the real sentence. */
+.scard {
+  padding: 16px; border-radius: 20px; background: #fff; display: flex; flex-direction: column; gap: 10px;
+  box-shadow: inset 0 0 0 1.5px rgba(140, 163, 199, 0.5);
+}
+.scard.playing { box-shadow: inset 0 0 0 4px var(--highlight); }
+.scard > .en { font: 600 17px/20.3px var(--sf); color: var(--w-pencil); }
+.scard > .parts { display: flex; align-items: center; gap: 8px; }
+.scard .part {
+  padding: 6px 12px; border-radius: 999px; background: var(--tint);
+  font: 600 17px/20.3px var(--serif); color: var(--ink); white-space: nowrap;
+}
+.scard > .parts > .sf { font-size: 15px; color: var(--w-pencil); }
+.scard > .uk { display: flex; align-items: baseline; gap: 10px; }
+.scard > .uk > .sf { font-size: 20px; color: var(--w-pencil); position: relative; top: 2px; }
+.scard > .uk.playing > .sf { color: var(--action-ink); }
+.scard > .uk > b { font: 700 28px/33.4px var(--serif); color: var(--ink); }

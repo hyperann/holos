@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Words · iPhone</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<!-- iPhone portrait (393 × 852 pt; the board's GeometryReader sees 393 × 759),
+     step 2 mid-scan: "I feel pain." is in the bar, "I need…" was chosen and
+     opened its blank, one press entered the first words row, and "Medicine"
+     is lit (2.1 s) with the Next tag (the goal's second sentence). Compact
+     layout (width < 600): 12 pt side padding, the sentence bar stacks its
+     controls below the line, the goal drops its help text, the starters fall
+     into two rows of four and lose their icons, the words lose their
+     "Words for" line, Back cells are 58 pt, the strip drops its detail line. -->
+<body data-device="iphone" data-statusbar="dark">
+<div class="safe">
+  <div class="board compact">
+    <div class="topbar">
+      <div class="brand"><i data-sf="text.bubble.fill"></i><b>Holos Words</b></div>
+      <div class="spacer"></div>
+      <span class="langtoggle"><span class="on">EN</span><span>УКР</span></span>
+      <div class="roundicon"><i data-sf="gearshape.fill"></i></div>
+    </div>
+    <div class="inner">
+      <div class="goal">
+        <div class="kicker">Step 2 of 4 · Two choices, one sentence</div>
+        <div class="goaltext" data-fit="0.6" data-lines="2">Say: “I feel pain. I need medicine.”</div>
+      </div>
+
+      <div class="scanrow dim">
+        <div class="sbar">
+          <div class="sentence">
+            <div class="said" data-fit="0.5" data-lines="3">I feel pain.</div>
+            <div class="stemrow"><span class="stem" data-fit="0.5">I need</span><span class="blank" style="width:90px"></span></div>
+          </div>
+          <div class="ctls">
+            <div class="msg-ctl prominent"><i data-sf="speaker.wave.2.fill"></i><b data-fit="0.7" data-lines="2">Speak</b></div>
+            <div class="msg-ctl"><i data-sf="delete.left.fill"></i><b data-fit="0.7" data-lines="2">Delete last</b></div>
+            <div class="msg-ctl"><i data-sf="xmark"></i><b data-fit="0.7" data-lines="2">Clear</b></div>
+            <div class="backpill"><i data-sf="arrow.uturn.backward"></i><b data-fit="0.6">Go back</b></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="scanrow dim">
+        <div class="starters" style="--cols: 4">
+          <div class="pill k-people open"><b data-fit="0.5" data-lines="2">I need…</b></div>
+          <div class="pill k-people"><b data-fit="0.5" data-lines="2">I feel…</b></div>
+          <div class="pill k-people"><b data-fit="0.5" data-lines="2">I want…</b></div>
+          <div class="pill k-people"><b data-fit="0.5" data-lines="2">Call my…</b></div>
+          <div class="pill k-question"><b data-fit="0.5" data-lines="2">Can you…</b></div>
+          <div class="pill k-question"><b data-fit="0.5" data-lines="2">Where is…</b></div>
+          <div class="pill lang"><i data-sf="globe"></i><b lang="uk" data-fit="0.6">Українська</b></div>
+          <div class="backpill"><i data-sf="arrow.uturn.backward"></i><b data-fit="0.6">Go back</b></div>
+        </div>
+      </div>
+
+      <div class="fillers">
+        <div class="scanrow entered">
+          <div class="frow">
+            <div class="guided">
+              <div class="cell k-thing lit"><i data-sf="pills.fill"></i><b data-fit="0.55" data-lines="2" data-maxh="half">Medicine</b></div>
+              <span class="nexttag"><i data-sf="arrow.down"></i>Next</span>
+            </div>
+            <div class="cell k-thing"><i data-sf="drop.fill"></i><b data-fit="0.55" data-lines="2" data-maxh="half">Water</b></div>
+            <div class="cell k-people"><i data-sf="stethoscope"></i><b data-fit="0.55" data-lines="2" data-maxh="half">Doctor</b></div>
+            <div class="cell k-people"><i data-sf="cross.case.fill"></i><b data-fit="0.55" data-lines="2" data-maxh="half">Nurse</b></div>
+            <div class="cell backcell"><i data-sf="arrow.uturn.backward"></i><b data-fit="0.6">Go back</b></div>
+          </div>
+        </div>
+        <div class="scanrow dim">
+          <div class="frow">
+            <div class="cell k-thing"><i data-sf="toilet.fill"></i><b data-fit="0.55" data-lines="2" data-maxh="half">Toilet</b></div>
+            <div class="cell k-urgent"><i data-sf="hand.raised.fill"></i><b data-fit="0.55" data-lines="2" data-maxh="half">Help</b></div>
+            <div class="cell k-thing"><i data-sf="bed.double.fill"></i><b data-fit="0.55" data-lines="2" data-maxh="half">Blanket</b></div>
+            <div class="cell k-thing"><i data-sf="eyeglasses"></i><b data-fit="0.55" data-lines="2" data-maxh="half">Glasses</b></div>
+            <div class="cell backcell"><i data-sf="arrow.uturn.backward"></i><b data-fit="0.6">Go back</b></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="findstrip">
+        <i class="mag" data-sf="magnifyingglass"></i>
+        <div class="txt">
+          <div class="t" data-fit="0.7">Not here? Find a word</div>
+        </div>
+        <i class="chev" data-sf="chevron.right"></i>
+        <svg class="dashline" aria-hidden="true"><rect width="100%" height="100%" rx="18" ry="18"/></svg>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../kit/icons.js"></script><script src="icons-words.js"></script><script src="../kit/kit.js"></script><script src="fit.js"></script>
+</body></html>

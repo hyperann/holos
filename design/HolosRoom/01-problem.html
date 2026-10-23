@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Room · The problem</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<link rel="stylesheet" href="style.css">
+<!-- Stage .problemAsk: the ward dark (veil 0.72) but for the nurse, her question
+     in a text-only bubble, no name pills yet, and the first story card. The
+     board is inert behind the card, so the chips and strip are at 50 %. -->
+</head>
+<body data-device="ipad" data-statusbar="light">
+<div class="safe"><div class="root">
+  <header class="topbar">
+    <div class="words">
+      <div class="heading">
+        <div class="partdots"><i class="on cur"></i><i></i><i></i><i></i><span>The problem</span></div>
+        <h1 class="title">Feel the problem</h1>
+      </div>
+      <div class="details"></div>
+    </div>
+    <div class="controls">
+      <span class="langtoggle"><span class="on">EN</span><span lang="uk">УКР</span></span>
+      <span class="gear"><i data-sf="gearshape.fill"></i></span>
+    </div>
+  </header>
+  <main class="stage">
+    <div class="slot"><div class="room" id="room"><img class="art" src="ward.svg" alt=""></div></div>
+    <div class="bottombar inert">
+      <div class="roomchip"><span class="sym"><i data-sf="house.fill"></i></span><b>Go home</b></div>
+      <div class="roomchip"><span class="sym"><i data-sf="globe"></i><span class="badge" lang="uk">УКР</span></span><b>Ukrainian</b></div>
+      <div class="strip">
+        <div class="sentence"><span class="empty">Your message appears here</span></div>
+        <div class="ctl prominent"><i data-sf="speaker.wave.2.fill"></i><b>Speak</b></div>
+        <div class="ctl"><i data-sf="delete.left.fill"></i><b>Delete last</b></div>
+        <div class="ctl"><i data-sf="xmark"></i><b>Clear</b></div>
+      </div>
+    </div>
+    <div class="overlay">
+      <div class="card">
+        <div class="content">
+          <h2>You can hear her. You can't answer.</h2>
+          <p>Imagine you are Mykola, 39. A stroke took your speech and your right hand. You have one button. Press it.</p>
+        </div>
+        <div class="footer">
+          <div class="continue"><i data-sf="hand.point.up.left.fill"></i>Press anywhere, or Space, to continue</div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div></div>
+<script src="../kit/icons.js"></script>
+<script src="room.js"></script>
+<script>
+  Room.render({
+    place: "ward",
+    spotlight: { id: "ward.nurse", dim: 0.72 },   // Experience.spotlight, .problemAsk
+    pills: false,                                  // HotspotLayer: no pills in .problemAsk
+    nurse: "How are you feeling?",                 // Copy.nurseAsks
+  });
+</script>
+<script src="../kit/kit.js"></script>
+</body></html>

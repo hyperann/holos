@@ -1,0 +1,173 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700" width="1000" height="700">
+<!--
+  Holos Room · the hospital ward at dusk — Art/WardArt.swift ported to SVG.
+  Room space 1000 × 700, exactly as RoomSpace; every shape keeps its artFrame
+  (x, y, width, height), its Dusk colour (Art/ArtKit.swift, sRGB 0–1 → hex)
+  and its gradient. Order follows the Swift ZStack, back to front.
+  SF Symbols in the drawing use the design kit's Phosphor stand-ins, fitted to
+  their own bounds the way .resizable().scaledToFit() fits a symbol.
+-->
+<defs>
+  <!-- RoomShell -->
+  <linearGradient id="wall" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="530"><stop offset="0" stop-color="#0F4047"/><stop offset="1" stop-color="#1A5459"/></linearGradient>
+  <linearGradient id="floor" gradientUnits="userSpaceOnUse" x1="0" y1="520" x2="0" y2="700"><stop offset="0" stop-color="#784A2B"/><stop offset="1" stop-color="#4F2E1A"/></linearGradient>
+  <!-- Glow: EllipticalGradient [c·s, c·s·0.35, clear], end radius 0.5 of its frame -->
+  <radialGradient id="glowLamp42" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FFD180" stop-opacity=".42"/><stop offset=".5" stop-color="#FFD180" stop-opacity=".147"/><stop offset="1" stop-color="#FFD180" stop-opacity="0"/></radialGradient>
+  <radialGradient id="glowScreen35" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#599EDB" stop-opacity=".35"/><stop offset=".5" stop-color="#599EDB" stop-opacity=".1225"/><stop offset="1" stop-color="#599EDB" stop-opacity="0"/></radialGradient>
+  <radialGradient id="glowLamp60" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FFD180" stop-opacity=".6"/><stop offset=".5" stop-color="#FFD180" stop-opacity=".21"/><stop offset="1" stop-color="#FFD180" stop-opacity="0"/></radialGradient>
+  <!-- window -->
+  <linearGradient id="sky" gradientUnits="userSpaceOnUse" x1="0" y1="82" x2="0" y2="298"><stop offset="0" stop-color="#2B2661"/><stop offset=".5" stop-color="#99527A"/><stop offset="1" stop-color="#FA9E5C"/></linearGradient>
+  <linearGradient id="curtainL" gradientUnits="userSpaceOnUse" x1="26" y1="0" x2="96" y2="0"><stop offset="0" stop-color="#D1754D"/><stop offset="1" stop-color="#994730"/></linearGradient>
+  <linearGradient id="curtainR" gradientUnits="userSpaceOnUse" x1="244" y1="0" x2="314" y2="0"><stop offset="0" stop-color="#D1754D"/><stop offset="1" stop-color="#994730"/></linearGradient>
+  <!-- phoneShelf, doorway, bed, bedsideTable -->
+  <linearGradient id="phoneScreen" gradientUnits="userSpaceOnUse" x1="0" y1="164" x2="0" y2="240"><stop offset="0" stop-color="#599EDB"/><stop offset="1" stop-color="#3D668F"/></linearGradient>
+  <linearGradient id="corridor" gradientUnits="userSpaceOnUse" x1="0" y1="98" x2="0" y2="526"><stop offset="0" stop-color="#FFF0CC"/><stop offset="1" stop-color="#EDCC99"/></linearGradient>
+  <linearGradient id="blanket" gradientUnits="userSpaceOnUse" x1="0" y1="404" x2="0" y2="496"><stop offset="0" stop-color="#5C8CB5"/><stop offset="1" stop-color="#3D668F"/></linearGradient>
+  <linearGradient id="table" gradientUnits="userSpaceOnUse" x1="0" y1="420" x2="0" y2="586"><stop offset="0" stop-color="#AD784D"/><stop offset="1" stop-color="#7A4F30"/></linearGradient>
+  <linearGradient id="shade" gradientUnits="userSpaceOnUse" x1="0" y1="312" x2="0" y2="356"><stop offset="0" stop-color="#FFD180"/><stop offset="1" stop-color="#FA9E4D"/></linearGradient>
+  <!-- Vignette: clear to 0.6, black 0.38 at 1, end radius 0.72 of the room -->
+  <radialGradient id="vignette" cx=".5" cy=".5" r=".72"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".38"/></radialGradient>
+  <!-- .blur(radius:) — the region spans the room so no blur is clipped -->
+  <filter id="blur3" filterUnits="userSpaceOnUse" x="-100" y="-100" width="1200" height="900"><feGaussianBlur stdDeviation="3"/></filter>
+  <filter id="blur8" filterUnits="userSpaceOnUse" x="-100" y="-100" width="1200" height="900"><feGaussianBlur stdDeviation="8"/></filter>
+</defs>
+
+<!-- RoomShell: wall, floor, floorboards, skirting -->
+<rect width="1000" height="530" fill="url(#wall)"/>
+<rect y="520" width="1000" height="180" fill="url(#floor)"/>
+<path fill="none" stroke="#3D2414" stroke-opacity=".5" stroke-width="2" d="M0 541.6H1000M0 568.6H1000M0 601H1000M0 642.4H1000M0 689.2H1000M180 520V541.6M520 520V541.6M830 520V541.6M330 541.6V568.6M710 541.6V568.6M100 568.6V601M470 568.6V601M900 568.6V601M270 601V642.4M640 601V642.4M50 642.4V689.2M410 642.4V689.2M780 642.4V689.2"/>
+<rect y="512" width="1000" height="14" fill="#0A262B"/>
+
+<!-- The bedside lamp's light on the wall: Glow(strength: 0.42) -->
+<ellipse cx="755" cy="340" rx="285" ry="280" fill="url(#glowLamp42)"/>
+
+<!-- window -->
+<rect x="24" y="50" width="292" height="8" rx="4" fill="#73828C"/>
+<rect x="50" y="70" width="230" height="240" rx="6" fill="#F0EDE3"/>
+<rect x="62" y="82" width="206" height="216" fill="url(#sky)"/>
+<circle cx="112" cy="102" r="2" fill="#FFFFFF" fill-opacity=".85"/>
+<circle cx="147.5" cy="121.5" r="1.5" fill="#FFFFFF" fill-opacity=".7"/>
+<circle cx="216" cy="98" r="2" fill="#FFFFFF" fill-opacity=".8"/>
+<circle cx="201" cy="239" r="23" fill="#FFD180" fill-opacity=".95"/>
+<rect x="96" y="230" width="38" height="68" fill="#211C3D"/>
+<rect x="132" y="256" width="46" height="42" fill="#211C3D"/>
+<rect x="176" y="240" width="30" height="58" fill="#211C3D"/>
+<rect x="204" y="262" width="46" height="36" fill="#211C3D"/>
+<g fill="#FFD180" fill-opacity=".9"><rect x="108" y="244" width="5" height="6"/><rect x="120" y="264" width="5" height="6"/><rect x="186" y="252" width="5" height="6"/><rect x="222" y="274" width="5" height="6"/></g>
+<rect x="162" y="82" width="6" height="216" fill="#F0EDE3"/>
+<rect x="62" y="186" width="206" height="6" fill="#F0EDE3"/>
+<rect x="40" y="304" width="250" height="14" rx="3" fill="#C2C7C4"/>
+<!-- curtain(x: 26) and curtain(x: 244): Drape, three scallops at the hem -->
+<path fill="url(#curtainL)" d="M26 56H96V319.04Q84.333 338.22 72.667 319.04Q61 338.22 49.333 319.04Q37.667 338.22 26 319.04Z"/>
+<rect x="48" y="60" width="3" height="258" fill="#994730" fill-opacity=".5"/>
+<rect x="72" y="60" width="3" height="258" fill="#994730" fill-opacity=".5"/>
+<path fill="url(#curtainR)" d="M244 56H314V319.04Q302.333 338.22 290.667 319.04Q279 338.22 267.333 319.04Q255.667 338.22 244 319.04Z"/>
+<rect x="266" y="60" width="3" height="258" fill="#994730" fill-opacity=".5"/>
+<rect x="290" y="60" width="3" height="258" fill="#994730" fill-opacity=".5"/>
+
+<!-- radiator -->
+<rect x="36" y="396" width="100" height="96" rx="6" fill="#C2C7C4"/>
+<g fill="#73828C" fill-opacity=".5"><rect x="46" y="404" width="6" height="80" rx="3"/><rect x="61" y="404" width="6" height="80" rx="3"/><rect x="76" y="404" width="6" height="80" rx="3"/><rect x="91" y="404" width="6" height="80" rx="3"/><rect x="106" y="404" width="6" height="80" rx="3"/><rect x="121" y="404" width="6" height="80" rx="3"/></g>
+<rect x="60" y="492" width="6" height="22" fill="#73828C"/>
+
+<!-- bodyChart: a pain body chart pinned on the wall -->
+<rect x="366" y="88" width="130" height="180" fill="#000000" fill-opacity=".25" filter="url(#blur3)"/>
+<rect x="360" y="80" width="130" height="180" rx="4" fill="#F7F0DE"/>
+<rect x="374" y="94" width="102" height="7" rx="3.5" fill="#3D668F" fill-opacity=".55"/>
+<rect x="374" y="106" width="64" height="5" rx="2.5" fill="#3D668F" fill-opacity=".35"/>
+<!-- Image("figure.arms.open") -->
+<svg x="372" y="118" width="106" height="132" viewBox="28 8 200.04 232" fill="#3D668F"><path d="M100,36a28,28,0,1,1,28,28A28,28,0,0,1,100,36ZM227.6,92.57A15.7,15.7,0,0,0,212,80H44a16,16,0,0,0-6.7,30.53l.06,0,53.89,23.73-21.92,83.3a16,16,0,0,0,7.9,20.91A15.83,15.83,0,0,0,84,240a16,16,0,0,0,14.44-9.06L128,180l29.58,51a16,16,0,0,0,29.07-13.35l-21.92-83.3,54-23.76A15.7,15.7,0,0,0,227.6,92.57Z"/></svg>
+<circle cx="425.5" cy="78.5" r="4.5" fill="#DB423D"/>
+
+<!-- phoneShelf -->
+<ellipse cx="633" cy="205" rx="65" ry="65" fill="url(#glowScreen35)"/>
+<rect x="560" y="250" width="150" height="12" rx="3" fill="#AD784D"/>
+<path d="M574 262H592L583 278Z" fill="#7A4F30"/>
+<path d="M678 262H696L687 278Z" fill="#7A4F30"/>
+<rect x="570" y="226" width="28" height="24" rx="4" fill="#994730"/>
+<!-- Image("leaf.fill") -->
+<svg x="566" y="192" width="36" height="36" viewBox="39.99 32 184.01 192" fill="#6BA866"><path d="M223.45,40.07a8,8,0,0,0-7.52-7.52C139.8,28.08,78.82,51,52.82,94a87.09,87.09,0,0,0-12.76,49A101.72,101.72,0,0,0,46.7,175.2a4,4,0,0,0,6.61,1.43l85-86.3a8,8,0,0,1,11.32,11.32L56.74,195.94,42.55,210.13a8.2,8.2,0,0,0-.6,11.1,8,8,0,0,0,11.71.43l16.79-16.79c14.14,6.84,28.41,10.57,42.56,11.07q1.67.06,3.33.06A86.93,86.93,0,0,0,162,203.18C205,177.18,227.93,116.21,223.45,40.07Z"/></svg>
+<rect x="612" y="156" width="54" height="94" rx="10" fill="#121721"/>
+<rect x="616" y="164" width="46" height="76" rx="6" fill="url(#phoneScreen)"/>
+<!-- Image("person.crop.circle.fill") -->
+<svg x="626" y="176" width="26" height="26" viewBox="24 24 208 208" fill="#FFFFFF" fill-opacity=".9"><path d="M172,120a44,44,0,1,1-44-44A44.05,44.05,0,0,1,172,120Zm60,8A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88.09,88.09,0,0,0-91.47-87.93C77.43,41.89,39.87,81.12,40,128.25a87.65,87.65,0,0,0,22.24,58.16A79.71,79.71,0,0,1,84,165.1a4,4,0,0,1,4.83.32,59.83,59.83,0,0,0,78.28,0,4,4,0,0,1,4.83-.32,79.71,79.71,0,0,1,21.79,21.31A87.62,87.62,0,0,0,216,128Z"/></svg>
+<circle cx="639" cy="223" r="9" fill="#6BA866"/>
+
+<!-- doorway -->
+<rect x="806" y="86" width="168" height="440" fill="#C2C7C4"/>
+<rect x="818" y="98" width="144" height="428" fill="url(#corridor)"/>
+<rect x="818" y="470" width="144" height="56" fill="#D6B88F"/>
+<rect x="818" y="360" width="144" height="5" fill="#B8C4CC" fill-opacity=".6"/>
+<!-- The door, swung open towards the room: Quad(0, 0.03, 1, 0, 1, 1, 0, 0.97) -->
+<path d="M962 97.68L996 84L996 540L962 526.32Z" fill="#AD784D"/>
+<!-- Corridor light spilling across the floor: Quad(0.24, 0, 0.84, 0, 1, 1, 0, 1) -->
+<path d="M817.6 526L961.6 526L1000 646L760 646Z" fill="#FFF0CC" fill-opacity=".22"/>
+
+<!-- nurse -->
+<ellipse cx="891" cy="514" rx="45" ry="8" fill="#000000" fill-opacity=".25" filter="url(#blur8)"/>
+<rect x="868" y="392" width="18" height="118" rx="9" fill="#66A3A6"/>
+<rect x="894" y="392" width="18" height="118" rx="9" fill="#66A3A6"/>
+<rect x="862" y="504" width="26" height="11" rx="5.5" fill="#FFFFFF"/>
+<rect x="892" y="504" width="26" height="11" rx="5.5" fill="#FFFFFF"/>
+<rect x="842" y="220" width="20" height="142" rx="10" fill="#66A3A6"/>
+<rect x="918" y="220" width="20" height="142" rx="10" fill="#66A3A6"/>
+<circle cx="852" cy="359" r="9" fill="#EDBD99"/>
+<circle cx="928" cy="359" r="9" fill="#EDBD99"/>
+<rect x="852" y="208" width="76" height="200" rx="20" fill="#8FCFCC"/>
+<path d="M880 208H900L890 226Z" fill="#EDBD99"/>
+<rect x="902" y="236" width="18" height="18" rx="4" fill="#FFFFFF"/>
+<!-- Image("cross.fill") -->
+<svg x="905" y="239" width="12" height="12" viewBox="24 24 208 208" fill="#DB423D"><path d="M232,108v40a16,16,0,0,1-16,16H164v52a16,16,0,0,1-16,16H108a16,16,0,0,1-16-16V164H40a16,16,0,0,1-16-16V108A16,16,0,0,1,40,92H92V40a16,16,0,0,1,16-16h40a16,16,0,0,1,16,16V92h52A16,16,0,0,1,232,108Z"/></svg>
+<rect x="882" y="190" width="16" height="22" fill="#EDBD99"/>
+<ellipse cx="890" cy="166" rx="30" ry="28" fill="#452E21"/>
+<circle cx="917" cy="143" r="11" fill="#452E21"/>
+<ellipse cx="890" cy="172" rx="24" ry="26" fill="#EDBD99"/>
+<rect x="864" y="142" width="52" height="16" rx="8" fill="#452E21"/>
+
+<!-- bed, and the person in it -->
+<ellipse cx="370" cy="587" rx="220" ry="21" fill="#000000" fill-opacity=".32" filter="url(#blur8)"/>
+<rect x="150" y="344" width="26" height="216" rx="8" fill="#B8C4CC"/>
+<rect x="146" y="336" width="34" height="12" rx="6" fill="#73828C"/>
+<rect x="556" y="404" width="22" height="156" rx="8" fill="#B8C4CC"/>
+<rect x="552" y="396" width="30" height="11" rx="5.5" fill="#73828C"/>
+<rect x="170" y="488" width="392" height="18" fill="#73828C"/>
+<rect x="188" y="506" width="8" height="46" fill="#73828C"/>
+<rect x="538" y="506" width="8" height="46" fill="#73828C"/>
+<circle cx="192" cy="558" r="10" fill="#1A1F24"/>
+<circle cx="542" cy="558" r="10" fill="#1A1F24"/>
+<rect x="172" y="444" width="388" height="50" rx="14" fill="#F0EDE3"/>
+<rect x="180" y="414" width="104" height="42" rx="18" fill="#F0EDE3"/>
+<rect x="180" y="414" width="104" height="42" rx="18" fill="none" stroke="#C2C7C4" stroke-width="2"/>
+<ellipse cx="224" cy="411" rx="28" ry="25" fill="#452E21"/>
+<ellipse cx="228" cy="415" rx="24" ry="23" fill="#EDBD99"/>
+<!-- BlanketShape: a rise at the chest, the knees, the feet -->
+<path fill="url(#blanket)" d="M236 429.76Q302 407.68 374.6 426.08Q434 435.28 480.2 409.52Q549.5 404 566 437.12L566 496L236 496Z"/>
+<rect x="234" y="428" width="26" height="66" rx="8" fill="#F0EDE3"/>
+<rect x="258" y="444" width="70" height="14" rx="7" fill="#EDBD99"/>
+<g fill="#B8C4CC" fill-opacity=".95"><rect x="296" y="452" width="208" height="8" rx="4"/><rect x="304" y="452" width="7" height="40" rx="3.5"/><rect x="490" y="452" width="7" height="40" rx="3.5"/></g>
+
+<!-- bedsideTable -->
+<ellipse cx="692" cy="588" rx="88" ry="14" fill="#000000" fill-opacity=".32" filter="url(#blur8)"/>
+<rect x="612" y="420" width="156" height="166" rx="8" fill="url(#table)"/>
+<rect x="606" y="412" width="168" height="14" rx="4" fill="#AD784D"/>
+<rect x="624" y="438" width="132" height="44" rx="4" fill="none" stroke="#573621" stroke-opacity=".6" stroke-width="2"/>
+<rect x="678" y="456" width="24" height="8" rx="4" fill="#B8C4CC"/>
+<rect x="624" y="494" width="132" height="78" rx="4" fill="none" stroke="#573621" stroke-opacity=".5" stroke-width="2"/>
+<!-- A glass of water… -->
+<rect x="622" y="370" width="34" height="42" rx="4" fill="#C7E8F5" fill-opacity=".75"/>
+<rect x="625" y="386" width="28" height="24" fill="#6BB3EB" fill-opacity=".85"/>
+<!-- …the pills… -->
+<rect x="664" y="378" width="28" height="34" rx="4" fill="#F28F33"/>
+<rect x="662" y="368" width="32" height="12" rx="2" fill="#FFFFFF"/>
+<rect x="667" y="388" width="22" height="12" fill="#FFFFFF" fill-opacity=".85"/>
+<!-- …and the glasses: Image("eyeglasses") -->
+<svg x="694" y="394" width="38" height="18" viewBox="24 40 208 167.92" fill="#1A1F24"><path d="M232,72v92a44,44,0,0,1-87.81,4H111.81A44,44,0,0,1,24,164V72A32,32,0,0,1,56,40a8,8,0,0,1,0,16A16,16,0,0,0,40,72v58.08A44,44,0,0,1,110.32,152h35.36A44,44,0,0,1,216,130.08V72a16,16,0,0,0-16-16,8,8,0,0,1,0-16A32,32,0,0,1,232,72Z"/></svg>
+<ellipse cx="751" cy="371" rx="75" ry="75" fill="url(#glowLamp60)"/>
+<ellipse cx="755" cy="409" rx="17" ry="5" fill="#73828C"/>
+<rect x="752" y="352" width="6" height="54" fill="#73828C"/>
+<!-- Trapezoid lamp shade, topInset 0.22 -->
+<path d="M737.64 312H772.36L786 356H724Z" fill="url(#shade)"/>
+
+<!-- Vignette -->
+<rect width="1000" height="700" fill="url(#vignette)"/>
+</svg>

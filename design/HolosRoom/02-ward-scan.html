@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Room · Scan the room</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<link rel="stylesheet" href="style.css">
+<!-- Stage .scanRoom, scanning the top level: the bed is the 2nd stop and lit.
+     Experience.spotlight → (ward.bed, dim 0.5); HotspotLayer draws the bed's
+     scan ring and its yellow pill, the other pills at 60 %. guideID is the bed,
+     so the GuideMarker sits 40 pt above its pill and the hint is
+     Copy.hintReach("Bed", scanning: true). The nurse still asks her question. -->
+</head>
+<body data-device="ipad" data-statusbar="light">
+<div class="safe"><div class="root">
+  <header class="topbar">
+    <div class="words">
+      <div class="heading">
+        <div class="partdots"><i class="on"></i><i class="on cur"></i><i></i><i></i><span>One switch</span></div>
+        <h1 class="title">One switch, any message</h1>
+      </div>
+      <div class="details">
+        <div class="goal">Tell the nurse: “I'm in pain. Medicine, please.”</div>
+        <div class="checklist"><span><i data-sf="bandage.fill"></i>I'm in pain</span><span><i data-sf="pills.fill"></i>Medicine</span></div>
+        <div class="how">The light moves around the room. One press opens a place; the next says a phrase.</div>
+        <div class="hint"><i data-sf="hand.point.up.left.fill"></i>Press when “Bed” lights up.</div>
+      </div>
+    </div>
+    <div class="controls">
+      <span class="langtoggle"><span class="on">EN</span><span lang="uk">УКР</span></span>
+      <span class="gear"><i data-sf="gearshape.fill"></i></span>
+    </div>
+  </header>
+  <main class="stage">
+    <div class="slot"><div class="room" id="room"><img class="art" src="ward.svg" alt=""></div></div>
+    <div class="bottombar">
+      <div class="roomchip"><span class="sym"><i data-sf="house.fill"></i></span><b>Go home</b></div>
+      <div class="roomchip"><span class="sym"><i data-sf="globe"></i><span class="badge" lang="uk">УКР</span></span><b>Ukrainian</b></div>
+      <div class="strip">
+        <div class="sentence"><span class="empty">Your message appears here</span></div>
+        <div class="ctl prominent"><i data-sf="speaker.wave.2.fill"></i><b>Speak</b></div>
+        <div class="ctl"><i data-sf="delete.left.fill"></i><b>Delete last</b></div>
+        <div class="ctl"><i data-sf="xmark"></i><b>Clear</b></div>
+      </div>
+    </div>
+  </main>
+</div></div>
+<script src="../kit/icons.js"></script>
+<script src="room.js"></script>
+<script>
+  Room.render({
+    place: "ward",
+    spotlight: { id: "ward.bed", dim: 0.5 },   // a lit hotspot while scanning
+    guide: "ward.bed",                          // route to "ward.bed.pain", nothing open yet
+    nurse: "How are you feeling?",
+  });
+</script>
+<script src="../kit/kit.js"></script>
+</body></html>

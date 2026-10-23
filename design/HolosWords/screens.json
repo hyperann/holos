@@ -1,0 +1,50 @@
+[
+  {
+    "file": "01-problem.png",
+    "title": "The problem",
+    "step": "Step 1",
+    "caption": "A nurse asks “Who should we call?”, the answer sits blurred inside the blank of “Call my ____”, and in the first five seconds a press gets only a knock and “Nothing. The word won’t come.”"
+  },
+  {
+    "file": "02-starters.png",
+    "title": "Two choices, one sentence",
+    "step": "Step 2",
+    "caption": "The scan has entered the starters row and lights “I feel…”, where the Next tag points, while the goal asks for “I feel pain. I need medicine.” and the rows not in play fade."
+  },
+  {
+    "file": "03-fillers.png",
+    "title": "Only the words that fit",
+    "step": "Step 2",
+    "caption": "“I feel…” has opened a blank, “I feel ____”, and the scan has jumped straight to the feelings: the first words row is entered and “Pain” is lit."
+  },
+  {
+    "file": "04-find-a-word.png",
+    "title": "Find a word: describe it",
+    "step": "Step 3",
+    "caption": "“Wife” is not on the board, so after “Call my…” the person describes her: Find a word › A person › Family asks “Which generation?” and “My generation” is lit."
+  },
+  {
+    "file": "05-candidates.png",
+    "title": "Find a word: recognise it",
+    "step": "Step 3",
+    "caption": "Four people to recognise, each with a first-letter cue and the sentence it will say; “Wife” is lit, and choosing it adds “Please call my wife.” to the open blank."
+  },
+  {
+    "file": "06-ukrainian.png",
+    "title": "Hear it in Ukrainian",
+    "step": "Step 4",
+    "caption": "The person’s three sentences replay in Ukrainian, each card showing starter + word above the stored sentence, with Continue lit; the page scrolls on this iPad, so the third sentence, «Подзвоніть, будь ласка, моїй дружині.», starts just below the fold."
+  },
+  {
+    "file": "07-closing.png",
+    "title": "A voice that offers the word",
+    "step": "Closing",
+    "caption": "Who Holos is for and why it is free, private and open source, with “Keep talking” lit to open the board for free use."
+  },
+  {
+    "file": "08-iphone.png",
+    "title": "The board on iPhone",
+    "step": "Step 2",
+    "caption": "The same board on an iPhone in portrait, mid-scan: “I feel pain.” is built, “I need ____” waits, and “Medicine” is lit in a row of small cells whose labels shrink, or truncate, to fit."
+  }
+]

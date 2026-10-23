@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Room · Closing</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<link rel="stylesheet" href="style.css">
+<!-- Stage .closing: finishUkrainian() has put the judge's language back, so the
+     board is English again. The top bar still reads part 4 and
+     Copy.ukrainianTitle (Experience.title is shared by .ukrainian and .closing).
+     The strip still holds the step-2 message. The card scan lights
+     "Keep talking" first and never pauses. -->
+</head>
+<body data-device="ipad" data-statusbar="light">
+<div class="safe"><div class="root">
+  <header class="topbar">
+    <div class="words">
+      <div class="heading">
+        <div class="partdots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on cur"></i><span>Ukrainian</span></div>
+        <h1 class="title">Hear it in Ukrainian</h1>
+      </div>
+      <div class="details"></div>
+    </div>
+    <div class="controls">
+      <span class="langtoggle"><span class="on">EN</span><span lang="uk">УКР</span></span>
+      <span class="gear"><i data-sf="gearshape.fill"></i></span>
+    </div>
+  </header>
+  <main class="stage">
+    <div class="slot"><div class="room" id="room"><img class="art" src="ward.svg" alt=""></div></div>
+    <div class="bottombar inert">
+      <div class="roomchip"><span class="sym"><i data-sf="house.fill"></i></span><b>Go home</b></div>
+      <div class="roomchip"><span class="sym"><i data-sf="globe"></i><span class="badge" lang="uk">УКР</span></span><b>Ukrainian</b></div>
+      <div class="strip">
+        <div class="sentence">
+          <span class="chip k-urgent"><i data-sf="bandage.fill"></i><b>I'm in pain</b></span>
+          <span class="chip k-thing"><i data-sf="pills.fill"></i><b>Medicine</b></span>
+        </div>
+        <div class="ctl prominent"><i data-sf="speaker.wave.2.fill"></i><b>Speak</b></div>
+        <div class="ctl"><i data-sf="delete.left.fill"></i><b>Delete last</b></div>
+        <div class="ctl"><i data-sf="xmark"></i><b>Clear</b></div>
+      </div>
+    </div>
+    <div class="overlay">
+      <div class="card">
+        <div class="content tight">
+          <h2>Holos: a voice, one press at a time</h2>
+          <div class="para"><i data-sf="person.2.fill"></i><p>For Ukrainian adults who lost speech through stroke, brain injury or war trauma, and for the families and therapists beside them.</p></div>
+          <div class="para"><i data-sf="brain.head.profile"></i><p>Rehabilitation centres in Ukraine treat many service members recovering from brain injuries and strokes who struggle to communicate. Aphasia can take reading and spelling as well as speech, so a keyboard is not enough.</p></div>
+          <div class="para"><i data-sf="heart.fill"></i><p>Free, private (no account, no analytics, nothing leaves the device) and open source, so anyone can check it, translate it and keep it alive.</p></div>
+          <p class="source">Source on rehabilitation: the Talk! (Hovory!) NGO. Mykola, Oleksandr and Yuriy are illustrative examples.</p>
+        </div>
+        <div class="footer">
+          <div class="cardbuttons">
+            <div class="cardbtn prominent lit"><i data-sf="bubble.left.and.bubble.right.fill"></i>Keep talking</div>
+            <div class="cardbtn"><i data-sf="arrow.counterclockwise"></i>Start again</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div></div>
+<script src="../kit/icons.js"></script>
+<script src="room.js"></script>
+<script>
+  Room.render({
+    place: "ward",
+    spotlight: { id: null, dim: 0.38 },
+  });
+</script>
+<script src="../kit/kit.js"></script>
+</body></html>

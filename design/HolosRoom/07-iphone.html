@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Room · iPhone</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<link rel="stylesheet" href="style.css">
+<!-- The bed moment of step 2 on an iPhone in portrait (393 × 852, 369 pt wide
+     inside RootView's 12-pt padding, so isNarrow). The top bar keeps to the
+     title, the goal checklist and a two-line hint (no goal sentence, no "how").
+     The room is width-bound at 369 × 258 (scale 0.369) and centred in its slot;
+     pills are caption-sized. The ring is a RingSheet: a three-column panel of
+     88-pt cells that replaces the chips and the message strip while it is open. -->
+</head>
+<body data-device="iphone" data-statusbar="light" class="narrow">
+<div class="safe"><div class="root">
+  <header class="topbar narrowbar">
+    <div class="row">
+      <div class="heading">
+        <div class="partdots"><i class="on"></i><i class="on cur"></i><i></i><i></i><span>One switch</span></div>
+        <h1 class="title">One switch, any message</h1>
+      </div>
+      <div class="controls">
+        <span class="langtoggle"><span class="on">EN</span><span lang="uk">УКР</span></span>
+        <span class="gear"><i data-sf="gearshape.fill"></i></span>
+      </div>
+    </div>
+    <div class="details">
+      <div class="checklist"><span><i data-sf="bandage.fill"></i>I'm in pain</span><span><i data-sf="pills.fill"></i>Medicine</span></div>
+      <div class="hint"><i data-sf="hand.point.up.left.fill"></i>Now press when “I'm in pain” lights up.</div>
+    </div>
+  </header>
+  <main class="stage">
+    <div class="slot"><div class="room" id="room"><img class="art" src="ward.svg" alt=""></div></div>
+    <div class="ringsheet" id="ringsheet"></div>
+  </main>
+</div></div>
+<script src="../kit/icons.js"></script>
+<script src="room.js"></script>
+<script>
+  Room.render({
+    place: "ward",
+    spotlight: { id: "ward.bed", dim: 0.62 },
+    open: "ward.bed",
+    ringLit: "ward.bed.pain",
+    guide: "ward.bed.pain",
+    nurse: "How are you feeling?",
+    ring: [
+      { id: "ward.bed.pain", label: "I'm in pain", symbol: "bandage.fill", kind: "urgent" },
+      { id: "ward.bed.sitUp", label: "Help me sit up", symbol: "chair.fill", kind: "action" },
+      { id: "ward.bed.lieDown", label: "I want to lie down", symbol: "bed.double.fill", kind: "action" },
+      { id: "ward.bed.sleep", label: "I can't sleep", symbol: "moon.zzz.fill", kind: "describing" },
+      { id: "ward.bed#back", back: true },
+    ],
+  });
+</script>
+<script src="../kit/kit.js"></script>
+</body></html>

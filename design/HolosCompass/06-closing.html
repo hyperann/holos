@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Compass · Closing</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-device="ipad" data-statusbar="light" class="compass">
+<div class="safe app">
+  <header class="topbar">
+    <span class="needle" data-size="34" data-dir="north"></span>
+    <div class="tb-text">
+      <div class="tb-name"><span>Holos</span><span class="sub">Compass</span></div>
+      <div class="tb-step">Step 4 of 4 · Who it is for</div>
+    </div>
+    <div class="dots"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span></div>
+    <div class="tb-spacer"></div>
+    <span class="langtoggle"><span class="on">EN</span><span>УКР</span></span>
+    <span class="gear"><i data-sf="gearshape.fill"></i></span>
+  </header>
+
+  <!-- ClosingStep: ViewThatFits(in: .vertical) tries the one-column card first,
+       then the card with the buttons beside the words (the script below keeps the
+       first that fits the step's height). "Keep talking" is lit first. -->
+  <main class="step closing">
+    <template id="lines">
+      <div class="cl-lines">
+        <div class="cl-head"><span class="needle" data-size="64" data-dir="north"></span><h1 class="cl-title">Holos means “voice”.</h1></div>
+        <div class="cl-line"><span class="ico"><i data-sf="person.2.fill"></i></span><p>For Ukrainian adults who lost their speech to a stroke, a brain injury or war trauma — and for the families, carers and speech therapists around them.</p></div>
+        <div class="cl-line"><span class="ico"><i data-sf="text.bubble.fill"></i></span><p>Many have aphasia, which can take reading and spelling as well as speech — so a keyboard is not enough. The compass offers the words; nobody has to recall them.</p></div>
+        <div class="cl-line"><span class="ico"><i data-sf="square.grid.2x2.fill"></i></span><p>Four choices at a time: big enough to see from a bed, few enough to hold in mind, and in four directions — so a head can point.</p></div>
+        <div class="cl-line"><span class="ico"><i data-sf="lock.fill"></i></span><p>Free, because a voice should not be a subscription. Private by design: no account, no analytics, nothing leaves the device.</p></div>
+        <div class="cl-line"><span class="ico"><i data-sf="book.fill"></i></span><p>Open source, so anyone can check it, translate it and keep it alive.</p></div>
+        <div class="cl-line"><span class="ico"><i data-sf="clock.fill"></i></span><p>Four choices also fit an Apple Watch face — the next place this voice should go.</p></div>
+      </div>
+      <div class="cl-buttons">
+        <div class="stopbtn prominent lit"><i data-sf="bubble.left.and.bubble.right.fill"></i><b>Keep talking</b></div>
+        <div class="stopbtn"><i data-sf="arrow.counterclockwise"></i><b>Start again</b></div>
+      </div>
+    </template>
+    <div class="cl-stack" id="stack"></div>
+    <div class="cl-beside" id="beside"></div>
+  </main>
+</div>
+<script>
+  // Both layouts get the same content; kit.js then swaps their icons.
+  for (const id of ["stack", "beside"]) {
+    document.getElementById(id).appendChild(document.getElementById("lines").content.cloneNode(true));
+  }
+</script>
+<script src="../kit/icons.js"></script><script src="../kit/kit.js"></script><script src="compass.js"></script>
+<script>
+  Compass.ready(() => {
+    const step = document.querySelector(".step.closing").getBoundingClientRect().height;
+    const stack = document.getElementById("stack"), beside = document.getElementById("beside");
+    const fitsStack = stack.getBoundingClientRect().height <= step + 0.5;
+    window.__compassLog.push(`step ${step.toFixed(1)}pt; one column ${stack.getBoundingClientRect().height.toFixed(1)}pt; beside ${beside.getBoundingClientRect().height.toFixed(1)}pt`);
+    (fitsStack ? beside : stack).remove();
+  });
+</script>
+</body></html>

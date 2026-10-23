@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Words · Find a word</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<!-- Step 3: "Call my…" opened its blank, "Find a word" was chosen, then
+     "A person" and "Family". The Find panel replaces the starters, the words
+     and the strip (BoardScreen: board.findScreen != nil). Find a word scans
+     linearly — Older generation (2.1 s), then "My generation" now (1.4 s).
+     The guide's route is Person › Family › My generation › Wife, so the Next
+     tag is on "My generation" too. The breadcrumb is the whole trail, root
+     included. On a 1194 pt-wide iPad the panel has six slots per row
+     (findColumns), so three answers, Back and two empty slots share one row.
+     Nothing is dimmed: a linear scan enters no row. -->
+<body data-device="ipad" data-statusbar="dark">
+<div class="safe">
+  <div class="board">
+    <div class="topbar">
+      <div class="brand"><i data-sf="text.bubble.fill"></i><b>Holos Words</b></div>
+      <div class="spacer"></div>
+      <span class="langtoggle"><span class="on">EN</span><span>УКР</span></span>
+      <div class="roundicon"><i data-sf="gearshape.fill"></i></div>
+    </div>
+    <div class="inner">
+      <div class="goal">
+        <div class="kicker">Step 3 of 4 · Find the word</div>
+        <div class="goaltext" data-fit="0.6" data-lines="2">Say: “Please call my wife.”</div>
+        <div class="help" data-fit="0.7" data-lines="2">“Wife” is not on the board: no board holds every word. Choose “Call my…”, then “Find a word”, and describe her instead of naming her.</div>
+      </div>
+
+      <div class="scanrow">
+        <div class="sbar">
+          <div class="sentence">
+            <div class="stemrow"><span class="stem" data-fit="0.5">Call my</span><span class="blank" style="width:150px"></span></div>
+          </div>
+          <div class="ctls">
+            <div class="msg-ctl prominent"><i data-sf="speaker.wave.2.fill"></i><b data-fit="0.7" data-lines="2">Speak</b></div>
+            <div class="msg-ctl"><i data-sf="delete.left.fill"></i><b data-fit="0.7" data-lines="2">Delete last</b></div>
+            <div class="msg-ctl"><i data-sf="xmark"></i><b data-fit="0.7" data-lines="2">Clear</b></div>
+            <div class="backpill"><i data-sf="arrow.uturn.backward"></i><b data-fit="0.6">Go back</b></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="findpanel">
+        <div class="crumb" data-fit="0.6">Find a word › A person › Family</div>
+        <div class="question" data-fit="0.5" data-lines="2">Which generation?</div>
+        <div class="frows">
+          <div class="r">
+            <div class="fcell k-people"><i data-sf="figure.stand"></i><b data-fit="0.5" data-lines="2">Older generation</b></div>
+            <div class="guided">
+              <div class="fcell k-people lit"><i data-sf="person.2.fill"></i><b data-fit="0.5" data-lines="2">My generation</b></div>
+              <span class="nexttag"><i data-sf="arrow.down"></i>Next</span>
+            </div>
+            <div class="fcell k-people"><i data-sf="figure.and.child.holdinghands"></i><b data-fit="0.5" data-lines="2">Younger generation</b></div>
+            <div class="cell backcell"><i data-sf="arrow.uturn.backward"></i><b data-fit="0.6">Go back</b></div>
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../kit/icons.js"></script><script src="icons-words.js"></script><script src="../kit/kit.js"></script><script src="fit.js"></script>
+</body></html>
