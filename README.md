@@ -5,10 +5,10 @@ adults who have lost speech through stroke, brain injury or war trauma — peopl
 able to type, read easily, or tap a small screen. Every part of it works with **one switch**: a tap
 anywhere, the Space or Enter key, any game-controller button, or a deliberate turn of the head.
 
-This repository holds **five prototypes** of the Swift Student Challenge 2027 app playground. Each
+This repository holds **six prototypes** of the Swift Student Challenge 2027 app playground. Each
 is a complete answer to the same brief, written to run as is (none has been compiled yet; see
 below), built on the same shared engine, so that the concept can be chosen by trying them rather
-than by imagining them.
+than by imagining them. The sixth combines two of the first five.
 
 | Prototype | The idea in one line |
 | --- | --- |
@@ -17,10 +17,12 @@ than by imagining them.
 | [Holos Room](Prototypes/HolosRoom.md) | Point at the world: an illustrated room is the board, and the scan sweeps a spotlight across it. |
 | [Holos Compass](Prototypes/HolosCompass.md) | Four huge choices at the compass points — and the head can point at them, no scanning at all. |
 | [Holos Words](Prototypes/HolosWords.md) | Find the word: sentence starters, and a way to *describe* a word you cannot recall. |
+| [Holos Bedside + Grid](Prototypes/HolosBedsideGrid.md) | Bedside's conversation first, and Grid's whole board one press away — and home, when nobody is asking. |
 
 **[PROTOTYPES.md](PROTOTYPES.md)** compares them side by side and suggests what to look for, and
-**[design/](design/README.md)** shows each one's key screens as design mockups, redrawn from the
-code before anything has been built.
+**[design/](design/README.md)** shows the first five's key screens as design mockups, redrawn from
+the code before anything has been built. The sixth has a playable browser sketch instead:
+[design/HolosBedsideGrid/sketch.html](design/HolosBedsideGrid/sketch.html).
 
 ## Running a prototype
 
@@ -79,7 +81,8 @@ Prototypes/
   <Name>.md             What the prototype is, who it serves, its 3-minute flow and timing
 design/
   <Name>/               Design mockups of one prototype's key screens (HTML, rendered to PNG)
-  shared/               The Settings sheet all five share
+  HolosBedsideGrid/     A playable browser sketch of the sixth prototype
+  shared/               The Settings sheet all six share
   kit/                  HTML and CSS stand-ins for Core's views, and the renderer
 tools/sync-core.sh      Copies Shared/HolosCore into every prototype's Core/
 ```

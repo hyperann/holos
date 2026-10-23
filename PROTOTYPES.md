@@ -1,40 +1,44 @@
 # Choosing a Holos
 
-Five prototypes, one brief. Each is a complete app playground with the same four-step judged
+Six prototypes, one brief. Each is a complete app playground with the same four-step judged
 experience — feel the problem, give one press a voice, see how the board helps with aphasia,
 hear it in Ukrainian (Compass swaps step 3 for head pointing and moves aphasia into its
-closing) — and each answers the question *what should a Holos board be?* differently.
+closing) — and each answers the question *what should a Holos board be?* differently. The
+sixth, Bedside + Grid, was built after the first five, to combine the two that were hardest to
+choose between.
 
 They all run on the same shared engine (`Shared/HolosCore`), so the *feel* of a switch press,
 the voices, the haptics, the settings and the privacy model are identical. What differs is the
 board and the story around it, which is exactly what is being chosen.
 
-> None of the five has been compiled yet (there was no Swift toolchain where they were written).
+> None of the six has been compiled yet (there was no Swift toolchain where they were written).
 > Every timing below is an estimate from counting scan steps at the default 1.4 s per step plus
 > reading time, taken from each prototype's own doc. Try them on a device before trusting any of it.
 
-To see the five before building them, **[design/README.md](design/README.md)** redraws each
-judged flow from its code as design mockups (not device screenshots), and
-[design/FINDINGS.md](design/FINDINGS.md) lists the layout problems that redraw turned up.
+To see the first five before building them, **[design/README.md](design/README.md)** redraws
+each judged flow from its code as design mockups (not device screenshots), and
+[design/FINDINGS.md](design/FINDINGS.md) lists the layout problems that redraw turned up. The
+sixth can be played in a browser instead:
+[design/HolosBedsideGrid/sketch.html](design/HolosBedsideGrid/sketch.html).
 
 ## At a glance
 
-| | [Grid](Prototypes/HolosGrid.md) | [Bedside](Prototypes/HolosBedside.md) | [Room](Prototypes/HolosRoom.md) | [Compass](Prototypes/HolosCompass.md) | [Words](Prototypes/HolosWords.md) |
-| --- | --- | --- | --- | --- | --- |
-| **The board is…** | a topic grid with quick phrases | a chat: the carer asks, the board answers | an illustrated ward and living room | four choices at the compass points | sentence starters and a word finder |
-| **Scanning** | row, then cell | one answer at a time (≤ 11 stops, 12 with Show me); row, then cell on the "Something else" board | object, then a ring of phrases | a ring of 6–7 stops per level | row, then cell; linear in Find a word |
-| **Best for** | Mykola; therapists who know grids | Yuriy and Mykola; carers | Yuriy | Oleksandr; low vision; from a bed | Yuriy; therapists |
-| **Weakest for** | anyone needing speed | starting a conversation unprompted | broad or new sentences; low vision | broad vocabulary | Mykola (reading-heavy); slow by head switch |
-| **Head control** | head turn = switch | head turn = switch | head turn = switch | **head points directly**, no scan (step 3 panel and free board; in step 2 a head turn is the switch) | head turn = switch |
-| **Vocabulary in the prototype** | 60 cells + 5 quick phrases | 7 answer sets (4–6 answers each, plus Yes · No · Not sure · Something else) + a 3-topic × 8-word mini board | about 45 phrases across 2 rooms | about 30 finished sentences in a tree | 6 starters × 8 words + Find a word |
-| **Novelty for judges** | lowest, by design | high (story and emotion) | highest (visual) | high (head pointing) | high (language insight) |
-| **Judged flow (estimate)** | ~2:11 | ~2:22 (2:35 with a missed pass) | ~2:19 (2:42 likely) | ~2:03–2:32 (~2:24–2:53 with head pointing tried) | ~2:44 (up to ~3:00) |
-| **Own code** (Swift, excluding Core/ and Package.swift) | 20 files, ~3,700 lines | 22 files, ~3,800 lines | 29 files, ~4,700 lines | 25 files, ~4,200 lines | 26 files, ~3,800 lines |
-| **Screens** (design mockups) | [8](design/README.md#holos-grid) | [8](design/README.md#holos-bedside) | [7](design/README.md#holos-room) | [7](design/README.md#holos-compass) | [8](design/README.md#holos-words) |
+| | [Grid](Prototypes/HolosGrid.md) | [Bedside](Prototypes/HolosBedside.md) | [Room](Prototypes/HolosRoom.md) | [Compass](Prototypes/HolosCompass.md) | [Words](Prototypes/HolosWords.md) | [Bedside + Grid](Prototypes/HolosBedsideGrid.md) |
+| --- | --- | --- | --- | --- | --- | --- |
+| **The board is…** | a topic grid with quick phrases | a chat: the carer asks, the board answers | an illustrated ward and living room | four choices at the compass points | sentence starters and a word finder | the chat and its answers, with the whole grid behind "Something else" |
+| **Scanning** | row, then cell | one answer at a time (≤ 11 stops, 12 with Show me); row, then cell on the "Something else" board | object, then a ring of phrases | a ring of 6–7 stops per level | row, then cell; linear in Find a word | one answer at a time, as Bedside; row, then cell on the whole board |
+| **Best for** | Mykola; therapists who know grids | Yuriy and Mykola; carers | Yuriy | Oleksandr; low vision; from a bed | Yuriy; therapists | Yuriy and Mykola; carers; starting a conversation |
+| **Weakest for** | anyone needing speed | starting a conversation unprompted | broad or new sentences; low vision | broad vocabulary | Mykola (reading-heavy); slow by head switch | long, specific sentences (the grid is as slow as Grid's) |
+| **Head control** | head turn = switch | head turn = switch | head turn = switch | **head points directly**, no scan (step 3 panel and free board; in step 2 a head turn is the switch) | head turn = switch | head turn = switch |
+| **Vocabulary in the prototype** | 60 cells + 5 quick phrases | 7 answer sets (4–6 answers each, plus Yes · No · Not sure · Something else) + a 3-topic × 8-word mini board | about 45 phrases across 2 rooms | about 30 finished sentences in a tree | 6 starters × 8 words + Find a word | Bedside's 7 answer sets + Grid's 60 cells and 5 quick phrases |
+| **Novelty for judges** | lowest, by design | high (story and emotion) | highest (visual) | high (head pointing) | high (language insight) | high (Bedside's story, with the full board behind it) |
+| **Judged flow (estimate)** | ~2:11 | ~2:22 (2:35 with a missed pass) | ~2:19 (2:42 likely) | ~2:03–2:32 (~2:24–2:53 with head pointing tried) | ~2:44 (up to ~3:00) | ~2:35 (2:48 with a missed pass) |
+| **Own code** (Swift, excluding Core/ and Package.swift) | 20 files, ~3,700 lines | 22 files, ~3,800 lines | 29 files, ~4,700 lines | 25 files, ~4,200 lines | 26 files, ~3,800 lines | 29 files, ~5,400 lines |
+| **Screens** (design mockups) | [8](design/README.md#holos-grid) | [8](design/README.md#holos-bedside) | [7](design/README.md#holos-room) | [7](design/README.md#holos-compass) | [8](design/README.md#holos-words) | none yet; a [playable sketch](design/HolosBedsideGrid/sketch.html) |
 
 The shared engine adds 27 files and about 3,400 lines to each.
 
-## The five, in a paragraph each
+## The six, in a paragraph each
 
 **Holos Grid — the board, as specified.** Your description built faithfully: a message bar, a
 row of urgent quick phrases that speak at once, six adult topic boards, row-column scanning with
@@ -79,7 +83,17 @@ first letter as a cue, in the spirit of semantic feature analysis. Step 4 shows 
 is hard in Ukrainian: every starter-and-word pair stores its own whole inflected sentence,
 because «Подзвоніть моїй дружині» cannot be built by concatenation. It is the most
 language-rich and most clearly adult prototype, and the most reading-heavy; its timing is the
-tightest of the five.
+tightest of the six.
+
+**Holos Bedside + Grid — ask first, the whole board behind it.** Bedside's story and
+conversation screen, with Bedside's small "Something else" board replaced by Holos Grid's whole
+one, in Bedside's palette. When someone asks, the board still offers only the answers that fit;
+when the answer isn't there, one press opens every topic, the quick phrases and a message to
+build, and the same terracotta tag leads across it (in step 3: the topics row, Family, Wife,
+Speak). After the story nobody has to ask first: the whole board is home, and a carer's question
+card brings the fitting answers up over it until they are used. It keeps Bedside's emotional arc
+and removes its two main risks, at the price of a longer step 3 (seven presses) and the most
+code of the six.
 
 ## What to look for when you try them
 
@@ -99,7 +113,7 @@ to EN (reset keeps the language on purpose) — so every prototype is timed from
 5. **Ask which one you would want a judge to remember tomorrow** — and which one a ward in Kyiv
    would actually use next year. If those are different prototypes, that is useful to know.
 
-## Things that are the same in all five
+## Things that are the same in all six
 
 - One switch completes everything: tap anywhere (on the boards it presses on touch-down, for
   tremor; on Grid's reading screens and on scrolling text in Bedside, Room and Words a tap presses
@@ -116,7 +130,8 @@ to EN (reset keeps the language on purpose) — so every prototype is timed from
 - Settings for scan speed, ignoring repeat presses, auditory prompts, head-turn angle and hold
   time, speech rate, vibration and sound. Opening Settings holds every press and stops the scan
   where it is. While scanning, Clear needs a second press ("No, keep it" lights first); a finger
-  tap on Clear clears at once, and Bedside has no message to clear.
+  tap on Clear clears at once, and Bedside has no message to clear (Bedside + Grid has one, on
+  its whole board).
 - No account, no analytics, no network. The camera, when asked for, is read on the device and
   nothing is recorded.
 
@@ -126,17 +141,17 @@ Because everything shares one engine, the concepts are not mutually exclusive. S
 combinations follow naturally from the docs:
 
 - **Bedside + Grid:** the conversation as the front door, the full grid as "Something else".
-  Bedside already contains a small version of this.
+  Now built as the sixth prototype, [Holos Bedside + Grid](Prototypes/HolosBedsideGrid.md).
 - **Any board + Compass's head pointing:** `Board/HeadPointer.swift` turns calibrated yaw and
   pitch into four directions. Any board that offers four choices at a time could use it.
-- **Words' frame-by-word storage everywhere:** all five already store each finished sentence
+- **Words' frame-by-word storage everywhere:** all six already store each finished sentence
   whole in both languages; Words goes further and stores a separate whole sentence for every
   starter-and-word pair (`SentenceFrame`), the model any board that combines two choices will
   need in Ukrainian.
 - **Room's photo-first families:** in the real app, a person's own family photos could be the
   "people" level of any board.
 
-## Known gaps across all five
+## Known gaps across all six
 
 - Never compiled. Expect the first Xcode build of each to show a few errors to fix.
 - The SF Symbols are placeholders for ARASAAC pictograms.

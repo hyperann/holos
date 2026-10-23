@@ -1,0 +1,2378 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- A playable browser sketch of Holos Bedside + Grid, written alongside the Swift prototype
+     (Prototypes/HolosBedsideGrid.swiftpm) rather than generated from it. Open it in any browser.
+     Icons: Phosphor Icons (MIT), see ../kit/Phosphor-LICENSE.txt. -->
+<title>Holos Bedside + Grid</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap">
+<style>
+/* Layout: a quiet page around one large device screen; the screen keeps the app's own light palette. */
+:root {
+  --page-bg: #E8EAED;
+  --page-fg: #16191E;
+  --page-muted: #4A515C;
+  --page-line: #C9CED6;
+  --page-panel: #FFFFFF;
+  --page-key: #FFCC00;
+  --page-key-ink: #16191E;
+  --page-display: "Nunito", ui-rounded, "Inter", system-ui, sans-serif;
+  --page-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --page-bg: #111317; --page-fg: #ECEEF1; --page-muted: #A7AEB9; --page-line: #2E333B; --page-panel: #1B1E23;
+    --page-key: #FFCC00; --page-key-ink: #111317; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --page-bg: #111317; --page-fg: #ECEEF1; --page-muted: #A7AEB9; --page-line: #2E333B; --page-panel: #1B1E23;
+  --page-key: #FFCC00; --page-key-ink: #111317; color-scheme: dark;
+}
+
+html, body { height: auto; }
+body {
+  background: var(--page-bg); color: var(--page-fg); font-family: var(--page-body); font-size: 15px; line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+.page {
+  max-width: 1320px; margin: 0 auto; padding-block: 20px 28px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex; flex-direction: column; gap: 14px;
+}
+.intro { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 10px 24px; }
+.intro .words { min-width: 0; flex: 1 1 520px; max-width: 760px; }
+.intro h1 { margin: 0; font: 800 28px/1.15 var(--page-display); letter-spacing: -0.01em; text-wrap: balance; }
+.intro p { margin: 4px 0 0; color: var(--page-muted); text-wrap: pretty; }
+.howto { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-weight: 600; }
+.key {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 58px; height: 30px; padding: 0 10px;
+  border-radius: 9px; background: var(--page-key); color: var(--page-key-ink); font: 800 14px/1 var(--page-display);
+  box-shadow: inset 0 0 0 2px #000;
+}
+.controls { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+.seg { display: inline-flex; align-items: center; gap: 6px; }
+.seg > .label { font-size: 13px; font-weight: 600; color: var(--page-muted); }
+.seg .opts { display: inline-flex; padding: 3px; border-radius: 10px; background: var(--page-panel); box-shadow: inset 0 0 0 1px var(--page-line); }
+.seg button, .restart {
+  appearance: none; border: 0; background: transparent; color: var(--page-fg); font: 600 13px/1 var(--page-body);
+  padding: 8px 10px; border-radius: 8px; cursor: pointer; min-height: 32px;
+}
+.seg button[aria-pressed="true"] { background: var(--page-fg); color: var(--page-bg); }
+.restart { background: var(--page-panel); box-shadow: inset 0 0 0 1px var(--page-line); }
+.seg button:focus-visible, .restart:focus-visible { outline: 2px solid var(--page-key); outline-offset: 2px; }
+.stage { position: relative; width: 100%; overflow: hidden; }
+.device {
+  position: absolute; top: 0; left: 50%; transform-origin: top center; padding: 14px; border-radius: 40px;
+  background: #0D0E10; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28), inset 0 0 0 1px #2A2C31;
+}
+.device.phone { padding: 12px; border-radius: 56px; }
+.notes { display: flex; flex-wrap: wrap; gap: 8px 28px; color: var(--page-muted); font-size: 13px; }
+.notes p { margin: 0; max-width: 620px; min-width: 0; flex: 1 1 320px; }
+.notes strong { color: var(--page-fg); }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+
+/* ---------- The app: Holos Bedside's light palette, as the Swift app forces .light ---------- */
+.app {
+  --ink: #12141A; --highlight: #FFCC00; --keyline: #000000;
+  --bg: #FCF5E8; --chatbg: #F7EBD9; --card: #FFFCF7; --terracotta: #B85438; --rust: #8F3821;
+  --peach: #FFDBC2; --softink: #594A42; --outline: #CCAD99; --shadow: rgba(115, 64, 38, 0.14);
+  --social-tint: #FCD6E6; --social-ink: #9E1A5C; --people-tint: #FFED9E; --people-ink: #7A5C00;
+  --action-tint: #C7EDC2; --action-ink: #1F6B24; --describing-tint: #C7E0FF; --describing-ink: #1A4D9E;
+  --thing-tint: #FFD9AD; --thing-ink: #994D05; --question-tint: #E0D1FA; --question-ink: #5C339E;
+  --urgent-tint: #FFC2BD; --urgent-ink: #A81414; --control-tint: #E0E3E8; --control-ink: #40454D;
+  --rounded: "Nunito", ui-rounded, "Inter", system-ui, sans-serif;
+  --sf: "Inter", system-ui, -apple-system, sans-serif;
+  position: relative; width: 1194px; height: 790px; overflow: hidden; border-radius: 22px;
+  background: var(--bg); color: var(--ink); font-family: var(--rounded); font-size: 17px; line-height: 1.3;
+  user-select: none; -webkit-user-select: none; touch-action: manipulation; color-scheme: light;
+  -webkit-tap-highlight-color: transparent;
+}
+.app.phone { width: 393px; height: 759px; border-radius: 44px; }
+.app *, .app *::before, .app *::after { box-sizing: border-box; }
+/* Zero specificity, so every component's own look wins over the reset. */
+:where(.app button) { appearance: none; border: 0; margin: 0; padding: 0; background: none; color: inherit; font: inherit; text-align: inherit; cursor: pointer; }
+.app.scanning button { cursor: default; }
+.k-social { --tint: var(--social-tint); --kind-ink: var(--social-ink); }
+.k-people { --tint: var(--people-tint); --kind-ink: var(--people-ink); }
+.k-action { --tint: var(--action-tint); --kind-ink: var(--action-ink); }
+.k-describing { --tint: var(--describing-tint); --kind-ink: var(--describing-ink); }
+.k-thing { --tint: var(--thing-tint); --kind-ink: var(--thing-ink); }
+.k-question { --tint: var(--question-tint); --kind-ink: var(--question-ink); }
+.k-urgent { --tint: var(--urgent-tint); --kind-ink: var(--urgent-ink); }
+.k-control { --tint: var(--control-tint); --kind-ink: var(--control-ink); }
+
+.sf { display: inline-block; width: 1em; height: 1em; vertical-align: -0.14em; flex: none; }
+.sf svg { width: 100%; height: 100%; display: block; overflow: visible; }
+
+/* Core's scanHighlight: 2 pt black, 7 pt yellow, 2 pt black inside the shape, lifted 1.04. */
+.lit { position: relative; transform: scale(1.04); z-index: 5; }
+.lit::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 6;
+  box-shadow: inset 0 0 0 2px var(--keyline), inset 0 0 0 9px var(--highlight), inset 0 0 0 11px var(--keyline);
+}
+.lit.nolift { transform: none; }
+.flash { position: absolute; inset: 0; pointer-events: none; z-index: 900; border-radius: inherit; opacity: 0;
+  box-shadow: inset 0 0 0 2px var(--keyline), inset 0 0 0 12px var(--highlight), inset 0 0 0 14px var(--keyline); }
+.flash.on { animation: flash 0.35s ease-out; }
+@keyframes flash { 0% { opacity: 0.9; } 100% { opacity: 0; } }
+
+.scr { position: absolute; inset: 16px; display: flex; flex-direction: column; gap: 14px; }
+.app.phone .scr { inset: 12px; gap: 10px; }
+
+/* ---------- Top bar ---------- */
+.topbar { flex: none; display: flex; align-items: flex-start; gap: 14px; }
+.topbar > .content { flex: 1; min-width: 0; }
+.topbar > .ctl { flex: none; display: flex; align-items: center; gap: 12px; }
+.app.phone .topbar { flex-direction: column; align-items: stretch; gap: 8px; }
+.app.phone .topbar > .ctl { order: -1; align-self: flex-end; }
+.langtoggle { position: relative; display: inline-flex; padding: 4px; background: #fff; border-radius: 999px; box-shadow: inset 0 0 0 2px var(--ink); }
+.langtoggle > span { font: 800 17px/1.2 var(--rounded); padding: 10px 14px; border-radius: 999px; color: var(--ink); }
+.langtoggle > span.on { background: var(--ink); color: #fff; }
+.app.phone .langtoggle > span { padding: 6px 11px; font-size: 15px; }
+.hdr { display: flex; flex-direction: column; gap: 6px; }
+.hdr .step { font: 800 15px/20px var(--rounded); color: var(--rust); }
+.hdr .title { font: 700 22px/28px var(--rounded); color: var(--ink); text-wrap: balance; }
+.hdr .detail { font: 400 17px/22px var(--rounded); color: var(--softink); }
+.hdr .how { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.hdr .how > span { display: inline-flex; align-items: center; gap: 6px; font: 600 15px/20px var(--rounded); color: var(--rust); }
+.app.phone .hdr .title { font-size: 19px; line-height: 24px; }
+.app.phone .hdr .detail { font-size: 15px; line-height: 20px; }
+.showme { position: relative; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 22px;
+  background: var(--rust); color: #fff; font: 700 17px/1 var(--rounded); }
+.ask { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.ask .lbl { font: 800 15px/20px var(--rounded); color: var(--rust); }
+.ask .chips { display: flex; gap: 10px; overflow-x: auto; padding: 4px 2px; scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent); }
+.ask .chips::-webkit-scrollbar { display: none; }
+.qchip { flex: none; display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 16px; border-radius: 999px;
+  background: var(--card); box-shadow: inset 0 0 0 1.5px var(--outline); font: 700 17px/1 var(--rounded); white-space: nowrap; }
+.qchip.on { background: var(--terracotta); color: #fff; }
+.qchip.act { background: var(--control-tint); color: var(--control-ink); box-shadow: none; }
+
+/* ---------- Split: chat beside (or above) the board ---------- */
+.body { flex: 1; min-height: 0; position: relative; display: flex; flex-direction: column; gap: 12px; }
+.split { flex: 1; min-height: 0; display: flex; gap: 16px; }
+.split > .chatcol { flex: none; width: 38%; position: relative; }
+.split > .boardcol { flex: 1; min-width: 0; position: relative; }
+.app.phone .split { flex-direction: column; gap: 10px; }
+.app.phone .split > .chatcol { width: auto; height: 20%; }
+.app.phone .split > .boardcol { flex: 1; min-height: 0; }
+
+.chat { position: absolute; inset: 0; background: var(--chatbg); border-radius: 28px; overflow-y: auto; scrollbar-width: thin; }
+.lines { display: flex; flex-direction: column; gap: 12px; padding: 16px; }
+.app.phone .lines { padding: 10px; gap: 8px; }
+.line { display: flex; align-items: flex-end; gap: 10px; }
+.line.partner::after { content: ""; flex: 1 0 36px; }
+.line.person::before { content: ""; flex: 1 0 36px; }
+.avatar { width: 46px; height: 46px; border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center;
+  background: var(--peach); box-shadow: inset 0 0 0 2px var(--rust); color: var(--rust); font-size: 20px; }
+.nbubble { min-width: 0; padding: 12px 16px; background: var(--card); color: var(--ink); font: 600 20px/25px var(--rounded);
+  border-radius: 22px 22px 22px 6px; box-shadow: inset 0 0 0 1px var(--outline), 0 3px 12px var(--shadow); }
+.pbubble { position: relative; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 12px 16px;
+  background: var(--terracotta); color: #fff; font: 700 20px/25px var(--rounded); border-radius: 22px 22px 6px 22px;
+  box-shadow: 0 3px 12px var(--shadow); }
+.pbubble > .sf { font-size: 22px; }
+.pbubble .facewrap { width: 30px; height: 30px; }
+.pbubble.lit::after { border-radius: 22px 22px 6px 22px; }
+.app.phone .avatar { width: 34px; height: 34px; font-size: 16px; }
+.app.phone .nbubble, .app.phone .pbubble { font-size: 16px; line-height: 21px; padding: 8px 12px; }
+.note { align-self: center; max-width: 100%; padding: 6px 14px; border-radius: 999px; text-align: center;
+  background: rgba(252, 245, 232, 0.8); color: var(--softink); font: italic 600 15px/20px var(--rounded); }
+.typing { display: inline-flex; gap: 6px; padding: 16px 18px; background: var(--card); border-radius: 22px 22px 22px 6px;
+  box-shadow: inset 0 0 0 1px var(--outline); }
+.typing > i { width: 9px; height: 9px; border-radius: 50%; background: var(--softink); opacity: 0.35; animation: dot 1.2s infinite; }
+.typing > i:nth-child(2) { animation-delay: 0.2s; } .typing > i:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dot { 0%, 60%, 100% { opacity: 0.25; } 30% { opacity: 0.9; } }
+
+/* ---------- Step 1: nothing to answer with ---------- */
+.emptyreply { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; gap: 18px; padding: 24px;
+  border-radius: 28px; background: rgba(142, 142, 147, 0.14); border: 2px dashed rgba(142, 142, 147, 0.5); transition: background-color 0.5s ease-out; }
+.emptyreply.knock { background: rgba(142, 142, 147, 0.32); transition: none; }
+.emptyreply > .yourturn { align-self: stretch; font: 700 22px/28px var(--rounded); color: var(--softink); }
+.emptyreply > .spacer { flex: 1 1 0; }
+.emptyreply > .handslash { font-size: 56px; color: rgba(89, 74, 66, 0.5); }
+.emptyreply > .msg { font: 600 20px/25px var(--rounded); color: var(--softink); text-align: center; }
+.cardlayer { position: absolute; inset: 0; z-index: 40; display: flex; align-items: center; justify-content: center; padding: 12px; }
+.cardlayer::before { content: ""; position: absolute; inset: 0; border-radius: 28px; background: rgba(0, 0, 0, 0.3); }
+.pcard { position: relative; width: 620px; max-width: 100%; max-height: 100%; overflow-y: auto; padding: 28px; border-radius: 30px;
+  background: var(--card); box-shadow: 0 8px 40px var(--shadow); display: flex; flex-direction: column; gap: 18px; }
+.pcard .ttl { display: flex; align-items: center; gap: 14px; }
+.pcard .disc { width: 60px; height: 60px; border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center;
+  background: var(--terracotta); color: #fff; font-size: 26px; }
+.pcard h2 { margin: 0; font: 700 34px/41px var(--rounded); color: var(--ink); text-wrap: balance; }
+.pcard p { margin: 0; font: 400 20px/25px var(--rounded); color: var(--softink); }
+.app.phone .pcard { padding: 20px; gap: 14px; }
+.app.phone .pcard h2 { font-size: 26px; line-height: 31px; }
+.app.phone .pcard p { font-size: 17px; line-height: 22px; }
+.bigbtn { position: relative; display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 72px; padding: 0 24px;
+  border-radius: 20px; background: var(--terracotta); color: #fff; font: 700 22px/28px var(--rounded); }
+.bigbtn.waiting { opacity: 0.6; }
+.bigbtn.peach { background: var(--peach); color: var(--ink); }
+
+/* ---------- Answers ---------- */
+.answers { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 14px; transition: opacity 0.25s; }
+.answers.waiting { opacity: 0.45; }
+.app.phone .answers { gap: 10px; }
+.qheader { flex: none; display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-radius: 18px;
+  background: rgba(255, 219, 194, 0.55); box-shadow: inset 0 0 0 1px rgba(204, 173, 153, 0.5); min-height: 52px; }
+.qheader > .sf { font-size: 27px; color: var(--rust); }
+.qheader > .q { flex: 1 1 auto; min-width: 0; font: 700 22px/28px var(--rounded); color: var(--ink); }
+.app.phone .qheader { padding: 8px 12px; min-height: 44px; }
+.app.phone .qheader > .q { font-size: 18px; line-height: 23px; }
+.agrid { flex: 1; min-height: 0; display: grid; gap: 14px; }
+.app.phone .agrid { gap: 10px; }
+.strip { flex: none; height: 84px; display: flex; gap: 12px; }
+.app.phone .strip { height: 72px; gap: 8px; }
+.strip > .acell { flex: 1 1 0; }
+.acell { position: relative; min-width: 0; min-height: 0; display: flex; flex-direction: column; gap: 10px; padding: 14px;
+  border-radius: 24px; background: var(--card); box-shadow: inset 0 0 0 1.5px rgba(204, 173, 153, 0.6), 0 4px 16px var(--shadow); }
+.acell.guide { box-shadow: inset 0 0 0 4px var(--terracotta), 0 4px 16px var(--shadow); }
+.acell > .art { flex: 1 1 0; min-height: 0; container-type: size; display: flex; align-items: center; justify-content: center; }
+.acell .disc { width: min(100cqw, 100cqh); height: min(100cqw, 100cqh); border-radius: 50%; flex: none;
+  display: flex; align-items: center; justify-content: center; background: var(--tint); color: var(--kind-ink); }
+.acell .disc > .sf { width: 61%; height: 61%; }
+.acell .disc.face { background: none; }
+.facewrap { display: block; flex: none; }
+.facewrap > svg { display: block; width: 100%; height: 100%; }
+.acell .disc.face > .facewrap { width: 100%; height: 100%; }
+.acell > .word { flex: none; font: 700 34px/41px var(--rounded); color: var(--ink); text-align: center; }
+.acell.compact { padding: 10px; }
+.acell.compact > .word { font-size: 20px; line-height: 25px; }
+.acell.h { flex-direction: row; align-items: stretch; gap: 14px; }
+.acell.h > .art { flex: none; width: 52px; }
+.acell.h > .word { flex: 1; min-width: 0; align-self: center; text-align: left; }
+.app.phone .acell { padding: 10px; gap: 6px; border-radius: 20px; }
+.app.phone .acell > .word { font-size: 22px; line-height: 27px; }
+.app.phone .acell.compact > .word { font-size: 16px; line-height: 20px; }
+.app.phone .acell.h { gap: 8px; }
+.app.phone .acell.h > .art { width: 36px; }
+.tag { position: absolute; top: 8px; right: 8px; z-index: 7; display: inline-flex; align-items: center; gap: 4px; padding: 6px 10px;
+  border-radius: 999px; white-space: nowrap; pointer-events: none; background: var(--rust); color: #fff;
+  box-shadow: inset 0 0 0 2px #fff; font: 800 15px/20px var(--rounded); }
+.tag .sf { font-size: 16px; }
+.tag.icon { padding: 6px; }
+.acell.compact > .tag { top: 4px; right: 4px; }
+.bodymap { flex: 1; min-height: 0; display: flex; gap: 14px; }
+.bodymap > .figure { flex: none; width: 200px; display: flex; align-items: center; justify-content: center; }
+.bodymap > .figure svg { display: block; }
+.bodymap > .agrid { flex: 1; min-width: 0; }
+.app.phone .bodymap > .figure { width: 110px; }
+.nurse-answering { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 8; padding: 12px 20px; border-radius: 999px;
+  background: var(--card); box-shadow: 0 4px 16px var(--shadow); font: 700 20px/25px var(--rounded); white-space: nowrap; }
+
+/* ---------- The whole board (Holos Grid, in Bedside's palette) ---------- */
+.boardmode { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 10px; }
+.bstrip { flex: none; display: flex; align-items: center; gap: 12px; padding: 6px 6px 6px 16px; border-radius: 18px; min-height: 56px;
+  background: rgba(255, 219, 194, 0.55); box-shadow: inset 0 0 0 1px rgba(204, 173, 153, 0.5); }
+.bstrip > .sf { font-size: 25px; color: var(--rust); }
+.bstrip > .q { flex: 1 1 auto; min-width: 0; font: 700 20px/25px var(--rounded); color: var(--ink); }
+.bstrip > .q .who { color: var(--rust); }
+.backans { position: relative; flex: none; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 14px;
+  background: var(--control-tint); color: var(--control-ink); font: 700 17px/1 var(--rounded); white-space: nowrap; }
+.backans.guide { box-shadow: inset 0 0 0 4px var(--terracotta); }
+.app.phone .bstrip { padding: 4px 4px 4px 10px; min-height: 48px; gap: 8px; }
+.app.phone .bstrip > .q { font-size: 16px; line-height: 20px; }
+.app.phone .backans { padding: 0 10px; font-size: 14px; }
+.board { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; gap: 8px; padding: 14px 2px 4px; scrollbar-width: none; }
+.board::-webkit-scrollbar { display: none; }
+.app.phone .board { gap: 6px; padding-top: 12px; }
+.srow { position: relative; flex: none; padding: 8px; border-radius: 24px; transition: opacity 0.15s ease-out; }
+.srow > .in { display: flex; gap: 12px; height: 100%; }
+.srow.entered { background: rgba(255, 204, 0, 0.16); box-shadow: inset 0 0 0 4px var(--highlight); }
+.srow.guiderow { box-shadow: inset 0 0 0 4px var(--terracotta); }
+.srow.ringed::after { content: ""; position: absolute; inset: 0; border-radius: 24px; pointer-events: none; z-index: 6;
+  box-shadow: inset 0 0 0 2px var(--keyline), inset 0 0 0 9px var(--highlight), inset 0 0 0 11px var(--keyline); }
+.srow.dim { opacity: 0.45; }
+.srow > .rowtag { position: absolute; top: -13px; right: 18px; left: auto; z-index: 8; }
+.quickrow { height: 104px; }
+.topicsrow { height: 72px; }
+.prow { flex: 1 1 116px; min-height: 116px; }
+.app.phone .srow > .in { gap: 6px; }
+.app.phone .quickrow { height: 92px; }
+.app.phone .topicsrow { height: 114px; }
+.app.phone .topicsrow > .in { flex-direction: column; }
+.app.phone .topicsrow .tline { display: flex; gap: 6px; flex: 1 1 0; min-height: 0; }
+.app.phone .prow { flex: none; height: 100px; }
+.topicsrow .tline { display: flex; gap: 12px; flex: 1 1 0; min-width: 0; }
+.slot { position: relative; flex: 1 1 0; min-width: 0; display: flex; }
+.slot > * { flex: 1 1 auto; min-width: 0; }
+.in > .cell { flex: 1 1 0; }
+.in > .backcell, .tline > .backcell { flex: 0 0 100px; }
+.app.phone .in > .backcell { flex: 0 0 56px; }
+.app.phone .tline > .backcell { flex: 1 1 0; }
+.cell { position: relative; display: flex; flex-direction: column; gap: 6px; padding: 10px; border-radius: 18px; min-width: 0; min-height: 0;
+  background: var(--tint, var(--control-tint)); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--kind-ink, var(--control-ink)) 35%, transparent); }
+/* The picture takes what the label leaves, never more: it must not set the row's height. */
+.cell > .sf { flex: 1 1 0; width: 100%; height: 0; min-height: 0; padding: 0 8px; color: var(--kind-ink); }
+.cell > b { flex: none; display: block; font: 700 20px/1.18 var(--rounded); color: var(--ink); text-align: center; }
+.app.phone .cell { padding: 6px; gap: 3px; border-radius: 14px; }
+.app.phone .cell > .sf { padding: 0 4px; }
+.backcell { --tint: var(--control-tint); --kind-ink: var(--control-ink); justify-content: center; align-items: center; color: var(--control-ink); box-shadow: none; padding: 8px; }
+.backcell > .sf { flex: none; width: 30px; height: 30px; padding: 0; }
+.backcell > b { font: 700 17px/1.2 var(--rounded); color: var(--control-ink); white-space: nowrap; }
+.app.phone .backcell > .sf { width: 22px; height: 22px; }
+.app.phone .backcell > b { font-size: 12px; }
+.cell > .sf.qspk { position: absolute; top: 10px; right: 10px; flex: none; width: 15px; height: 15px; padding: 0; color: var(--urgent-ink); z-index: 4; }
+.tab, .langcell { position: relative; flex: 1 1 0; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0 8px;
+  border-radius: 16px; background: var(--card); box-shadow: inset 0 0 0 1.5px var(--outline); color: var(--ink); font: 700 17px/1.15 var(--rounded); }
+.tab > .sf { font-size: 20px; color: var(--rust); }
+.tab > span { min-width: 0; text-align: center; }
+.tab.sel { background: var(--terracotta); color: #fff; box-shadow: none; }
+.tab.sel > .sf { color: #fff; }
+.tab.stack { flex-direction: column; gap: 2px; }
+.app.phone .tab, .app.phone .langcell { font-size: 13px; gap: 4px; padding: 0 4px; border-radius: 12px; }
+.app.phone .tab > .sf { font-size: 15px; }
+.langcell > .sf { font-size: 21px; color: var(--rust); }
+.langcell .chips { display: flex; gap: 2px; }
+.langcell .chips > span { font: 800 16px/1 var(--rounded); padding: 6px 9px; border-radius: 999px; }
+.langcell .chips > span.on { background: var(--ink); color: #fff; }
+.app.phone .langcell .chips > span { font-size: 12px; padding: 4px 6px; }
+.app.phone .langcell > .sf { display: none; }
+.theader { flex: none; height: 30px; padding: 0 8px; display: flex; align-items: center; gap: 10px; color: var(--rust); }
+.theader > .sf { font-size: 24px; }
+.theader > b { font: 700 22px/1.2 var(--rounded); white-space: nowrap; }
+.app.phone .theader { height: 26px; }
+.app.phone .theader > b { font-size: 18px; }
+.msgbar { position: relative; flex: none; display: flex; align-items: center; gap: 12px; padding: 10px; background: #fff; border-radius: 22px;
+  box-shadow: inset 0 0 0 1.5px rgba(60, 60, 67, 0.21); }
+.msgbar.entered { box-shadow: inset 0 0 0 4px var(--highlight); }
+.msgbar.dim { opacity: 0.45; }
+.msgbar.guiderow { box-shadow: inset 0 0 0 4px var(--terracotta); }
+.msgbar > .rowtag { position: absolute; top: -13px; left: 18px; right: auto; z-index: 8; }
+.msg-sentence { flex: 1; min-width: 0; min-height: 64px; display: flex; align-items: center; gap: 8px; padding: 0 4px; overflow: hidden; white-space: nowrap; }
+.msg-empty { font: 400 20px/1.2 var(--sf); color: rgba(60, 60, 67, 0.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 999px; background: var(--tint); flex: none; }
+.chip > .sf { color: var(--kind-ink); font-size: 18px; }
+.chip > b { font: 600 20px/1.1 var(--rounded); color: var(--ink); }
+.msg-ctl { position: relative; flex: none; width: 88px; min-height: 64px; padding: 6px 4px; border-radius: 16px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; background: var(--control-tint); color: var(--ink); }
+.msg-ctl > .sf { font-size: 24px; }
+.msg-ctl > b { font: 700 12px/1.15 var(--rounded); text-align: center; }
+.msg-ctl.prominent { background: var(--ink); color: #fff; }
+.msg-ctl.back { width: 72px; color: var(--control-ink); }
+.msg-ctl > .tag { top: -14px; right: 50%; transform: translateX(50%); }
+/* A phone: the sentence large, over a strip of the same controls. */
+.cmsg { flex: none; display: flex; flex-direction: column; gap: 6px; }
+.cmsg > .sent { height: 44px; display: flex; align-items: center; padding: 0 12px; border-radius: 14px; background: #fff;
+  font: 600 16px/1.15 var(--rounded); overflow: hidden; }
+.cmsg > .sent.empty { color: rgba(60, 60, 67, 0.6); font-weight: 400; }
+.cmsg > .ctls { display: flex; gap: 6px; }
+.cmsg .msg-ctl { flex: 1 1 0; width: auto; min-width: 54px; min-height: 60px; border-radius: 14px; }
+.cmsg .msg-ctl > .sf { font-size: 20px; }
+.cmsg .msg-ctl > b { font-size: 11px; }
+
+/* ---------- Head-turn panel (Core's HeadTryPanel, browser version) ---------- */
+.panellayer { position: absolute; inset: 0; z-index: 40; display: flex; align-items: center; justify-content: center; padding: 12px; }
+.panellayer::before { content: ""; position: absolute; inset: 0; border-radius: 28px; background: rgba(0, 0, 0, 0.35); }
+.headpanel { position: relative; width: 640px; max-width: 100%; padding: 24px; border-radius: 26px; background: #fff;
+  box-shadow: inset 0 0 0 1.5px rgba(60, 60, 67, 0.18); display: flex; flex-direction: column; gap: 18px; color: var(--ink); }
+.headpanel h3 { margin: 0; display: flex; align-items: center; gap: 10px; font: 700 22px/1.2 var(--rounded); }
+.headpanel h3 .sf { font-size: 24px; }
+.headpanel p { margin: 0; font: 400 20px/1.35 var(--sf); }
+.app.phone .headpanel p { font-size: 16px; }
+.panelbtn { position: relative; min-height: 64px; padding: 0 18px; border-radius: 16px; background: var(--control-tint);
+  display: flex; align-items: center; justify-content: center; gap: 10px; font: 700 20px/1.15 var(--rounded); color: var(--ink); }
+
+/* ---------- Step 4: the replay ---------- */
+.transcript { flex: 1; min-height: 0; position: relative; }
+.replaystatus { flex: none; display: flex; align-items: center; gap: 16px; }
+.replaystatus > .label { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; color: var(--softink); font: 600 17px/22px var(--rounded); }
+.replaystatus > .bigbtn { flex: none; min-width: 180px; min-height: 68px; padding: 0 28px; }
+.voicenotice { flex: none; display: flex; gap: 12px; align-items: flex-start; padding: 14px; border-radius: 16px; background: var(--people-tint); color: var(--ink); }
+.voicenotice > .sf { font-size: 22px; }
+.voicenotice b { display: block; font: 600 17px/1.25 var(--sf); }
+.voicenotice span { font: 400 15px/1.35 var(--sf); }
+
+/* ---------- Closing ---------- */
+.closing { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; gap: 18px; }
+.closingbar { align-self: stretch; flex: none; display: flex; justify-content: flex-end; }
+.cscroll { align-self: stretch; flex: 1; min-height: 0; overflow-y: auto; display: flex; justify-content: center; align-items: flex-start; padding: 4px; }
+.ccard { width: 760px; max-width: 100%; display: flex; flex-direction: column; gap: 18px; padding: 28px; border-radius: 30px;
+  background: var(--card); box-shadow: 0 6px 28px var(--shadow); }
+.ccard h2 { margin: 0; font: 700 34px/41px var(--rounded); color: var(--ink); text-wrap: balance; }
+.para { display: flex; align-items: flex-start; gap: 14px; }
+.para > .sf { width: 34px; font-size: 24px; height: 25px; color: var(--rust); }
+.para > p { margin: 0; flex: 1; min-width: 0; font: 400 20px/25px var(--rounded); color: var(--ink); }
+.ccard .source { font: 400 13px/18px var(--rounded); color: var(--softink); }
+.choices { flex: none; width: 760px; max-width: 100%; height: 96px; display: flex; gap: 16px; }
+.choices > .bigbtn { flex: 1 1 0; border-radius: 22px; }
+.app.phone .ccard { padding: 18px; gap: 12px; }
+.app.phone .ccard h2 { font-size: 24px; line-height: 29px; }
+.app.phone .para > p { font-size: 16px; line-height: 21px; }
+.app.phone .choices { height: 72px; gap: 10px; }
+.app.phone .choices > .bigbtn { font-size: 17px; padding: 0 10px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .typing > i { animation: none; opacity: 0.5; }
+  .flash.on { animation-duration: 0.01s; }
+}
+
+</style>
+<style>body { margin: 0; }</style>
+</head>
+<body>
+<div class="page">
+  <header class="intro">
+    <div class="words">
+      <h1>Holos Bedside + Grid</h1>
+      <p>The sixth Holos prototype, playable in the browser. When someone asks, the board offers only the answers that fit. When the answer isn't there, or nobody is asking, the whole board is one press away.</p>
+    </div>
+    <div class="howto"><span class="key">Space</span><span>or a tap on the screen is your one switch.</span></div>
+  </header>
+  <div class="controls" role="group" aria-label="Sketch settings">
+    <div class="seg"><span class="label" id="l-device">Device</span><span class="opts" role="group" aria-labelledby="l-device"><button type="button" id="o-ipad" data-opt="device" data-value="ipad">iPad</button><button type="button" id="o-iphone" data-opt="device" data-value="iphone">iPhone</button></span></div>
+    <div class="seg"><span class="label" id="l-mode">Choose by</span><span class="opts" role="group" aria-labelledby="l-mode"><button type="button" id="o-scan" data-opt="mode" data-value="scan">Switch</button><button type="button" id="o-touch" data-opt="mode" data-value="touch">Touch</button></span></div>
+    <div class="seg"><span class="label" id="l-speed">Time on each cell</span><span class="opts" role="group" aria-labelledby="l-speed"><button type="button" id="o-s2" data-opt="scanInterval" data-value="2">2 s</button><button type="button" id="o-s14" data-opt="scanInterval" data-value="1.4">1.4 s</button><button type="button" id="o-s1" data-opt="scanInterval" data-value="1">1 s</button></span></div>
+    <div class="seg"><span class="label" id="l-gender">Speak as</span><span class="opts" role="group" aria-labelledby="l-gender"><button type="button" id="o-man" data-opt="gender" data-value="m">A man</button><button type="button" id="o-woman" data-opt="gender" data-value="f">A woman</button></span></div>
+    <div class="seg"><span class="label" id="l-sound">Clicks</span><span class="opts" role="group" aria-labelledby="l-sound"><button type="button" id="o-on" data-opt="sound" data-value="true">On</button><button type="button" id="o-off" data-opt="sound" data-value="false">Off</button></span></div>
+    <button type="button" class="restart" id="restart">Start again</button>
+  </div>
+  <main class="stage" id="stage"><div class="device" id="device"><div class="app" id="app" role="application" aria-label="Holos Bedside + Grid"></div></div></main>
+  <div id="live" class="visually-hidden" aria-live="polite"></div>
+  <footer class="notes">
+    <p><strong>What changed from Bedside.</strong> “Something else” now opens Holos Grid's whole board: every topic, the urgent quick phrases and a message to build. After the story the whole board is home, so the person can start a conversation without being asked.</p>
+    <p><strong>A browser sketch, not the app.</strong> The Swift prototype is Prototypes/HolosBedsideGrid.swiftpm in this repository. Here there is no vibration and no head control, and speech uses this browser's voices: Ukrainian is spoken only if your device has a Ukrainian voice.</p>
+  </footer>
+</div>
+<script>
+/* Holos Bedside + Grid, in the browser.
+ *
+ * A sketch of Prototypes/HolosBedsideGrid.swiftpm: the same story, words and
+ * timings, with Core's scanner ported line by line, so the flow can be felt
+ * before the Swift is built. One switch: Space, Enter, or a tap on the screen.
+ */
+(function () {
+  "use strict";
+
+  // ===================================================================
+  // Settings and words
+  // ===================================================================
+
+  const settings = { language: "en", gender: "m", mode: "scan", scanInterval: 1.4, pressGap: 0.3, sound: true, device: "ipad" };
+
+  function B(en, uk, ukF) { return { en: en, uk: uk, ukF: ukF || null }; }
+  function T(b, lang) {
+    if (!b) return "";
+    const l = lang || settings.language;
+    if (l === "uk") return settings.gender === "f" && b.ukF ? b.ukF : b.uk;
+    return b.en;
+  }
+  function joined(list) {
+    const fem = list.some(function (b) { return b.ukF; });
+    return {
+      en: list.map(function (b) { return b.en; }).join(" "),
+      uk: list.map(function (b) { return b.uk; }).join(" "),
+      ukF: fem ? list.map(function (b) { return b.ukF || b.uk; }).join(" ") : null,
+    };
+  }
+  function sameWords(a, b) { return !!a && !!b && a.en === b.en && a.uk === b.uk; }
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; });
+  }
+  function quoted(b) { return B("“" + b.en + "”", "«" + b.uk + "»", b.ukF ? "«" + b.ukF + "»" : null); }
+
+  const C = {
+    step1: B("Step 1 of 4 · Feel the problem", "Крок 1 з 4 · Відчуйте проблему"),
+    step2: B("Step 2 of 4 · One switch, a whole conversation", "Крок 2 з 4 · Один перемикач — ціла розмова"),
+    step3: B("Step 3 of 4 · When the word won't come", "Крок 3 з 4 · Коли слова не йдуть"),
+    step4: B("Step 4 of 4 · Hear it in Ukrainian", "Крок 4 з 4 · Почуйте українською"),
+    problemSetup: B("Imagine a stroke has taken your words. You understand everything, but you cannot speak, and your right hand will not move. You have one button: tap anywhere, or press Space.",
+      "Уявіть, що інсульт забрав у вас слова. Ви все розумієте, але не можете говорити, а права рука не рухається. У вас є одна кнопка: торкніться будь-де або натисніть пробіл."),
+    yourTurn: B("Your turn", "Ваша черга"),
+    replyEmpty: B("Your answer would go here, if there were any way to give one.", "Тут була б ваша відповідь, якби її було як дати."),
+    pressedInVain: B("You pressed. There is nothing to choose.", "Ви натиснули, але обирати немає з чого."),
+    nurseGreeting: B("Good morning! How are you feeling?", "Доброго ранку! Як ви почуваєтеся?"),
+    nurseWaiting: B("…", "…"),
+    nurseTakeTime: B("Take your time.", "Не поспішайте."),
+    nurseLater: B("I'll come back later, then.", "Тоді я зайду пізніше."),
+    noteNurseLeft: B("She leaves. You never got to answer.", "Вона виходить. Ви так і не змогли відповісти."),
+    cardTitle: B("Holos gives your answer a voice.", "Holos дає вашій відповіді голос."),
+    cardBody: B("When someone asks you something, Holos offers the few answers that fit. If yours isn't there, the whole board is one press away. Press once when the right one lights up, and Holos says it aloud.",
+      "Коли вас про щось питають, Holos пропонує кілька відповідей, що пасують. Якщо вашої серед них немає, уся дошка — за одне натискання. Натисніть один раз, коли засвітиться потрібна, — і Holos скаже її вголос."),
+    pressToAnswer: B("Press to answer", "Натисніть, щоб відповісти"),
+    noteTenMinutes: B("Ten minutes later", "Через десять хвилин"),
+    noteLittleLater: B("A little later", "Трохи згодом"),
+    nurseBack: B("I'm back. How are you feeling now?", "Я повернулася. Як ви почуваєтеся зараз?"),
+    nurseSorry: B("I'm sorry.", "Мені дуже шкода."),
+    nurseThanksForTelling: B("Thank you for telling me.", "Дякую, що сказали."),
+    nurseWhereHurts: B("Where does it hurt?", "Де болить?"),
+    nurseAnythingHurt: B("Does anything hurt? Show me where.", "Щось болить? Покажіть, де саме."),
+    nurseYourHead: B("Your head. Thank you for showing me.", "Голова. Дякую, що показали."),
+    nurseThanks: B("Thank you.", "Дякую."),
+    nurseHowBad: B("How bad is it?", "Наскільки сильно болить?"),
+    nurseHowBadIfAny: B("If anything hurts, how bad is it?", "Якщо щось болить, то наскільки сильно?"),
+    nurseMedicine: B("I'll bring your medicine now.", "Я зараз принесу ваші ліки."),
+    nurseWillTellDoctor: B("Thank you. I'll let the doctor know.", "Дякую. Я скажу лікареві."),
+    nurseAnythingElse: B("Do you need anything else?", "Вам ще щось потрібно?"),
+    nurseComingUp: B("Coming right up.", "Зараз принесу."),
+    nurseThanksAllRight: B("All right. Thank you for telling me.", "Добре. Дякую, що сказали."),
+    nurseTellMe: B("Is there anything you want to tell me?", "Ви хочете мені щось сказати?"),
+    nurseCallWife: B("Of course. I'll call your wife right away.", "Звісно. Я одразу подзвоню вашій дружині."),
+    nurseHearYou: B("All right. I hear you.", "Добре. Я вас почула."),
+    goalPain: B("Tell the nurse you're in pain.", "Скажіть медсестрі, що вам боляче."),
+    goalPainDetail: B("Any answer works: the nurse will follow you.", "Підійде будь-яка відповідь: медсестра підлаштується."),
+    goalHead: B("Show her where: your head.", "Покажіть, де саме: голова."),
+    goalHeadDetail: B("The board changed with her question. Now it is a body.", "Дошка змінилася разом із питанням. Тепер це тіло."),
+    goalALot: B("Tell her how bad: a lot.", "Скажіть, наскільки: сильно."),
+    goalALotDetail: B("Four answers in order, with faces. Nothing to spell.", "Чотири відповіді по порядку, з обличчями. Нічого не треба писати."),
+    goalWater: B("Ask for water.", "Попросіть води."),
+    goalWife: B("Ask her to call your wife.", "Попросіть її подзвонити вашій дружині."),
+    goalWifeDetail: B("With aphasia the word \"wife\" may not come, even when you know exactly who you mean. Choose Something else: the whole board opens, and Family offers the word.",
+      "За афазії слово «дружина» може не згадатися, хоч ви й точно знаєте, кого маєте на увазі. Оберіть «Щось інше» — відкриється вся дошка, і тема «Родина» підкаже слово."),
+    goalHeadTry: B("Optional: try a turn of the head, or skip.", "За бажанням: спробуйте повернути голову або пропустіть."),
+    guideBackToAnswers: B("That answer is with the answers to her question. Go back to them.", "Ця відповідь — серед відповідей на її питання. Поверніться до них."),
+    howScan: B("Press when the marked answer lights up.", "Натисніть, коли засвітиться позначена відповідь."),
+    howTouch: B("Tap the marked answer.", "Торкніться позначеної відповіді."),
+    showMe: B("Show me", "Відповісти за мене"),
+    guideMarker: B("This one", "Ось ця"),
+    nurseAnswering: B("The nurse is answering…", "Медсестра відповідає…"),
+    somethingElseHint: B("Opens the whole board: every topic, urgent phrases and a message to build.", "Відкриває всю дошку: усі теми, термінові фрази й повідомлення, яке можна скласти."),
+    backToAnswers: B("Back to the answers", "Назад до відповідей"),
+    boardHome: B("Nobody is asking. Say anything.", "Ніхто не питає. Скажіть що завгодно."),
+    youSaid: B("You said", "Ви сказали"),
+    askHeader: B("For the partner: tap a question to ask it", "Для співрозмовника: торкніться питання, щоб його поставити"),
+    newConversation: B("New conversation", "Нова розмова"),
+    freeNote: B("Free conversation. Nobody has to ask first: the whole board is here. A partner can also tap a question above, and the board offers the answers that fit.",
+      "Вільна розмова. Ніхто не мусить питати першим — уся дошка тут. Співрозмовник також може торкнутися питання вгорі, і дошка запропонує відповіді, що пасують."),
+    replayTitle: B("The same conversation, in Ukrainian.", "Та сама розмова — українською."),
+    replayBody: B("Every answer was kept as meaning, not as typed text, so the whole conversation can be said again in Ukrainian: the language of the people Holos is for.",
+      "Кожну відповідь збережено як зміст, а не як набраний текст, тож усю розмову можна сказати ще раз українською — мовою людей, для яких створено Holos."),
+    replaySpeaking: B("Saying your answers in Ukrainian…", "Промовляємо ваші відповіді українською…"),
+    replayDone: B("That was your whole conversation, in Ukrainian.", "Це була вся ваша розмова українською."),
+    replayShownOnly: B("Your answers again, shown in Ukrainian…", "Ваші відповіді ще раз — українською на екрані…"),
+    replayDoneShownOnly: B("That was your whole conversation, shown in Ukrainian.", "Це була вся ваша розмова — українською на екрані."),
+    replayNothing: B("You gave no answers this time, so there is nothing to replay. That's fine.", "Цього разу відповідей не було, тож повторювати нічого. Нічого страшного."),
+    continueLabel: B("Continue", "Далі"),
+    noVoiceTitle: B("No Ukrainian voice in this browser", "У цьому браузері немає українського голосу"),
+    noVoiceBody: B("The words stay in Ukrainian; speech uses English for now.", "Слова залишаються українською, а озвучення поки що — англійською."),
+    closingTitle: B("For people who understand far more than they can say.", "Для тих, хто розуміє значно більше, ніж може сказати."),
+    closingWho: B("Rehabilitation centres in Ukraine treat many service members recovering from brain injuries and strokes who struggle to communicate, often through aphasia or dysarthria. Aphasia can take reading and spelling as well as speech, so a keyboard is not enough.",
+      "Реабілітаційні центри в Україні лікують багатьох військових після черепно-мозкових травм та інсультів, яким важко спілкуватися, — часто через афазію чи дизартрію. Афазія може забрати не лише мовлення, а й читання та письмо, тож клавіатури замало."),
+    closingHow: B("Holos starts from the partner's question and offers only the answers that fit, so nobody has to find a word from nothing. When the answer isn't there, or nobody is asking, the whole board is one press away. One switch is enough: a tap, a key, a controller button or a turn of the head.",
+      "Holos зважає на питання співрозмовника й пропонує лише ті відповіді, що пасують, — тож нікому не доводиться шукати слово з нуля. Коли потрібної відповіді немає або ніхто не питає, уся дошка — за одне натискання. Досить одного перемикача: дотику, клавіші, кнопки контролера чи повороту голови."),
+    closingFree: B("Free, because a voice should not be a subscription. Private: no account, no analytics, nothing leaves this device. Open source, so speech therapists can check it, translate it and keep it alive.",
+      "Безплатний, бо голос не має бути підпискою. Поважає приватність: без облікового запису, без аналітики, ніщо не залишає цей пристрій. З відкритим кодом, щоб логопеди могли його перевірити, перекласти й підтримувати."),
+    closingSource: B("On rehabilitation in Ukraine: Talk! (Говори!) NGO.", "Про реабілітацію в Україні: ГО «Говори!»."),
+    keepTalking: B("Keep talking", "Говорити далі"),
+    startAgain: B("Start again", "Почати знову"),
+    headTryTitle: B("No hands at all", "Зовсім без рук"),
+    headTryBody: B("Oleksandr can only move his head. In the app on an iPad, you could turn on head control here and press by turning your head. This browser sketch has no camera, so press to go on.",
+      "Олександр може рухати лише головою. У застосунку на iPad тут можна ввімкнути керування головою й натискати поворотом голови. У цьому браузерному ескізі камери немає, тож натисніть, щоб продовжити."),
+    headTrySkip: B("Skip", "Пропустити"),
+    speak: B("Speak", "Сказати"),
+    deleteLast: B("Delete last", "Стерти останнє"),
+    clear: B("Clear", "Очистити"),
+    clearConfirm: B("Yes, clear all", "Так, очистити все"),
+    clearCancel: B("No, keep it", "Ні, залишити"),
+    messageEmpty: B("Your message appears here", "Тут з’явиться ваше повідомлення"),
+    goBack: B("Go back", "Назад"),
+    language: B("Language", "Мова"),
+  };
+
+  function guideTopicLine(topic, touch) {
+    const n = TOPICS[topic].name;
+    return touch
+      ? B("Tap " + n.en + " in the topics row.", "Торкніться «" + n.uk + "» у ряду тем.")
+      : B("Open the " + n.en + " board: the topics row, then " + n.en + ".", "Відкрийте тему «" + n.uk + "»: ряд тем, а потім «" + n.uk + "».");
+  }
+  function guideCellLine(phrase, touch) {
+    const l = phrase.label;
+    return touch
+      ? B("There it is: the word you could not find. Tap " + l.en + ".", "Ось воно — слово, якого ви не могли знайти. Торкніться «" + l.uk + "».")
+      : B("There it is: the word you could not find. Its row, then " + l.en + ".", "Ось воно — слово, якого ви не могли знайти. Його ряд, а потім «" + l.uk + "».");
+  }
+  function guideSpeakLine(stops, touch) {
+    const en = stops.map(function (s) { return s.phrase.label.en; }).join(" and ");
+    const uk = stops.map(function (s) { return "«" + s.phrase.label.uk + "»"; }).join(" і ");
+    return touch
+      ? B(en + " is in your message. Now tap Speak.", uk + " — у вашому повідомленні. Тепер торкніться «Сказати».")
+      : B(en + " is in your message. Now the message row, then Speak.", uk + " — у вашому повідомленні. Тепер ряд повідомлення, а потім «Сказати».");
+  }
+
+  // ===================================================================
+  // Vocabulary: Bedside's answers, and Grid's whole board
+  // ===================================================================
+
+  function P(id, label, says, symbol, kind) { return { id: id, label: label, speech: says || label, symbol: symbol, kind: kind }; }
+
+  const SOMETHING_ELSE = P("somethingElse", B("Something else", "Щось інше"), null, "ellipsis.bubble.fill", "control");
+  const V = {
+    feeling: [
+      P("feel.pain", B("In pain", "Болить"), B("I'm in pain.", "Мені боляче."), "bandage.fill", "urgent"),
+      P("feel.tired", B("Tired", "Втомився", "Втомилася"), B("I'm tired.", "Я втомився.", "Я втомилася."), "moon.zzz.fill", "describing"),
+      P("feel.good", B("Good", "Добре"), B("I feel good.", "Я почуваюся добре."), "face.smiling", "describing"),
+      P("feel.notGood", B("Not good", "Погано"), B("I don't feel well.", "Мені погано."), "cloud.rain.fill", "describing"),
+      P("feel.scared", B("Scared", "Страшно"), B("I'm scared.", "Мені страшно."), "exclamationmark.triangle.fill", "describing"),
+    ],
+    body: [
+      P("body.head", B("Head", "Голова"), B("My head hurts.", "Болить голова."), "brain.head.profile", "thing"),
+      P("body.chest", B("Chest", "Груди"), B("My chest hurts.", "Болить у грудях."), "lungs.fill", "thing"),
+      P("body.stomach", B("Stomach", "Живіт"), B("My stomach hurts.", "Болить живіт."), "figure.stand", "thing"),
+      P("body.back", B("Back", "Спина"), B("My back hurts.", "Болить спина."), "figure.walk", "thing"),
+      P("body.arm", B("Arm", "Рука"), B("My arm hurts.", "Болить рука."), "hand.raised.fill", "thing"),
+      P("body.leg", B("Leg", "Нога"), B("My leg hurts.", "Болить нога."), "shoeprints.fill", "thing"),
+    ],
+    scale: [
+      P("scale.little", B("A little", "Трохи"), B("A little.", "Трохи."), "thermometer.medium", "describing"),
+      P("scale.medium", B("Medium", "Помірно"), B("Medium.", "Помірно."), "thermometer.medium", "describing"),
+      P("scale.lot", B("A lot", "Сильно"), B("A lot.", "Сильно."), "thermometer.medium", "describing"),
+      P("scale.worst", B("The worst ever", "Нестерпно"), B("It's the worst pain ever.", "Нестерпно."), "thermometer.medium", "urgent"),
+    ],
+    needs: [
+      P("need.water", B("Water", "Вода"), B("Water, please.", "Води, будь ласка."), "drop.fill", "thing"),
+      P("need.medicine", B("Medicine", "Ліки"), B("Medicine, please.", "Ліки, будь ласка."), "pills.fill", "thing"),
+      P("need.toilet", B("Toilet", "Туалет"), B("I need the toilet.", "Мені треба в туалет."), "toilet.fill", "thing"),
+      P("need.move", B("Help me move", "Змінити позу"), B("Please help me change position.", "Допоможіть мені, будь ласка, змінити позу."), "bed.double.fill", "action"),
+      P("need.rest", B("Rest", "Відпочити"), B("I'd like to rest.", "Я хочу відпочити."), "moon.fill", "action"),
+      P("need.nothing", B("Nothing, thanks", "Нічого, дякую"), B("Nothing, thank you.", "Нічого, дякую."), "checkmark.circle.fill", "social"),
+    ],
+    call: [
+      P("call.wife", B("Wife", "Дружина"), B("My wife, please.", "Дружині, будь ласка."), "heart.circle.fill", "people"),
+      P("call.husband", B("Husband", "Чоловік"), B("My husband, please.", "Чоловікові, будь ласка."), "person.crop.circle.fill", "people"),
+      P("call.mum", B("Mum", "Мама"), B("My mum, please.", "Мамі, будь ласка."), "figure.and.child.holdinghands", "people"),
+      P("call.son", B("Son", "Син"), B("My son, please.", "Синові, будь ласка."), "figure.wave", "people"),
+      P("call.daughter", B("Daughter", "Донька"), B("My daughter, please.", "Доньці, будь ласка."), "person.fill", "people"),
+      P("call.friend", B("A friend", "Друг"), B("A friend, please.", "Другові, будь ласка."), "person.2.fill", "people"),
+    ],
+    rest: [
+      P("rest.sleep", B("Sleep", "Поспати"), B("Yes, I'd like to sleep.", "Так, я хочу поспати."), "moon.zzz.fill", "action"),
+      P("rest.lightOff", B("Light off", "Вимкнути світло"), B("Please turn off the light.", "Вимкніть, будь ласка, світло."), "lightbulb.fill", "action"),
+      P("rest.quiet", B("Quiet", "Тиша"), B("Some quiet, please.", "Тихіше, будь ласка."), "speaker.slash.fill", "thing"),
+      P("rest.sitUp", B("Sit up", "Сісти"), B("I'd like to sit up.", "Я хочу сісти."), "chair.fill", "action"),
+      P("rest.notNow", B("Not now", "Не зараз"), B("Not now, thank you.", "Не зараз, дякую."), "clock.fill", "social"),
+    ],
+    tell: [
+      SOMETHING_ELSE,
+      P("tell.thanks", B("Thank you", "Дякую"), B("Thank you.", "Дякую."), "heart.fill", "social"),
+      P("tell.ok", B("I'm OK", "Усе гаразд"), B("I'm OK.", "Усе гаразд."), "sun.max.fill", "social"),
+      P("tell.home", B("Home", "Додому"), B("I want to go home.", "Я хочу додому."), "house.fill", "thing"),
+      P("tell.later", B("Talk later", "Поговорити пізніше"), B("Can we talk later?", "Можна поговорити пізніше?"), "clock.fill", "social"),
+    ],
+    strip: [
+      P("yes", B("Yes", "Так"), B("Yes.", "Так."), "hand.thumbsup.fill", "action"),
+      P("no", B("No", "Ні"), B("No.", "Ні."), "hand.thumbsdown.fill", "urgent"),
+      P("notSure", B("Not sure", "Не впевнений", "Не впевнена"), B("I'm not sure.", "Я не впевнений.", "Я не впевнена."), "questionmark.circle.fill", "question"),
+      SOMETHING_ELSE,
+    ],
+  };
+
+  const QUESTIONS = {
+    feeling: { prompt: B("How are you feeling?", "Як ви почуваєтеся?"), symbol: "face.smiling", layout: "cells", answers: V.feeling },
+    painWhere: { prompt: B("Where does it hurt?", "Де болить?"), symbol: "figure.stand", layout: "bodyMap", answers: V.body },
+    painHowBad: { prompt: B("How bad is it?", "Наскільки сильно болить?"), symbol: "thermometer.medium", layout: "scale", answers: V.scale },
+    needs: { prompt: B("Do you need anything?", "Вам щось потрібно?"), symbol: "cup.and.saucer.fill", layout: "cells", answers: V.needs },
+    whoToCall: { prompt: B("Who should we call?", "Кому нам подзвонити?"), symbol: "phone.fill", layout: "cells", answers: V.call },
+    rest: { prompt: B("Do you want to rest?", "Хочете відпочити?"), symbol: "bed.double.fill", layout: "cells", answers: V.rest },
+    anythingElse: { prompt: B("Is there anything you want to tell me?", "Ви хочете мені щось сказати?"), symbol: "ellipsis.bubble.fill", layout: "cells", answers: V.tell },
+  };
+  const QUESTION_ORDER = ["feeling", "painWhere", "painHowBad", "needs", "whoToCall", "rest", "anythingElse"];
+  function stripFor(q) {
+    const main = {};
+    q.answers.forEach(function (p) { main[p.id] = true; });
+    return V.strip.filter(function (p) { return !main[p.id]; });
+  }
+
+  /* Holos Grid's board: quick phrases spoken at once, and six adult topics
+     of two rows of five. English apostrophes are plain, as in Bedside. */
+  const QUICK = [
+    P("quick.help", B("Help", "Допоможіть"), B("Help me, please!", "Допоможіть, будь ласка!"), "exclamationmark.triangle.fill", "urgent"),
+    P("quick.yes", B("Yes", "Так"), B("Yes.", "Так."), "hand.thumbsup.fill", "urgent"),
+    P("quick.no", B("No", "Ні"), B("No.", "Ні."), "hand.thumbsdown.fill", "urgent"),
+    P("quick.pain", B("I'm in pain", "Мені боляче"), B("I'm in pain.", "Мені боляче."), "bandage.fill", "urgent"),
+    P("quick.wait", B("Wait, please", "Зачекайте"), B("Wait, please. I need a moment.", "Зачекайте, будь ласка. Мені потрібна хвилинка."), "hourglass", "urgent"),
+  ];
+  const TOPICS = {
+    needs: { name: B("Needs", "Потреби"), symbol: "cup.and.saucer.fill", phrases: [
+      P("needs.water", B("Water", "Вода"), B("Water, please.", "Води, будь ласка."), "drop.fill", "thing"),
+      P("needs.food", B("Food", "Їжа"), B("I'd like something to eat.", "Я хочу їсти."), "fork.knife", "thing"),
+      P("needs.toilet", B("Toilet", "Туалет"), B("I need the toilet.", "Мені треба в туалет."), "toilet.fill", "thing"),
+      P("needs.wash", B("Wash", "Помитися"), B("I'd like to wash.", "Я хочу помитися."), "shower.fill", "action"),
+      P("needs.rest", B("Rest", "Відпочити"), B("I'd like to rest.", "Я хочу відпочити."), "moon.zzz.fill", "action"),
+      P("needs.sitUp", B("Sit up", "Сісти"), B("Please help me sit up.", "Допоможіть мені сісти, будь ласка."), "chair.fill", "action"),
+      P("needs.lieDown", B("Lie down", "Лягти"), B("Please help me lie down.", "Допоможіть мені лягти, будь ласка."), "bed.double.fill", "action"),
+      P("needs.hot", B("Too hot", "Жарко"), B("I'm too hot.", "Мені жарко."), "thermometer.sun.fill", "describing"),
+      P("needs.cold", B("Too cold", "Холодно"), B("I'm too cold.", "Мені холодно."), "thermometer.snowflake", "describing"),
+      P("needs.glasses", B("My glasses", "Окуляри"), B("My glasses, please.", "Подайте, будь ласка, мої окуляри."), "eyeglasses", "thing"),
+    ] },
+    pain: { name: B("Pain & body", "Біль і тіло"), symbol: "bandage.fill", phrases: [
+      P("pain.inPain", B("I'm in pain", "Мені боляче"), B("I'm in pain.", "Мені боляче."), "bandage.fill", "urgent"),
+      P("pain.head", B("Head", "Голова"), B("My head hurts.", "Болить голова."), "brain.head.profile", "thing"),
+      P("pain.chest", B("Chest", "Груди"), B("My chest hurts.", "Болить у грудях."), "heart.fill", "thing"),
+      P("pain.stomach", B("Stomach", "Живіт"), B("My stomach hurts.", "Болить живіт."), "figure.stand", "thing"),
+      P("pain.back", B("Back", "Спина"), B("My back hurts.", "Болить спина."), "figure.walk", "thing"),
+      P("pain.arm", B("Arm", "Рука"), B("My arm hurts.", "Болить рука."), "hand.raised.fill", "thing"),
+      P("pain.leg", B("Leg", "Нога"), B("My leg hurts.", "Болить нога."), "shoeprints.fill", "thing"),
+      P("pain.throat", B("Throat", "Горло"), B("My throat hurts.", "Болить горло."), "mouth.fill", "thing"),
+      P("pain.little", B("A little", "Трохи"), B("A little.", "Трохи."), "3.circle.fill", "describing"),
+      P("pain.lot", B("A lot", "Дуже"), B("A lot.", "Дуже сильно."), "8.circle.fill", "describing"),
+    ] },
+    medicine: { name: B("Medicine", "Лікування"), symbol: "pills.fill", phrases: [
+      P("medicine.medicine", B("Medicine", "Ліки"), B("Medicine, please.", "Ліки, будь ласка."), "pills.fill", "thing"),
+      P("medicine.nurse", B("Nurse", "Медсестра"), B("Please call the nurse.", "Покличте, будь ласка, медсестру."), "cross.case.fill", "people"),
+      P("medicine.doctor", B("Doctor", "Лікар"), B("Please call the doctor.", "Покличте, будь ласка, лікаря."), "stethoscope", "people"),
+      P("medicine.notHelping", B("It doesn't help", "Не допомагає"), B("It doesn't help.", "Це не допомагає."), "xmark.circle.fill", "describing"),
+      P("medicine.sick", B("I feel sick", "Нудить"), B("I feel sick.", "Мене нудить."), "face.dashed", "describing"),
+      P("medicine.dizzy", B("Dizzy", "Паморочиться"), B("I feel dizzy.", "У мене паморочиться в голові."), "sparkles", "describing"),
+      P("medicine.breathe", B("Hard to breathe", "Важко дихати"), B("It's hard to breathe.", "Мені важко дихати."), "lungs.fill", "urgent"),
+      P("medicine.itchy", B("Itchy", "Свербить"), B("It's itchy.", "У мене свербить."), "hand.point.up.left.fill", "describing"),
+      P("medicine.when", B("When?", "Коли?"), B("When?", "Коли?"), "calendar", "question"),
+      P("medicine.allergic", B("I'm allergic", "У мене алергія"), B("I'm allergic.", "У мене алергія."), "allergens", "urgent"),
+    ] },
+    family: { name: B("Family", "Родина"), symbol: "person.3.fill", phrases: [
+      P("family.wife", B("Wife", "Дружина"), B("Please call my wife.", "Подзвоніть, будь ласка, моїй дружині."), "heart.circle.fill", "people"),
+      P("family.husband", B("Husband", "Чоловік"), B("Please call my husband.", "Подзвоніть, будь ласка, моєму чоловікові."), "person.fill", "people"),
+      P("family.mum", B("Mum", "Мама"), B("Please call my mum.", "Подзвоніть, будь ласка, моїй мамі."), "figure.arms.open", "people"),
+      P("family.dad", B("Dad", "Тато"), B("Please call my dad.", "Подзвоніть, будь ласка, моєму татові."), "person.crop.circle.fill", "people"),
+      P("family.son", B("Son", "Син"), B("Please call my son.", "Подзвоніть, будь ласка, моєму синові."), "figure.and.child.holdinghands", "people"),
+      P("family.daughter", B("Daughter", "Донька"), B("Please call my daughter.", "Подзвоніть, будь ласка, моїй доньці."), "person.wave.2.fill", "people"),
+      P("family.brother", B("Brother", "Брат"), B("Please call my brother.", "Подзвоніть, будь ласка, моєму братові."), "person.2.fill", "people"),
+      P("family.sister", B("Sister", "Сестра"), B("Please call my sister.", "Подзвоніть, будь ласка, моїй сестрі."), "figure.wave", "people"),
+      P("family.friend", B("Friend", "Друг"), B("Please call my friend.", "Подзвоніть, будь ласка, моєму другові."), "face.smiling.inverse", "people"),
+      P("family.call", B("Call", "Подзвонити"), B("Could I make a phone call?", "Можна мені зателефонувати?"), "phone.fill", "action"),
+    ] },
+    feelings: { name: B("Feelings", "Почуття"), symbol: "face.smiling", phrases: [
+      P("feelings.good", B("Good", "Добре"), B("I feel good.", "Я почуваюся добре."), "face.smiling", "describing"),
+      P("feelings.tired", B("Tired", "Втомився", "Втомилася"), B("I'm tired.", "Я втомився.", "Я втомилася."), "zzz", "describing"),
+      P("feelings.scared", B("Scared", "Страшно"), B("I'm scared.", "Мені страшно."), "bolt.fill", "describing"),
+      P("feelings.sad", B("Sad", "Сумно"), B("I feel sad.", "Мені сумно."), "cloud.rain.fill", "describing"),
+      P("feelings.angry", B("Angry", "Сердитий", "Сердита"), B("I'm angry.", "Я сердитий.", "Я сердита."), "flame.fill", "describing"),
+      P("feelings.bored", B("Bored", "Нудно"), B("I'm bored.", "Мені нудно."), "tv.fill", "describing"),
+      P("feelings.lonely", B("Lonely", "Самотньо"), B("I feel lonely.", "Мені самотньо."), "heart.slash.fill", "describing"),
+      P("feelings.frustrated", B("Frustrated", "Роздратований", "Роздратована"), B("I'm frustrated.", "Я роздратований.", "Я роздратована."), "cloud.fill", "describing"),
+      P("feelings.better", B("Better", "Краще"), B("I feel better.", "Мені краще."), "arrow.up", "describing"),
+      P("feelings.worse", B("Worse", "Гірше"), B("I feel worse.", "Мені гірше."), "arrow.down", "describing"),
+    ] },
+    talk: { name: B("Talk", "Спілкування"), symbol: "bubble.left.and.bubble.right.fill", phrases: [
+      P("talk.slowly", B("Speak slowly", "Повільніше"), B("Please speak slowly.", "Говоріть, будь ласка, повільніше."), "tortoise.fill", "social"),
+      P("talk.moment", B("I need a moment", "Хвилинку"), B("I need a moment.", "Мені потрібна хвилинка."), "hourglass", "social"),
+      P("talk.understand", B("I understand", "Розумію"), B("I understand.", "Я розумію."), "checkmark.circle.fill", "social"),
+      P("talk.dontUnderstand", B("I don't understand", "Не розумію"), B("I don't understand.", "Я не розумію."), "questionmark.circle.fill", "social"),
+      P("talk.again", B("Say it again", "Повторіть"), B("Please say it again.", "Повторіть, будь ласка."), "repeat", "social"),
+      P("talk.thanks", B("Thank you", "Дякую"), B("Thank you.", "Дякую."), "heart.fill", "social"),
+      P("talk.hello", B("Hello", "Добрий день"), B("Hello.", "Добрий день."), "hand.wave.fill", "social"),
+      P("talk.goodbye", B("Goodbye", "До побачення"), B("Goodbye.", "До побачення."), "door.left.hand.open", "social"),
+      P("talk.time", B("What time is it?", "Котра година?"), B("What time is it?", "Котра година?"), "clock.fill", "question"),
+      P("talk.home", B("Home", "Додому"), B("I want to go home.", "Я хочу додому."), "house.fill", "action"),
+    ] },
+  };
+  const TOPIC_ORDER = ["needs", "pain", "medicine", "family", "feelings", "talk"];
+
+  const ANSWERS = {};
+  Object.keys(V).forEach(function (k) { V[k].forEach(function (p) { if (!ANSWERS[p.id]) ANSWERS[p.id] = p; }); });
+  const BOARD = {};
+  const TOPIC_OF = {};
+  QUICK.forEach(function (p) { BOARD[p.id] = p; });
+  TOPIC_ORDER.forEach(function (t) { TOPICS[t].phrases.forEach(function (p) { BOARD[p.id] = p; TOPIC_OF[p.id] = t; }); });
+  function phraseFor(id) { return ANSWERS[id] || BOARD[id] || null; }
+
+  /* The nurse's side of the guided story (Bedside's NurseScript); the last
+     turn's word now lives on the whole board. */
+  const TURNS = [
+    { stage: 2, note: C.noteTenMinutes, asks: C.nurseBack, question: "feeling", target: "feel.pain", goal: C.goalPain, detail: C.goalPainDetail, yes: [C.nurseSorry], other: [C.nurseThanksForTelling] },
+    { stage: 2, asks: C.nurseWhereHurts, surprised: C.nurseAnythingHurt, question: "painWhere", target: "body.head", goal: C.goalHead, detail: C.goalHeadDetail, yes: [C.nurseYourHead], other: [C.nurseThanks] },
+    { stage: 2, asks: C.nurseHowBad, surprised: C.nurseHowBadIfAny, plainAfter: V.body.map(function (p) { return p.id; }), question: "painHowBad", target: "scale.lot", goal: C.goalALot, detail: C.goalALotDetail, yes: [C.nurseMedicine], other: [C.nurseWillTellDoctor] },
+    { stage: 2, asks: C.nurseAnythingElse, question: "needs", target: "need.water", goal: C.goalWater, yes: [C.nurseComingUp], other: [C.nurseThanksAllRight] },
+    { stage: 3, note: C.noteLittleLater, asks: C.nurseTellMe, question: "anythingElse", target: "family.wife", goal: C.goalWife, detail: C.goalWifeDetail, yes: [C.nurseCallWife], other: [C.nurseHearYou] },
+  ];
+
+  // ===================================================================
+  // Sound: Core's synthesised clicks, by Web Audio
+  // ===================================================================
+
+  const TONES = {
+    step: [{ duration: 0.02, noise: 1, brightness: 0.8, attack: 0.0008, decay: 9, volume: 0.12 }, { duration: 0.04, pitch: 1320, decay: 10, volume: 0.06 }],
+    enter: [{ duration: 0.08, pitch: 523.25, partials: [1, 0.2], attack: 0.003, decay: 6, volume: 0.16 }, { start: 0.08, duration: 0.11, pitch: 659.25, partials: [1, 0.2], attack: 0.003, decay: 6, volume: 0.17 }],
+    select: [{ duration: 0.025, noise: 1, brightness: 0.9, attack: 0.0005, decay: 10, volume: 0.15 }, { start: 0.01, duration: 0.26, pitch: 783.99, partials: [1, 0.35, 0.12], attack: 0.004, decay: 5, volume: 0.22 }],
+    back: [{ duration: 0.08, pitch: 659.25, partials: [1, 0.2], attack: 0.003, decay: 6, volume: 0.15 }, { start: 0.08, duration: 0.11, pitch: 440, partials: [1, 0.2], attack: 0.003, decay: 6, volume: 0.15 }],
+    pause: [{ duration: 0.38, pitch: 261.63, pitchEnd: 220, partials: [1, 0.15], attack: 0.03, decay: 3, volume: 0.14 }],
+    speak: [{ duration: 0.16, pitch: 392, pitchEnd: 587.33, partials: [1, 0.2], attack: 0.04, decay: 3, volume: 0.13 }],
+    unavailable: [{ duration: 0.18, pitch: 130.81, partials: [1, 0.3], noise: 0.3, brightness: 0.15, attack: 0.004, decay: 5, volume: 0.22 }],
+  };
+  const Sound = {
+    ctx: null,
+    noiseBuffer: null,
+    ensure: function () {
+      if (this.ctx) {
+        if (this.ctx.state === "suspended") { try { this.ctx.resume(); } catch (e) { /* stays silent */ } }
+        return this.ctx;
+      }
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      try { this.ctx = new AC(); } catch (e) { return null; }
+      const len = Math.floor(this.ctx.sampleRate * 0.4);
+      this.noiseBuffer = this.ctx.createBuffer(1, len, this.ctx.sampleRate);
+      const data = this.noiseBuffer.getChannelData(0);
+      for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      return this.ctx;
+    },
+    play: function (kind) {
+      if (!settings.sound || !this.ctx) return;
+      const layers = TONES[kind];
+      if (!layers) return;
+      const t0 = this.ctx.currentTime + 0.005;
+      for (let i = 0; i < layers.length; i++) this.layer(t0, layers[i]);
+    },
+    layer: function (t0, l) {
+      const ctx = this.ctx;
+      const start = t0 + (l.start || 0);
+      const dur = l.duration;
+      const attack = l.attack || 0.002;
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.linearRampToValueAtTime(l.volume, start + attack);
+      gain.gain.setTargetAtTime(0.0001, start + attack, dur / (l.decay || 5));
+      gain.connect(ctx.destination);
+      if (l.noise) {
+        const src = ctx.createBufferSource();
+        src.buffer = this.noiseBuffer;
+        const filter = ctx.createBiquadFilter();
+        filter.type = "lowpass";
+        filter.frequency.value = 400 + (l.brightness || 0.5) * 9000;
+        const ng = ctx.createGain();
+        ng.gain.value = l.noise * (l.pitch ? 0.5 : 1);
+        src.connect(filter).connect(ng).connect(gain);
+        src.start(start);
+        src.stop(start + dur + 0.02);
+      }
+      if (l.pitch) {
+        const partials = l.partials || [1];
+        for (let i = 0; i < partials.length; i++) {
+          const osc = ctx.createOscillator();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(l.pitch * (i + 1), start);
+          if (l.pitchEnd) osc.frequency.linearRampToValueAtTime(l.pitchEnd * (i + 1), start + dur);
+          const pg = ctx.createGain();
+          pg.gain.value = partials[i];
+          osc.connect(pg).connect(gain);
+          osc.start(start);
+          osc.stop(start + dur + 0.05);
+        }
+      }
+    },
+  };
+
+  // ===================================================================
+  // Speech: the browser's voices, with Core's English fallback
+  // ===================================================================
+
+  const Speaker = {
+    synth: ("speechSynthesis" in window) ? window.speechSynthesis : null,
+    voices: [],
+    speaking: false,
+    utterance: null,
+    ceiling: null,
+    init: function () {
+      if (!this.synth) return;
+      const self = this;
+      const load = function () {
+        try { self.voices = self.synth.getVoices() || []; } catch (e) { self.voices = []; }
+        changed();
+      };
+      load();
+      try { this.synth.addEventListener("voiceschanged", load); } catch (e) { /* older browsers: the first list stays */ }
+    },
+    voiceFor: function (lang) {
+      const prefix = lang === "uk" ? "uk" : "en";
+      const list = this.voices.filter(function (v) { return (v.lang || "").toLowerCase().indexOf(prefix) === 0; });
+      if (prefix === "en") {
+        return list.find(function (v) { return /en[-_]gb/i.test(v.lang); }) || list.find(function (v) { return v.localService; }) || list[0] || null;
+      }
+      return list[0] || null;
+    },
+    hasUkrainian: function () { return !!this.voiceFor("uk"); },
+    /* Says `words` in `lang` (the board's language by default). Without a
+       Ukrainian voice the English words are said instead, as Core does. */
+    say: function (words, lang) {
+      let l = lang || settings.language;
+      let text = T(words, l);
+      if (l === "uk" && !this.hasUkrainian()) { l = "en"; text = words.en; }
+      this.stop();
+      this.speaking = true;
+      const self = this;
+      const guess = Math.max(1.2, text.split(/\s+/).length * 0.42 + 0.5);
+      if (!this.synth) {
+        this.ceiling = setTimeout(function () { self.finished(null); }, guess * 1000);
+        return;
+      }
+      const u = new SpeechSynthesisUtterance(text);
+      const voice = this.voiceFor(l);
+      if (voice) u.voice = voice;
+      u.lang = voice ? voice.lang : (l === "uk" ? "uk-UA" : "en-GB");
+      u.rate = 0.95;
+      u.onend = function () { self.finished(u); };
+      u.onerror = function () { self.finished(u); };
+      this.utterance = u;
+      try { this.synth.speak(u); } catch (e) { this.finished(u); return; }
+      // Some browsers never report the end; the story must never stall on it.
+      this.ceiling = setTimeout(function () { self.finished(u); }, (guess + 4) * 1000);
+    },
+    finished: function (u) {
+      if (u && u !== this.utterance) return;
+      clearTimeout(this.ceiling);
+      this.ceiling = null;
+      this.utterance = null;
+      this.speaking = false;
+      changed();
+    },
+    stop: function () {
+      clearTimeout(this.ceiling);
+      this.ceiling = null;
+      this.utterance = null;
+      this.speaking = false;
+      if (this.synth) { try { this.synth.cancel(); } catch (e) { /* nothing was speaking */ } }
+    },
+  };
+
+  // ===================================================================
+  // Scanner: Core's single-switch engine (Scanning/Scanner.swift)
+  // ===================================================================
+
+  function Scanner(opts) {
+    opts = opts || {};
+    this.state = "stopped";
+    this.highlightedID = null;
+    this.path = [];
+    this.root = [];
+    this.stack = [];
+    this.cursor = 0;
+    this.loops = 0;
+    this.timer = null;
+    this.loopsBeforeLeavingGroup = 2;
+    this.loopsBeforePause = opts.loopsBeforePause || 3;
+    this.firstStepFactor = 1.5;
+    this.onSelect = opts.onSelect || null;
+  }
+  Scanner.backID = function (g) { return g + "#back"; };
+  Scanner.prune = function (nodes) {
+    const out = [];
+    nodes.forEach(function (n) {
+      if (n.children) {
+        const kept = Scanner.prune(n.children);
+        if (kept.length) out.push({ id: n.id, children: kept });
+      } else {
+        out.push(n);
+      }
+    });
+    return out;
+  };
+  Scanner.eid = function (e) { return e.back ? Scanner.backID(e.back) : e.node.id; };
+  Scanner.prototype.isHighlighted = function (id) { return this.state === "scanning" && this.highlightedID === id; };
+  Scanner.prototype.isEntered = function (id) { return this.path.indexOf(id) >= 0; };
+  Scanner.prototype.entries = function () {
+    const level = this.stack[this.stack.length - 1];
+    if (!level) return this.root.map(function (n) { return { node: n }; });
+    return level.children.map(function (n) { return { node: n }; }).concat([{ back: level.id }]);
+  };
+  Scanner.prototype.first = function () {
+    const e = this.entries()[0];
+    return e ? Scanner.eid(e) : null;
+  };
+  Scanner.prototype.load = function (nodes, start) {
+    if (start === undefined) start = true;
+    this.root = Scanner.prune(nodes);
+    this.stack = [];
+    this.path = [];
+    this.cursor = 0;
+    this.loops = 0;
+    if (start && this.root.length) {
+      this.state = "scanning";
+      this.highlightedID = this.first();
+      this.restart(true);
+    } else {
+      this.state = "stopped";
+      this.highlightedID = null;
+      clearTimeout(this.timer);
+      this.timer = null;
+    }
+    changed();
+  };
+  Scanner.prototype.start = function () {
+    if (this.state === "scanning") return;
+    this.stack = [];
+    this.path = [];
+    this.cursor = 0;
+    this.loops = 0;
+    this.state = "scanning";
+    this.highlightedID = this.first();
+    this.restart(true);
+    changed();
+  };
+  Scanner.prototype.stop = function () {
+    this.state = "stopped";
+    this.highlightedID = null;
+    this.stack = [];
+    this.path = [];
+    this.cursor = 0;
+    this.loops = 0;
+    clearTimeout(this.timer);
+    this.timer = null;
+    changed();
+  };
+  Scanner.prototype.press = function () {
+    if (this.state === "stopped") return;
+    if (this.state === "paused") {
+      this.start();
+      Sound.play("step");
+      return;
+    }
+    const entries = this.entries();
+    const entry = entries[this.cursor];
+    if (!entry) return;
+    if (entry.back) {
+      this.leave();
+      this.restart(true);
+      Sound.play("back");
+      changed();
+      return;
+    }
+    const node = entry.node;
+    if (node.children) {
+      this.stack.push({ id: node.id, children: node.children });
+      this.path.push(node.id);
+      this.cursor = 0;
+      this.loops = 0;
+      this.highlightedID = this.first();
+      this.restart(true);
+      Sound.play("enter");
+      changed();
+      return;
+    }
+    this.stack = [];
+    this.path = [];
+    this.cursor = 0;
+    this.loops = 0;
+    this.highlightedID = this.first();
+    this.restart(true);
+    Sound.play("select");
+    // Last, so a handler that loads a new tree or stops the scan wins.
+    if (this.onSelect) this.onSelect(node.id);
+    changed();
+  };
+  Scanner.prototype.leave = function () {
+    const left = this.stack.pop();
+    if (!left) return;
+    this.path.pop();
+    this.loops = 0;
+    const entries = this.entries();
+    const index = entries.findIndex(function (e) { return Scanner.eid(e) === left.id; });
+    this.cursor = index >= 0 ? index : 0;
+    this.highlightedID = entries[this.cursor] ? Scanner.eid(entries[this.cursor]) : null;
+  };
+  Scanner.prototype.advance = function () {
+    if (this.state !== "scanning") return;
+    const entries = this.entries();
+    if (!entries.length) return;
+    this.cursor += 1;
+    if (this.cursor >= entries.length) {
+      this.cursor = 0;
+      this.loops += 1;
+      const level = this.stack[this.stack.length - 1];
+      if (level && this.loops >= this.loopsBeforeLeavingGroup) {
+        this.leave();
+        this.restart(true);
+        Sound.play("back");
+        changed();
+        return;
+      }
+      if (!level && this.loops >= this.loopsBeforePause) {
+        this.state = "paused";
+        this.highlightedID = null;
+        clearTimeout(this.timer);
+        this.timer = null;
+        Sound.play("pause");
+        changed();
+        return;
+      }
+    }
+    this.highlightedID = Scanner.eid(entries[this.cursor]);
+    Sound.play("step");
+    changed();
+  };
+  Scanner.prototype.restart = function (long) {
+    clearTimeout(this.timer);
+    this.timer = null;
+    if (this.state !== "scanning") return;
+    const self = this;
+    const wait = settings.scanInterval * (long ? this.firstStepFactor : 1);
+    this.timer = setTimeout(function () { self.tick(); }, Math.max(wait, 0.2) * 1000);
+  };
+  Scanner.prototype.tick = function () {
+    this.timer = null;
+    this.advance();
+    if (this.state === "scanning" && !this.timer) this.restart(false);
+  };
+
+  // ===================================================================
+  // The conversation and the story (Bedside's Experience)
+  // ===================================================================
+
+  const conv = {
+    lines: [], question: "feeling", prompt: null, isPartnerTurn: false, isTyping: false,
+    /* A question is waiting for its answer. Only the free board can have
+       none, and then the whole board is home. */
+    awaiting: true,
+    boardOpen: false,
+    nextID: 0,
+    append: function (role, words, symbol, face) {
+      this.lines.push({ id: this.nextID++, role: role, words: words, symbol: symbol || null, face: face === undefined ? null : face });
+    },
+    addPerson: function (words, symbol, phraseID) {
+      const face = V.scale.findIndex(function (p) { return p.id === phraseID; });
+      this.append("person", words, symbol, face >= 0 ? face : null);
+    },
+    setQuestion: function (q, prompt) {
+      this.question = q;
+      this.prompt = prompt || null;
+      this.awaiting = true;
+      this.boardOpen = false;
+    },
+    reset: function () {
+      this.lines = [];
+      this.question = "feeling";
+      this.prompt = null;
+      this.isPartnerTurn = false;
+      this.isTyping = false;
+      this.awaiting = true;
+      this.boardOpen = false;
+    },
+    personLines: function () { return this.lines.filter(function (l) { return l.role === "person"; }); },
+  };
+
+  const S = {
+    step: "problem",
+    deadPresses: 0, knock: false, cardShown: false, cardReady: false,
+    turnIndex: 0, showMeOffered: false, headTry: false,
+    replayingID: null, replayReady: false, replayFinished: false,
+    lastAnswerID: null,
+  };
+
+  /* Every timed beat runs as a job; starting a new one cancels the old, so a
+     step that ends can never leave a stray timer firing into the next. */
+  let pendingJob = null;
+  let problemJob = null;
+  let showMeTimer = null;
+  function newJob(kind) {
+    const job = { cancelled: false };
+    if (kind === "problem") { if (problemJob) problemJob.cancelled = true; problemJob = job; } else { if (pendingJob) pendingJob.cancelled = true; pendingJob = job; }
+    return job;
+  }
+  function cancelJobs() {
+    if (pendingJob) pendingJob.cancelled = true;
+    if (problemJob) problemJob.cancelled = true;
+    pendingJob = null;
+    problemJob = null;
+    cancelShowMe();
+  }
+  function pause(job, seconds) {
+    return new Promise(function (resolve) { setTimeout(function () { resolve(!job.cancelled); }, seconds * 1000); });
+  }
+  async function nurseSays(job, words) {
+    conv.isTyping = true;
+    changed();
+    const ok = await pause(job, 0.9);
+    conv.isTyping = false;
+    if (!ok) { changed(); return false; }
+    conv.append("nurse", words);
+    announce(T(words === C.nurseWaiting ? B("The nurse waits.", "Медсестра чекає.") : words));
+    changed();
+    return true;
+  }
+  async function waitForSpeech(job) {
+    if (!(await pause(job, 0.5))) return false;
+    let waited = 0.5;
+    while (Speaker.speaking && waited < 7) {
+      if (!(await pause(job, 0.2))) return false;
+      waited += 0.2;
+    }
+    return true;
+  }
+
+  function currentTurn() {
+    if (S.step !== "conversation") return null;
+    return TURNS[S.turnIndex] || null;
+  }
+  function boardMode() {
+    return (S.step === "conversation" || S.step === "free") && (conv.boardOpen || !conv.awaiting);
+  }
+
+  // ---------- Step 1 ----------
+
+  async function runProblemScene() {
+    const job = newJob("problem");
+    conv.reset();
+    S.deadPresses = 0;
+    S.cardShown = false;
+    S.cardReady = false;
+    changed();
+    if (!(await pause(job, 0.8))) return;
+    if (!(await nurseSays(job, C.nurseGreeting))) return;
+    if (!(await pause(job, 4.0))) return;
+    if (!(await nurseSays(job, C.nurseWaiting))) return;
+    if (!(await pause(job, 3.5))) return;
+    if (!(await nurseSays(job, C.nurseTakeTime))) return;
+    if (!(await pause(job, 4.0))) return;
+    if (!(await nurseSays(job, C.nurseLater))) return;
+    if (!(await pause(job, 1.2))) return;
+    conv.append("note", C.noteNurseLeft);
+    changed();
+    if (!(await pause(job, 1.6))) return;
+    S.cardShown = true;
+    announce(T(C.cardTitle));
+    changed();
+    if (!(await pause(job, 1.5))) return;
+    S.cardReady = true;
+    changed();
+  }
+
+  function problemPressed() {
+    if (S.step !== "problem") return;
+    if (S.cardReady) { beginConversation(); return; }
+    if (!S.cardShown) {
+      S.deadPresses += 1;
+      S.knock = true;
+      setTimeout(function () { S.knock = false; changed(); }, 150);
+    }
+    Sound.play("unavailable");
+    changed();
+  }
+
+  function beginConversation() {
+    Sound.play("select");
+    if (problemJob) problemJob.cancelled = true;
+    S.cardShown = false;
+    S.cardReady = false;
+    S.step = "conversation";
+    S.lastAnswerID = null;
+    S.turnIndex = 0;
+    conv.isPartnerTurn = true;
+    const job = newJob();
+    runTurn(job, 0);
+    changed();
+  }
+
+  // ---------- Steps 2 and 3 ----------
+
+  async function runTurn(job, index) {
+    const turn = TURNS[index];
+    if (!turn) return;
+    const previous = index > 0 ? TURNS[index - 1] : null;
+    S.turnIndex = index;
+    conv.isPartnerTurn = true;
+    changed();
+    if (turn.note) {
+      if (!(await pause(job, 0.6))) return;
+      conv.append("note", turn.note);
+      changed();
+    }
+    // The plain question only when it fits what was actually said.
+    const plainAfter = turn.plainAfter || (previous ? [previous.target] : []);
+    const fitsPlain = !previous || !S.lastAnswerID || plainAfter.indexOf(S.lastAnswerID) >= 0;
+    const asks = fitsPlain ? turn.asks : (turn.surprised || turn.asks);
+    if (!(await nurseSays(job, asks))) return;
+    conv.setQuestion(turn.question, asks);
+    conv.isPartnerTurn = false;
+    armShowMe();
+    changed();
+  }
+
+  async function respond(job, reply, index) {
+    // Never talk over the person: the nurse waits for their sentence.
+    if (!(await waitForSpeech(job))) return;
+    for (let i = 0; i < reply.length; i++) {
+      if (!(await nurseSays(job, reply[i]))) return;
+      if (!(await pause(job, 0.5))) return;
+    }
+    if (TURNS[index + 1]) {
+      await runTurn(job, index + 1);
+    } else {
+      if (!(await pause(job, 1.0))) return;
+      S.headTry = true;
+      changed();
+    }
+  }
+
+  function armShowMe() {
+    cancelShowMe();
+    showMeTimer = setTimeout(function () {
+      S.showMeOffered = true;
+      if (board.offersShowMe !== true) { board.offersShowMe = true; board.reload(false); }
+      changed();
+    }, 45000);
+  }
+  function cancelShowMe() {
+    clearTimeout(showMeTimer);
+    showMeTimer = null;
+    S.showMeOffered = false;
+    if (board.offersShowMe) { board.offersShowMe = false; board.reload(false); }
+  }
+
+  /* Whatever the person chose among the answers, by scan or by touch. */
+  function activate(id) {
+    if (id === "lang") { toggleLanguage(); return; }
+    if (id === "showme") { showMe(); return; }
+    if (id === SOMETHING_ELSE.id) { openBoard(); return; }
+    const phrase = ANSWERS[id];
+    if (phrase) personAnswered(phrase);
+  }
+
+  function toggleLanguage() {
+    settings.language = settings.language === "en" ? "uk" : "en";
+    changed();
+  }
+
+  function openBoard() {
+    if (S.step === "conversation" && conv.isPartnerTurn) return;
+    const turn = currentTurn();
+    const target = turn ? BOARD[turn.target] : null;
+    board.configure(target ? [{ phrase: target, topic: TOPIC_OF[target.id] }] : null, "needs", true);
+    conv.boardOpen = true;
+    // Opening the board is progress; the "Show me" clock starts again.
+    if (S.step === "conversation") armShowMe();
+    announce(T(C.somethingElseHint));
+    changed();
+  }
+
+  function closeBoard() {
+    conv.boardOpen = false;
+    if (S.step === "conversation") armShowMe();
+    changed();
+  }
+
+  /* An answer cell: the person's words go into the conversation and are said. */
+  function personAnswered(phrase) {
+    if (S.step === "conversation" && conv.isPartnerTurn) return;
+    conv.boardOpen = false;
+    conv.addPerson(phrase.speech, phrase.symbol, phrase.id);
+    Sound.play("speak");
+    Speaker.say(phrase.speech);
+    afterPersonSpoke(phrase.speech, phrase.id);
+  }
+
+  /* A message from the whole board, already said by the board itself. */
+  function personSaidFromBoard(phrases, words, isQuick) {
+    if (S.step === "conversation" && conv.isPartnerTurn) return;
+    conv.addPerson(words, phrases[0] ? phrases[0].symbol : null, phrases.length === 1 ? phrases[0].id : null);
+    if (!isQuick) board.message = [];
+    conv.boardOpen = false;
+    afterPersonSpoke(words, phrases.length === 1 ? phrases[0].id : "board.message");
+  }
+
+  function afterPersonSpoke(words, id) {
+    if (S.step === "free") {
+      // Answered: nobody is asking any more, so the whole board is home again.
+      conv.awaiting = false;
+      conv.boardOpen = false;
+      changed();
+      return;
+    }
+    if (S.step !== "conversation") { changed(); return; }
+    const turn = TURNS[S.turnIndex];
+    if (!turn) return;
+    const target = phraseFor(turn.target);
+    // The nurse hears what was said, whichever board it came from.
+    const hit = id === turn.target || (!!target && sameWords(words, target.speech));
+    S.lastAnswerID = hit ? turn.target : id;
+    cancelShowMe();
+    conv.isPartnerTurn = true;
+    const job = newJob();
+    respond(job, hit ? turn.yes : turn.other, S.turnIndex);
+    changed();
+  }
+
+  /* The way out for anyone stuck: answers the turn on the person's behalf. */
+  function showMe() {
+    const turn = currentTurn();
+    if (!turn || conv.isPartnerTurn) return;
+    const answer = ANSWERS[turn.target];
+    if (answer) { personAnswered(answer); return; }
+    const cell = BOARD[turn.target];
+    if (!cell) return;
+    board.message = [cell];
+    Sound.play("speak");
+    Speaker.say(cell.speech);
+    personSaidFromBoard([cell], cell.speech, false);
+  }
+
+  function headTryDone() {
+    S.headTry = false;
+    startReplay();
+  }
+
+  // ---------- Step 4 ----------
+
+  function startReplay() {
+    cancelJobs();
+    S.replayingID = null;
+    S.replayReady = false;
+    S.replayFinished = false;
+    S.step = "ukrainian";
+    changed();
+    runReplay(newJob());
+  }
+
+  async function runReplay(job) {
+    if (!(await pause(job, 1.5))) return;
+    S.replayReady = true;
+    changed();
+    const lines = conv.personLines();
+    for (let i = 0; i < lines.length; i++) {
+      S.replayingID = lines[i].id;
+      Sound.play("speak");
+      Speaker.say(lines[i].words, "uk");
+      changed();
+      if (!(await waitForSpeech(job))) return;
+      if (!(await pause(job, 0.4))) return;
+    }
+    S.replayingID = null;
+    S.replayFinished = true;
+    changed();
+  }
+
+  function replayPressed() {
+    if (S.step !== "ukrainian") return;
+    if (!S.replayReady) { Sound.play("unavailable"); return; }
+    Sound.play("select");
+    cancelJobs();
+    Speaker.stop();
+    S.replayingID = null;
+    S.step = "closing";
+    closingStarts = Date.now() + 1500;
+    changed();
+  }
+
+  // ---------- After the story ----------
+
+  function keepTalking() {
+    cancelJobs();
+    conv.isPartnerTurn = false;
+    conv.isTyping = false;
+    conv.append("note", C.freeNote);
+    conv.awaiting = false;
+    conv.boardOpen = false;
+    board.configure(null, "needs", false);
+    S.step = "free";
+    changed();
+  }
+
+  function partnerAsks(q) {
+    if (S.step !== "free") return;
+    conv.append("partner", QUESTIONS[q].prompt);
+    conv.setQuestion(q, QUESTIONS[q].prompt);
+    announce(T(QUESTIONS[q].prompt));
+    changed();
+  }
+
+  function newConversation() {
+    Speaker.stop();
+    conv.reset();
+    conv.append("note", C.freeNote);
+    conv.awaiting = false;
+    board.message = [];
+    changed();
+  }
+
+  function restart() {
+    cancelJobs();
+    Speaker.stop();
+    conv.reset();
+    board.message = [];
+    board.configure(null, "needs", false);
+    S.turnIndex = 0;
+    S.lastAnswerID = null;
+    S.headTry = false;
+    S.replayingID = null;
+    S.replayReady = false;
+    S.replayFinished = false;
+    S.deadPresses = 0;
+    S.cardShown = false;
+    S.cardReady = false;
+    S.step = "problem";
+    changed();
+    runProblemScene();
+  }
+
+  // ===================================================================
+  // The whole board (Holos Grid's GridBoard)
+  // ===================================================================
+
+  const MSG = { row: "message.row", speak: "message.speak", del: "message.delete", clear: "message.clear", cancel: "message.clear.cancel", confirm: "message.clear.confirm" };
+  const ROW = { quick: "board.row.quick", topics: "board.row.topics", one: "board.row.1", two: "board.row.2" };
+  function ownsMessage(id) {
+    return [MSG.row, MSG.speak, MSG.del, MSG.clear, MSG.cancel, MSG.confirm, Scanner.backID(MSG.row), Scanner.backID(MSG.clear)].indexOf(id) >= 0;
+  }
+
+  const board = {
+    topic: "needs",
+    message: [],
+    guide: null,
+    offersShowMe: false,
+    offersBack: false,
+    scanner: new Scanner({ onSelect: function (id) { board.select(id); } }),
+    phrases: function () { return TOPICS[this.topic].phrases; },
+    firstRow: function () { return this.phrases().slice(0, 5); },
+    secondRow: function () { return this.phrases().slice(5); },
+    words: function () { return joined(this.message.map(function (p) { return p.speech; })); },
+    configure: function (guide, topic, back) {
+      this.guide = guide;
+      this.offersShowMe = false;
+      this.offersBack = !!back;
+      if (topic) this.topic = topic;
+    },
+    /* Where the guide tag goes: the first goal cell the message still lacks,
+       or Speak once every one is in (Grid's Guide). */
+    target: function () {
+      if (!this.guide) return null;
+      let matched = 0;
+      for (let i = 0; i < this.message.length; i++) {
+        if (matched < this.guide.length && this.message[i].id === this.guide[matched].phrase.id) matched += 1;
+      }
+      const stop = this.guide[matched];
+      if (!stop) return { kind: "speak" };
+      return stop.topic === this.topic ? { kind: "cell", phrase: stop.phrase } : { kind: "topic", topic: stop.topic };
+    },
+    targetRow: function (t) {
+      if (!t) return null;
+      if (t.kind === "speak") return MSG.row;
+      if (t.kind === "topic") return ROW.topics;
+      return this.firstRow().some(function (p) { return p.id === t.phrase.id; }) ? ROW.one : ROW.two;
+    },
+    /* Classic row-column, top to bottom. Right after a topic the same rows
+       start from the topic's own: the order round the loop never changes. */
+    tree: function (rotated) {
+      const ids = function (list) { return list.map(function (p) { return { id: p.id }; }); };
+      let rows = [
+        { id: MSG.row, children: [{ id: MSG.speak }, { id: MSG.del }, { id: MSG.clear, children: [{ id: MSG.cancel }, { id: MSG.confirm }] }] },
+        { id: ROW.quick, children: ids(QUICK) },
+        { id: ROW.topics, children: TOPIC_ORDER.map(function (t) { return { id: "topic." + t }; }).concat([{ id: "board.language" }]) },
+        { id: ROW.one, children: ids(this.firstRow()) },
+        { id: ROW.two, children: ids(this.secondRow()) },
+      ];
+      if (this.offersBack) rows.push({ id: "board.close" });
+      if (rotated) rows = rows.slice(3).concat(rows.slice(0, 3));
+      if (this.offersShowMe) rows.unshift({ id: "board.showMe" });
+      return rows;
+    },
+    reload: function (rotated) {
+      if (this.scanner.state !== "stopped") this.scanner.load(this.tree(rotated));
+    },
+    select: function (id) {
+      if (id === "board.showMe") { showMe(); return; }
+      if (id === "board.close") { closeBoard(); return; }
+      if (ownsMessage(id)) { this.perform(id); if (boardLive) this.reload(false); return; }
+      if (id === "board.language") { toggleLanguage(); this.reload(false); return; }
+      if (id.indexOf("topic.") === 0) { this.topic = id.slice(6); this.reload(true); return; }
+      const quick = QUICK.find(function (p) { return p.id === id; });
+      if (quick) { this.speakQuick(quick); return; }
+      const cell = this.phrases().find(function (p) { return p.id === id; });
+      if (cell) { this.add(cell); this.reload(false); }
+    },
+    add: function (phrase) {
+      if (this.message.length >= 12) { Sound.play("unavailable"); return false; }
+      this.message.push(phrase);
+      return true;
+    },
+    perform: function (id) {
+      if (id === MSG.speak) { this.speak(); return; }
+      if (id === MSG.del) {
+        if (!this.message.length) Sound.play("unavailable"); else this.message.pop();
+        return;
+      }
+      if (id === MSG.clear || id === MSG.confirm) { this.message = []; Speaker.stop(); }
+    },
+    speak: function () {
+      if (!this.message.length) { Sound.play("unavailable"); return; }
+      const phrases = this.message.slice();
+      const words = this.words();
+      Sound.play("speak");
+      Speaker.say(words);
+      personSaidFromBoard(phrases, words, false);
+    },
+    speakQuick: function (phrase) {
+      Sound.play("speak");
+      Speaker.say(phrase.speech);
+      personSaidFromBoard([phrase], phrase.speech, true);
+    },
+  };
+
+  // ===================================================================
+  // Which scanner runs, and on what
+  // ===================================================================
+
+  const answers = new Scanner({ onSelect: function (id) { activate(id); } });
+  const panel = new Scanner({ onSelect: function (id) { if (id === "head.skip") headTryDone(); } });
+  const closing = new Scanner({ loopsBeforePause: 40, onSelect: function (id) { if (id === "closing.keep") keepTalking(); else restart(); } });
+  let answersSig = null;
+  let settleTimer = null;
+  let boardLive = false;
+  let boardSettle = null;
+  let closingStarts = 0;
+  let closingTimer = null;
+
+  function answersTree() {
+    if (S.step !== "conversation" && S.step !== "free") return [];
+    if (conv.isPartnerTurn || S.headTry || boardMode()) return [];
+    const nodes = [];
+    if (S.step === "conversation" && S.showMeOffered) nodes.push({ id: "showme" });
+    const q = QUESTIONS[conv.question];
+    q.answers.forEach(function (p) { nodes.push({ id: p.id }); });
+    stripFor(q).forEach(function (p) { nodes.push({ id: p.id }); });
+    nodes.push({ id: "lang" });
+    return nodes;
+  }
+
+  /* A new set of answers appears a moment before anything lights up, so the
+     eye can land on the question first (Bedside's 0.8 s settle). */
+  function syncScanners() {
+    const scanning = settings.mode === "scan";
+    const live = S.step === "conversation" || S.step === "free";
+    const tree = scanning ? answersTree() : [];
+    const sig = JSON.stringify(tree);
+    if (sig !== answersSig) {
+      answersSig = sig;
+      clearTimeout(settleTimer);
+      answers.load(tree, false);
+      if (tree.length) {
+        settleTimer = setTimeout(function () { if (answersSig === sig) answers.load(tree); }, 800);
+      }
+    }
+    const wantBoard = scanning && live && !S.headTry && boardMode() && !conv.isPartnerTurn;
+    if (wantBoard && !boardLive) {
+      boardLive = true;
+      board.scanner.load(board.tree(false), false);
+      clearTimeout(boardSettle);
+      boardSettle = setTimeout(function () { if (boardLive) board.scanner.load(board.tree(false)); }, 800);
+    } else if (!wantBoard && boardLive) {
+      boardLive = false;
+      clearTimeout(boardSettle);
+      board.scanner.stop();
+    }
+    const wantPanel = scanning && live && S.headTry;
+    if (wantPanel && panel.state === "stopped") panel.load([{ id: "head.skip" }]);
+    if (!wantPanel && panel.state !== "stopped") panel.stop();
+    const wantClosing = scanning && S.step === "closing";
+    if (wantClosing && closing.state === "stopped" && !closingTimer) {
+      const delay = Math.max(0, closingStarts - Date.now());
+      closingTimer = setTimeout(function () {
+        closingTimer = null;
+        if (S.step === "closing" && settings.mode === "scan") closing.load([{ id: "closing.keep" }, { id: "closing.again" }]);
+      }, delay);
+    }
+    if (!wantClosing) {
+      clearTimeout(closingTimer);
+      closingTimer = null;
+      if (closing.state !== "stopped") closing.stop();
+    }
+  }
+
+  // ===================================================================
+  // Presses
+  // ===================================================================
+
+  let lastPress = 0;
+  function press() {
+    const now = performance.now();
+    if (now - lastPress < settings.pressGap * 1000) return;
+    lastPress = now;
+    Sound.ensure();
+    flash();
+    if (S.step === "problem") { problemPressed(); return; }
+    if (S.step === "ukrainian") { replayPressed(); return; }
+    if (S.step === "closing") { closing.press(); return; }
+    if (S.headTry) { panel.press(); return; }
+    if (boardMode()) { board.scanner.press(); return; }
+    answers.press();
+  }
+
+  /* A finger or a click on something, in touch mode. */
+  function touchAct(kind, id) {
+    Sound.ensure();
+    switch (kind) {
+      case "answer":
+        Sound.play("select");
+        activate(id);
+        break;
+      case "cell": {
+        const cell = board.phrases().find(function (p) { return p.id === id; });
+        if (cell && board.add(cell)) Sound.play("select");
+        break;
+      }
+      case "quick": {
+        const quick = QUICK.find(function (p) { return p.id === id; });
+        if (quick) board.speakQuick(quick);
+        break;
+      }
+      case "topic":
+        Sound.play("enter");
+        board.topic = id;
+        break;
+      case "msg":
+        if (id === MSG.speak) board.speak();
+        else if (id === MSG.del) { if (board.message.length) Sound.play("back"); board.perform(id); }
+        else { Sound.play("back"); board.perform(MSG.clear); }
+        break;
+      case "close":
+        Sound.play("back");
+        closeBoard();
+        break;
+      default:
+        break;
+    }
+    changed();
+  }
+
+  // ===================================================================
+  // Rendering
+  // ===================================================================
+
+  let ICONS = {};
+  function icon(name, cls) {
+    const entry = ICONS[name];
+    const c = "sf" + (cls ? " " + cls : "");
+    if (!entry) return '<span class="' + c + '"></span>';
+    return '<span class="' + c + '" aria-hidden="true"><svg viewBox="' + entry.vb + '" fill="currentColor">' + entry.d + "</svg></span>";
+  }
+
+  const FACES = { 0: { fill: "#C7EDC2", curve: 0.9 }, 1: { fill: "#FFED9E", curve: 0.15 }, 2: { fill: "#FFD9AD", curve: -0.55 }, 3: { fill: "#FFC2BD", curve: -1 } };
+  function faceSVG(level, size) {
+    const f = FACES[level] || FACES[3];
+    const s = size || 120;
+    const ring = (Math.max(s * 0.04, 1.5) / s) * 100;
+    const mouth = (Math.max(s * 0.06, 2) / s) * 100;
+    const eyeH = level >= 3 ? 4 : 12;
+    const eyeY = 40 - eyeH / 2;
+    const cy = 68 + 20 * f.curve;
+    return '<span class="facewrap" aria-hidden="true"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="' + f.fill + '"/>' +
+      '<circle cx="50" cy="50" r="' + (50 - ring / 2) + '" fill="none" stroke="#12141A" stroke-width="' + ring + '"/>' +
+      '<rect x="31" y="' + eyeY + '" width="9" height="' + eyeH + '" rx="' + Math.min(4.5, eyeH / 2) + '" fill="#12141A"/>' +
+      '<rect x="60" y="' + eyeY + '" width="9" height="' + eyeH + '" rx="' + Math.min(4.5, eyeH / 2) + '" fill="#12141A"/>' +
+      '<path d="M30 68 Q50 ' + cy + ' 70 68" fill="none" stroke="#12141A" stroke-width="' + mouth + '" stroke-linecap="round"/></svg></span>';
+  }
+
+  function tagHTML(iconOnly, cls) {
+    return '<span class="tag' + (iconOnly ? " icon" : "") + (cls ? " " + cls : "") + '">' + icon("hand.point.up.left.fill") + (iconOnly ? "" : "<span>" + esc(T(C.guideMarker)) + "</span>") + "</span>";
+  }
+
+  function langToggleHTML(lit) {
+    return '<button type="button" class="langtoggle' + (lit ? " lit" : "") + '" data-ui="lang" aria-label="' + esc(T(C.language)) + '">' +
+      '<span class="' + (settings.language === "en" ? "on" : "") + '">EN</span><span class="' + (settings.language === "uk" ? "on" : "") + '">УКР</span></button>';
+  }
+
+  function headerHTML(step, title, detail, extra) {
+    return '<div class="hdr"><div class="step">' + esc(T(step)) + '</div><div class="title">' + esc(T(title)) + "</div>" +
+      (detail ? '<div class="detail">' + esc(T(detail)) + "</div>" : "") + (extra || "") + "</div>";
+  }
+
+  function topHTML() {
+    const scanning = settings.mode === "scan";
+    const ctl = '<div class="ctl">' + langToggleHTML(answers.isHighlighted("lang")) + "</div>";
+    if (S.step === "problem") return '<div class="topbar"><div class="content">' + headerHTML(C.step1, QUESTIONS.feeling.prompt, C.problemSetup) + "</div>" + ctl + "</div>";
+    if (S.step === "ukrainian") return '<div class="topbar"><div class="content">' + headerHTML(C.step4, C.replayTitle, C.replayBody) + "</div>" + ctl + "</div>";
+    if (S.step === "free") {
+      let chips = QUESTION_ORDER.map(function (q) {
+        const on = conv.awaiting && conv.question === q;
+        return '<button type="button" class="qchip' + (on ? " on" : "") + '" data-ui="ask" data-id="' + q + '">' + icon(QUESTIONS[q].symbol) + esc(T(QUESTIONS[q].prompt)) + "</button>";
+      }).join("");
+      chips += '<button type="button" class="qchip act" data-ui="new">' + icon("arrow.counterclockwise") + esc(T(C.newConversation)) + "</button>";
+      chips += '<button type="button" class="qchip act" data-ui="again">' + icon("play.fill") + esc(T(C.startAgain)) + "</button>";
+      return '<div class="topbar"><div class="content"><div class="ask"><div class="lbl">' + esc(T(C.askHeader)) + '</div><div class="chips">' + chips + "</div></div></div>" + ctl + "</div>";
+    }
+    if (S.step === "conversation") {
+      const turn = currentTurn();
+      if (!turn) return '<div class="topbar"><div class="content"></div>' + ctl + "</div>";
+      const step = turn.stage === 2 ? C.step2 : C.step3;
+      let detail = null;
+      let how = "";
+      if (S.headTry) {
+        return '<div class="topbar"><div class="content">' + headerHTML(step, C.goalHeadTry, null) + "</div>" + ctl + "</div>";
+      }
+      const showMeBtn = S.showMeOffered ? '<button type="button" class="showme' + ((answers.isHighlighted("showme") || board.scanner.isHighlighted("board.showMe")) ? " lit" : "") + '" data-ui="showme">' + icon("sparkles") + esc(T(C.showMe)) + "</button>" : "";
+      if (boardMode()) {
+        const t = board.target();
+        if (BOARD[turn.target] && t) {
+          if (t.kind === "topic") detail = guideTopicLine(t.topic, !scanning);
+          else if (t.kind === "cell") detail = guideCellLine(t.phrase, !scanning);
+          else detail = guideSpeakLine(board.guide, !scanning);
+        } else if (!BOARD[turn.target]) {
+          detail = C.guideBackToAnswers;
+        }
+        how = showMeBtn ? '<div class="how">' + showMeBtn + "</div>" : "";
+      } else {
+        detail = turn.detail || null;
+        how = '<div class="how"><span>' + icon("hand.point.up.left.fill") + esc(T(scanning ? C.howScan : C.howTouch)) + "</span>" + showMeBtn + "</div>";
+      }
+      return '<div class="topbar"><div class="content">' + headerHTML(step, turn.goal, detail, how) + "</div>" + ctl + "</div>";
+    }
+    return "";
+  }
+
+  function lineHTML(line, lang) {
+    const words = esc(T(line.words, lang));
+    if (line.role === "note") return '<div class="note">' + words + "</div>";
+    if (line.role === "person") {
+      const lit = S.step === "ukrainian" && S.replayingID === line.id;
+      const art = line.face !== null && line.face !== undefined ? faceSVG(line.face, 30) : icon(line.symbol || "bubble.left.fill");
+      return '<div class="line person" data-line="' + line.id + '"><div class="pbubble' + (lit ? " lit nolift" : "") + '">' + art + "<span>" + words + "</span>" + (lit ? icon("speaker.wave.2.fill") : "") + "</div></div>";
+    }
+    const avatar = icon(line.role === "nurse" ? "stethoscope" : "person.fill");
+    return '<div class="line partner"><div class="avatar">' + avatar + '</div><div class="nbubble">' + words + "</div></div>";
+  }
+
+  function chatHTML(lang) {
+    let html = conv.lines.map(function (l) { return lineHTML(l, lang); }).join("");
+    if (conv.isTyping) html += '<div class="line partner" data-typing="1"><div class="avatar">' + icon("stethoscope") + '</div><div class="typing"><i></i><i></i><i></i></div></div>';
+    return '<div class="lines"' + (lang === "uk" ? ' lang="uk"' : "") + ">" + html + "</div>";
+  }
+
+  function answerCell(p, opts) {
+    const lit = opts.lit;
+    const face = opts.face;
+    const art = face !== null && face !== undefined
+      ? '<div class="disc face">' + faceSVG(face, 120) + "</div>"
+      : '<div class="disc">' + icon(p.symbol) + "</div>";
+    const cls = "acell k-" + p.kind + (opts.compact ? " compact" : "") + (opts.h ? " h" : "") + (opts.guide ? " guide" : "") + (lit ? " lit" : "");
+    const maxh = !opts.h && !opts.compact ? ' data-maxh="half"' : "";
+    return '<button type="button" class="' + cls + '" data-act="answer" data-id="' + p.id + '" aria-label="' + esc(T(p.label)) + '">' +
+      '<div class="art">' + art + '</div><div class="word" data-fit="2" data-min="0.45"' + maxh + ">" + esc(T(p.label)) + "</div>" +
+      (opts.guide ? tagHTML(opts.compact || opts.small) : "") + "</button>";
+  }
+
+  function guideAnswerID() {
+    const turn = currentTurn();
+    if (!turn || conv.isPartnerTurn || S.headTry) return null;
+    if (BOARD[turn.target]) return conv.boardOpen ? null : SOMETHING_ELSE.id;
+    return conv.boardOpen ? "board.close" : turn.target;
+  }
+
+  function answersHTML(size) {
+    const q = QUESTIONS[conv.question];
+    const guide = guideAnswerID();
+    const phone = settings.device === "iphone";
+    const stripH = phone ? 72 : 84;
+    const headerH = phone ? 44 : 52;
+    const gap = phone ? 10 : 14;
+    const gridW = size.w;
+    const gridH = Math.max(80, size.h - headerH - stripH - gap * 2);
+    const roomy = size.w > 560;
+    let main = "";
+    const lit = function (id) { return answers.isHighlighted(id); };
+    const grid = function (list, isScale, columns, w, h) {
+      const count = Math.max(1, list.length);
+      let per;
+      if (columns) per = columns;
+      else {
+        const wide = w > h * 1.3;
+        if (isScale) per = wide ? count : 1;
+        else if (wide) per = count <= 4 ? count : 3;
+        else per = count <= 2 ? count : 2;
+      }
+      const rows = Math.max(1, Math.ceil(count / per));
+      const cw = (w - gap * (per - 1)) / per;
+      const ch = (h - gap * (rows - 1)) / rows;
+      const horizontal = cw > ch * 1.7;
+      const small = cw < 130;
+      const cells = list.map(function (p, i) {
+        return answerCell(p, { lit: lit(p.id), guide: guide === p.id, h: horizontal, face: isScale ? i : null, small: small });
+      }).join("");
+      return '<div class="agrid" style="grid-template-columns: repeat(' + per + ', minmax(0, 1fr)); grid-template-rows: repeat(' + rows + ', minmax(0, 1fr))">' + cells + "</div>";
+    };
+    if (q.layout === "bodyMap") {
+      const figureW = roomy ? 200 : (phone ? 110 : 130);
+      const litRegion = (answers.highlightedID || "").indexOf("body.") === 0 && answers.state === "scanning" ? answers.highlightedID.slice(5) : "";
+      const guideRegion = guide && guide.indexOf("body.") === 0 ? guide.slice(5) : "";
+      main = '<div class="bodymap"><div class="figure" style="width:' + figureW + 'px" data-bodymap data-lit="' + litRegion + '" data-guide="' + guideRegion + '"></div>' +
+        grid(q.answers, false, 2, gridW - figureW - gap, gridH) + "</div>";
+    } else {
+      main = grid(q.answers, q.layout === "scale", null, gridW, gridH);
+    }
+    const strip = stripFor(q).map(function (p) {
+      return answerCell(p, { lit: lit(p.id), guide: guide === p.id, compact: true, h: roomy });
+    }).join("");
+    return '<div class="answers' + (conv.isPartnerTurn ? " waiting" : "") + '">' +
+      '<div class="qheader">' + icon("bubble.left.fill") + '<span class="q" data-fit="' + (size.h < 420 ? 1 : 2) + '" data-min="0.6">' + esc(T(conv.prompt || q.prompt)) + "</span></div>" +
+      main + '<div class="strip">' + strip + "</div></div>" +
+      (conv.isPartnerTurn && S.step === "conversation" ? '<div class="nurse-answering">' + esc(T(C.nurseAnswering)) + "</div>" : "");
+  }
+
+  function rowClass(id, base) {
+    const sc = board.scanner;
+    const scanning = settings.mode === "scan" && sc.state !== "stopped";
+    let cls = base;
+    if (scanning && sc.isEntered(id)) cls += " entered";
+    else if (scanning && sc.path.length) cls += " dim";
+    if (sc.isHighlighted(id)) cls += " ringed";
+    return cls;
+  }
+
+  function boardHTML() {
+    const sc = board.scanner;
+    const scanning = settings.mode === "scan";
+    const phone = settings.device === "iphone";
+    const t = S.step === "conversation" && currentTurn() && BOARD[currentTurn().target] ? board.target() : null;
+    const tRow = board.targetRow(t);
+    const rowGuided = function (rowID) { return !!t && tRow === rowID && scanning && !sc.isEntered(rowID); };
+    const onTarget = function (rowID) { return !!t && tRow === rowID && (!scanning || sc.isEntered(rowID)); };
+    const lit = function (id) { return sc.isHighlighted(id); };
+    const back = function (rowID) {
+      return scanning ? '<div class="cell backcell' + (lit(Scanner.backID(rowID)) ? " lit" : "") + '">' + icon("arrow.uturn.backward") + "<b>" + esc(T(C.goBack)) + "</b></div>" : "";
+    };
+
+    // The conversation, in one line above the board.
+    let stripText;
+    if (conv.awaiting) {
+      const q = QUESTIONS[conv.question];
+      stripText = esc(T(conv.prompt || q.prompt));
+    } else {
+      const lastPerson = conv.lines.slice().reverse().find(function (l) { return l.role === "person"; });
+      stripText = lastPerson ? '<span class="who">' + esc(T(C.youSaid)) + ":</span> " + esc(T(quoted(lastPerson.words))) : esc(T(C.boardHome));
+    }
+    const guideBack = guideAnswerID() === "board.close";
+    const backBtn = conv.awaiting ? '<button type="button" class="backans' + (guideBack ? " guide" : "") + (lit("board.close") ? " lit" : "") + '" data-act="close" data-id="close">' +
+      icon("arrow.uturn.backward") + "<span>" + esc(T(C.backToAnswers)) + "</span>" + (guideBack ? tagHTML(true) : "") + "</button>" : "";
+
+    // Row 1: the message.
+    const mEntered = sc.isEntered(MSG.row);
+    const clearOpen = sc.isEntered(MSG.clear);
+    const speakTag = t && t.kind === "speak" && onTarget(MSG.row) ? tagHTML(true) : "";
+    const ctl = function (id, sym, words, prominent) {
+      return '<button type="button" class="msg-ctl' + (prominent ? " prominent" : "") + (lit(id) ? " lit" : "") + '" data-act="msg" data-id="' + id + '">' +
+        icon(sym) + "<b>" + esc(T(words)) + "</b>" + (id === MSG.speak ? speakTag : "") + "</button>";
+    };
+    let controls = ctl(MSG.speak, "speaker.wave.2.fill", C.speak, true) + ctl(MSG.del, "delete.left.fill", C.deleteLast);
+    controls += clearOpen ? ctl(MSG.cancel, "arrow.uturn.backward", C.clearCancel) + ctl(MSG.confirm, "checkmark.circle.fill", C.clearConfirm) : ctl(MSG.clear, "xmark", C.clear);
+    if (mEntered) {
+      const bid = Scanner.backID(clearOpen ? MSG.clear : MSG.row);
+      controls += '<div class="msg-ctl back' + (lit(bid) ? " lit" : "") + '">' + icon("arrow.uturn.backward") + "<b>" + esc(T(C.goBack)) + "</b></div>";
+    }
+    const chips = board.message.length
+      ? board.message.map(function (p) { return '<span class="chip k-' + p.kind + '">' + icon(p.symbol) + "<b>" + esc(T(p.label)) + "</b></span>"; }).join("")
+      : '<span class="msg-empty">' + esc(T(C.messageEmpty)) + "</span>";
+    let msgRow;
+    const mGuided = rowGuided(MSG.row);
+    if (phone) {
+      const sentence = board.message.length ? esc(T(board.words())) : esc(T(C.messageEmpty));
+      msgRow = '<div class="' + rowClass(MSG.row, "srow msgrow") + (mGuided ? " guiderow" : "") + '" data-row="' + MSG.row + '"><div class="cmsg">' +
+        '<div class="sent' + (board.message.length ? "" : " empty") + '">' + sentence + '</div><div class="ctls">' + controls + "</div></div>" +
+        (mGuided ? tagHTML(false, "rowtag") : "") + "</div>";
+    } else {
+      let cls = "msgbar";
+      if (scanning && mEntered) cls += " entered";
+      else if (scanning && sc.path.length) cls += " dim";
+      if (lit(MSG.row)) cls += " lit nolift";
+      if (mGuided) cls += " guiderow";
+      msgRow = '<div class="' + cls + '" data-row="' + MSG.row + '"><div class="msg-sentence">' + chips + "</div>" + controls + (mGuided ? tagHTML(false, "rowtag") : "") + "</div>";
+    }
+
+    // Row 2: quick phrases, said at once.
+    const quick = QUICK.map(function (p) {
+      return '<button type="button" class="cell k-' + p.kind + (lit(p.id) ? " lit" : "") + '" data-act="quick" data-id="' + p.id + '">' + icon(p.symbol) +
+        '<b data-fit="2" data-min="0.55">' + esc(T(p.label)) + "</b>" + icon("speaker.wave.2.fill", "qspk") + "</button>";
+    }).join("");
+    const quickRow = '<div class="' + rowClass(ROW.quick, "srow quickrow") + '" data-row="' + ROW.quick + '"><div class="in">' + quick + back(ROW.quick) + "</div></div>";
+
+    // Row 3: topics and the language cell.
+    const topicItems = TOPIC_ORDER.map(function (key) {
+      const topic = TOPICS[key];
+      const sel = board.topic === key;
+      const guided = t && t.kind === "topic" && t.topic === key && onTarget(ROW.topics);
+      return '<div class="slot"><button type="button" class="tab' + (sel ? " sel" : "") + (phone ? " stack" : "") + (lit("topic." + key) ? " lit" : "") + '" data-act="topic" data-id="' + key + '">' +
+        icon(topic.symbol) + '<span data-fit="' + (phone ? 2 : 1) + '" data-min="0.6">' + esc(T(topic.name)) + "</span></button>" + (guided ? tagHTML(true) : "") + "</div>";
+    });
+    topicItems.push('<div class="slot"><button type="button" class="langcell' + (lit("board.language") ? " lit" : "") + '" data-ui="lang">' + icon("globe") +
+      '<span class="chips"><span class="' + (settings.language === "en" ? "on" : "") + '">EN</span><span class="' + (settings.language === "uk" ? "on" : "") + '">УКР</span></span></button></div>');
+    if (scanning) topicItems.push('<div class="cell backcell' + (lit(Scanner.backID(ROW.topics)) ? " lit" : "") + '">' + icon("arrow.uturn.backward") + "<b>" + esc(T(C.goBack)) + "</b></div>");
+    let topicsInner;
+    if (phone) {
+      const half = Math.ceil(topicItems.length / 2);
+      topicsInner = '<div class="tline">' + topicItems.slice(0, half).join("") + '</div><div class="tline">' + topicItems.slice(half).join("") + "</div>";
+    } else {
+      topicsInner = '<div class="tline">' + topicItems.join("") + "</div>";
+    }
+    const tGuided = rowGuided(ROW.topics);
+    const topicsRow = '<div class="' + rowClass(ROW.topics, "srow topicsrow") + (tGuided ? " guiderow" : "") + '" data-row="' + ROW.topics + '"><div class="in">' + topicsInner + "</div>" + (tGuided ? tagHTML(false, "rowtag") : "") + "</div>";
+
+    const header = '<div class="theader">' + icon(TOPICS[board.topic].symbol) + "<b>" + esc(T(TOPICS[board.topic].name)) + "</b></div>";
+
+    // Rows 4 and 5: the open topic.
+    const phraseRow = function (rowID, list) {
+      const cells = list.map(function (p) {
+        const guided = t && t.kind === "cell" && t.phrase.id === p.id && onTarget(rowID);
+        return '<div class="slot"><button type="button" class="cell k-' + p.kind + (lit(p.id) ? " lit" : "") + '" data-act="cell" data-id="' + p.id + '">' + icon(p.symbol) +
+          '<b data-fit="2" data-min="0.55">' + esc(T(p.label)) + "</b></button>" + (guided ? tagHTML(true) : "") + "</div>";
+      }).join("");
+      const guidedRow = rowGuided(rowID);
+      return '<div class="' + rowClass(rowID, "srow prow") + (guidedRow ? " guiderow" : "") + '" data-row="' + rowID + '"><div class="in">' + cells + back(rowID) + "</div>" + (guidedRow ? tagHTML(false, "rowtag") : "") + "</div>";
+    };
+
+    return '<div class="boardmode">' +
+      '<div class="bstrip">' + icon(conv.awaiting ? "bubble.left.fill" : "bubble.left.and.bubble.right.fill") + '<span class="q" data-fit="2" data-min="0.6">' + stripText + "</span>" + backBtn + "</div>" +
+      '<div class="board">' + msgRow + quickRow + topicsRow + header + phraseRow(ROW.one, board.firstRow()) + phraseRow(ROW.two, board.secondRow()) + "</div></div>";
+  }
+
+  function problemBoardHTML() {
+    const words = S.deadPresses > 0 ? C.pressedInVain : C.replyEmpty;
+    return '<div class="emptyreply' + (S.knock ? " knock" : "") + '" data-ui="empty"><div class="yourturn">' + esc(T(C.yourTurn)) + '</div><div class="spacer"></div>' +
+      icon("hand.raised.slash.fill", "handslash") + '<div class="msg">' + esc(T(words)) + '</div><div class="spacer"></div></div>';
+  }
+
+  function overlayHTML() {
+    const scanning = settings.mode === "scan";
+    if (S.step === "problem" && S.cardShown) {
+      return '<div class="cardlayer"><div class="pcard" role="dialog" aria-modal="true"><div class="ttl"><div class="disc">' + icon("speaker.wave.2.fill") + "</div><h2>" + esc(T(C.cardTitle)) + "</h2></div>" +
+        "<p>" + esc(T(C.cardBody)) + '</p><button type="button" class="bigbtn' + (scanning ? " lit nolift" : "") + (S.cardReady ? "" : " waiting") + '" data-ui="answer">' +
+        icon("chevron.right") + "<span>" + esc(T(C.pressToAnswer)) + "</span></button></div></div>";
+    }
+    if ((S.step === "conversation" || S.step === "free") && S.headTry) {
+      return '<div class="panellayer"><div class="headpanel" role="dialog" aria-modal="true"><h3>' + icon("face.smiling") + esc(T(C.headTryTitle)) + "</h3><p>" + esc(T(C.headTryBody)) + "</p>" +
+        '<button type="button" class="panelbtn' + (panel.isHighlighted("head.skip") ? " lit" : "") + '" data-ui="skip">' + icon("chevron.right") + esc(T(C.headTrySkip)) + "</button></div></div>";
+    }
+    return "";
+  }
+
+  function replayStatusHTML() {
+    const hasVoice = Speaker.hasUkrainian();
+    let label;
+    if (!conv.personLines().length) label = C.replayNothing;
+    else if (S.replayFinished) label = hasVoice ? C.replayDone : C.replayDoneShownOnly;
+    else label = hasVoice ? C.replaySpeaking : C.replayShownOnly;
+    const scanning = settings.mode === "scan";
+    return '<div class="replaystatus"><div class="label">' + icon(S.replayFinished ? "checkmark.circle.fill" : "speaker.wave.2.fill") + "<span>" + esc(T(label)) + "</span></div>" +
+      '<button type="button" class="bigbtn' + (S.replayReady ? (scanning ? " lit nolift" : "") : " waiting") + '" data-ui="continue">' + icon("chevron.right") + "<span>" + esc(T(C.continueLabel)) + "</span></button></div>";
+  }
+
+  function voiceNoticeHTML() {
+    if (Speaker.hasUkrainian()) return "";
+    if (!(S.step === "ukrainian" || settings.language === "uk")) return "";
+    return '<div class="voicenotice">' + icon("speaker.slash.fill") + "<div><b>" + esc(T(C.noVoiceTitle)) + "</b><span>" + esc(T(C.noVoiceBody)) + "</span></div></div>";
+  }
+
+  function closingHTML() {
+    const para = function (sym, words) { return '<div class="para">' + icon(sym) + "<p>" + esc(T(words)) + "</p></div>"; };
+    const btn = function (id, sym, words, peach) {
+      return '<button type="button" class="bigbtn' + (peach ? " peach" : "") + (closing.isHighlighted(id) ? " lit" : "") + '" data-ui="' + id + '">' + icon(sym) + "<span>" + esc(T(words)) + "</span></button>";
+    };
+    return '<div class="closing"><div class="closingbar">' + langToggleHTML(false) + '</div><div class="cscroll"><div class="ccard"><h2>' + esc(T(C.closingTitle)) + "</h2>" +
+      para("person.2.fill", C.closingWho) + para("bubble.left.and.bubble.right.fill", C.closingHow) + para("lock.fill", C.closingFree) +
+      '<div class="source">' + esc(T(C.closingSource)) + '</div></div></div><div class="choices">' +
+      btn("closing.keep", "bubble.left.fill", C.keepTalking, false) + btn("closing.again", "arrow.counterclockwise", C.startAgain, true) + "</div></div>";
+  }
+
+  // ---------- Regions: only what changed is redrawn ----------
+
+  let appEl = null;
+  let cache = {};
+  let layout = "";
+
+  function skeleton(kind) {
+    if (kind === "closing") return '<div class="scr"><div class="body" data-r="closing"></div></div><div class="flash"></div>';
+    if (kind === "replay") {
+      return '<div class="scr"><div data-r="top"></div><div data-r="notice"></div><div class="transcript"><div class="chat" data-r="chat"></div></div><div data-r="status"></div></div><div class="flash"></div>';
+    }
+    if (kind === "board") return '<div class="scr"><div data-r="top"></div><div data-r="notice"></div><div class="body"><div data-r="board" style="position:absolute;inset:0"></div><div data-r="overlay"></div></div></div><div class="flash"></div>';
+    return '<div class="scr"><div data-r="top"></div><div data-r="notice"></div><div class="body"><div class="split"><div class="chatcol"><div class="chat" data-r="chat"></div></div>' +
+      '<div class="boardcol" data-r="board"></div></div><div data-r="overlay"></div></div></div><div class="flash"></div>';
+  }
+
+  function setRegion(name, html, after) {
+    const el = appEl.querySelector('[data-r="' + name + '"]');
+    if (!el) return;
+    if (cache[name] === html) return;
+    el.innerHTML = html;
+    cache[name] = html;
+    if (after) after(el);
+  }
+
+  let renderQueued = false;
+  function changed() {
+    if (renderQueued) return;
+    renderQueued = true;
+    requestAnimationFrame(function () { renderQueued = false; render(); });
+  }
+
+  function render() {
+    if (!appEl) return;
+    syncScanners();
+    let kind;
+    if (S.step === "closing") kind = "closing";
+    else if (S.step === "ukrainian") kind = "replay";
+    else if (boardMode()) kind = "board";
+    else kind = "split";
+    appEl.classList.toggle("phone", settings.device === "iphone");
+    appEl.classList.toggle("scanning", settings.mode === "scan");
+    if (layout !== kind) {
+      appEl.innerHTML = skeleton(kind);
+      layout = kind;
+      cache = {};
+    }
+    if (kind === "closing") {
+      setRegion("closing", closingHTML(), fitIn);
+      return;
+    }
+    setRegion("top", topHTML(), fitIn);
+    setRegion("notice", voiceNoticeHTML());
+    if (kind === "replay") {
+      setRegion("chat", chatHTML("uk"), scrollChat);
+      setRegion("status", replayStatusHTML());
+      return;
+    }
+    if (kind === "board") {
+      setRegion("board", boardHTML(), function (el) { fitIn(el); followScan(el); });
+      setRegion("overlay", overlayHTML(), fitIn);
+      return;
+    }
+    setRegion("chat", chatHTML(settings.language), scrollChat);
+    const col = appEl.querySelector('[data-r="board"]');
+    const size = col ? { w: col.clientWidth, h: col.clientHeight } : { w: 700, h: 600 };
+    setRegion("board", S.step === "problem" ? problemBoardHTML() : answersHTML(size), function (el) { fitIn(el); drawBodyMaps(el); });
+    setRegion("overlay", overlayHTML(), fitIn);
+  }
+
+  function scrollChat(el) {
+    if (S.step === "ukrainian" && S.replayingID !== null) {
+      const line = el.querySelector('[data-line="' + S.replayingID + '"]');
+      if (line) { el.scrollTop = Math.max(0, line.offsetTop + line.offsetHeight / 2 - el.clientHeight / 2); return; }
+    }
+    el.scrollTop = el.scrollHeight;
+  }
+
+  /* A switch user cannot scroll, so a board taller than its space follows
+     the scan by itself (Grid's GridBoardView). */
+  function followScan(el) {
+    const scroller = el.querySelector(".board");
+    if (!scroller || scroller.scrollHeight <= scroller.clientHeight + 4) return;
+    const sc = board.scanner;
+    const focus = sc.path[0] || sc.highlightedID;
+    if (!focus) return;
+    const row = scroller.querySelector('[data-row="' + focus + '"]');
+    if (!row) return;
+    scroller.scrollTop = Math.max(0, row.offsetTop - scroller.clientHeight / 2 + row.offsetHeight / 2);
+  }
+
+  /* lineLimit + minimumScaleFactor: shrink in steps until the text fits its
+     width, its line count and, for an answer word, half its cell. */
+  const fitCache = {};
+  function fitIn(root) {
+    const els = root.querySelectorAll("[data-fit]");
+    for (let i = 0; i < els.length; i++) fitOne(els[i]);
+  }
+  function fitOne(el) {
+    const lines = +el.dataset.fit;
+    const min = el.dataset.min ? +el.dataset.min : 0.45;
+    el.style.fontSize = "";
+    el.style.lineHeight = "";
+    el.style.overflowWrap = "";
+    const cs = getComputedStyle(el);
+    const base = parseFloat(cs.fontSize);
+    const lh = parseFloat(cs.lineHeight);
+    const ratio = isNaN(lh) ? 1.2 : lh / base;
+    let maxH = Infinity;
+    if (el.dataset.maxh === "half") {
+      const p = el.parentElement;
+      const ps = getComputedStyle(p);
+      const inner = p.clientHeight - parseFloat(ps.paddingTop) - parseFloat(ps.paddingBottom);
+      maxH = (inner - (parseFloat(ps.rowGap) || 0)) / 2;
+    }
+    const key = el.textContent + "|" + el.clientWidth + "|" + Math.round(maxH) + "|" + lines + "|" + base;
+    let scale = fitCache[key];
+    const apply = function (s) { el.style.fontSize = base * s + "px"; el.style.lineHeight = base * s * ratio + "px"; };
+    if (scale === undefined) {
+      scale = 1;
+      for (; scale >= min - 1e-9; scale -= 0.02) {
+        apply(scale);
+        const h = el.offsetHeight;
+        const lineH = base * scale * ratio;
+        if (el.scrollWidth <= el.clientWidth + 0.5 && Math.round(h / lineH) <= lines && h <= maxH + 0.5) break;
+      }
+      if (scale < min) scale = -min;
+      fitCache[key] = scale;
+    }
+    if (scale < 0) {
+      apply(-scale);
+      el.style.overflowWrap = "anywhere";
+    } else {
+      apply(scale);
+    }
+  }
+
+  /* Bedside's BodyMapFigure: unit rects of a width × 1.8 width figure. */
+  const PARTS = [["back", 0.23, 0.15, 0.54, 0.36, true], ["head", 0.37, 0.0, 0.26, 0.14], ["chest", 0.28, 0.165, 0.44, 0.16], ["stomach", 0.28, 0.335, 0.44, 0.16],
+    ["arm", 0.07, 0.17, 0.13, 0.34], ["arm", 0.80, 0.17, 0.13, 0.34], ["leg", 0.29, 0.52, 0.19, 0.47], ["leg", 0.52, 0.52, 0.19, 0.47]];
+  function drawBodyMaps(root) {
+    root.querySelectorAll("[data-bodymap]").forEach(function (box) {
+      const lit = box.dataset.lit || "";
+      const guide = box.dataset.guide || "";
+      const w = Math.max(40, Math.min(box.clientWidth, box.clientHeight / 1.8));
+      const h = w * 1.8;
+      let s = '<svg width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + " " + h + '" role="img" aria-label="' + esc(T(QUESTIONS.painWhere.prompt)) + '">';
+      PARTS.forEach(function (p) {
+        const region = p[0];
+        const x = p[1] * w, y = p[2] * h, pw = p[3] * w, ph = p[4] * h;
+        const isLit = lit === region;
+        const isGuide = guide === region && !isLit;
+        const r = Math.min(pw, ph) * (region === "head" ? 0.5 : 0.38);
+        const fill = isLit ? "#FFCC00" : (region === "back" ? "#F7EBD9" : "#FFDBC2");
+        const lw = isLit ? 5 : (isGuide ? 4 : 2);
+        const stroke = isLit ? "#000" : (isGuide ? "#B85438" : "rgba(143, 56, 33, 0.55)");
+        const dash = p[5] && !isLit ? ' stroke-dasharray="6 4"' : "";
+        s += '<g data-act="answer" data-id="body.' + region + '" style="cursor:pointer"><rect x="' + x + '" y="' + y + '" width="' + pw + '" height="' + ph + '" rx="' + r + '" fill="' + fill + '"/>' +
+          '<rect x="' + (x + lw / 2) + '" y="' + (y + lw / 2) + '" width="' + (pw - lw) + '" height="' + (ph - lw) + '" rx="' + Math.max(0, r - lw / 2) + '" fill="none" stroke="' + stroke + '" stroke-width="' + lw + '"' + dash + "/></g>";
+      });
+      box.innerHTML = s + "</svg>";
+    });
+  }
+
+  function flash() {
+    if (!appEl) return;
+    const f = appEl.querySelector(".flash");
+    if (!f) return;
+    f.classList.remove("on");
+    void f.offsetWidth;
+    f.classList.add("on");
+  }
+
+  let liveEl = null;
+  function announce(text) {
+    if (liveEl) liveEl.textContent = text;
+  }
+
+  // ===================================================================
+  // The page around the device
+  // ===================================================================
+
+  function fitDevice() {
+    const stage = document.getElementById("stage");
+    const device = document.getElementById("device");
+    if (!stage || !device) return;
+    const phone = settings.device === "iphone";
+    const w = (phone ? 393 : 1194) + (phone ? 24 : 28);
+    const h = (phone ? 759 : 790) + (phone ? 24 : 28);
+    device.classList.toggle("phone", phone);
+    const availW = stage.clientWidth;
+    const top = stage.getBoundingClientRect().top + window.scrollY;
+    const availH = Math.max(380, window.innerHeight - Math.min(top, 220) - 24);
+    let scale = Math.min(1, availW / w);
+    // Fit the height on a wide screen, but never below a readable size.
+    if (!phone || window.innerWidth > 700) scale = Math.min(scale, Math.max(availH / h, Math.min(0.7, availW / w)));
+    device.style.transform = "translateX(-50%) scale(" + scale + ")";
+    stage.style.height = Math.ceil(h * scale) + "px";
+  }
+
+  function setOption(name, value) {
+    settings[name] = value;
+    document.querySelectorAll('[data-opt="' + name + '"]').forEach(function (b) {
+      b.setAttribute("aria-pressed", String(b.dataset.value === String(value)));
+    });
+    if (name === "device") { fitDevice(); }
+    if (name === "mode") { answersSig = null; }
+    cache = {};
+    layout = "";
+    changed();
+  }
+
+  function bind() {
+    appEl = document.getElementById("app");
+    liveEl = document.getElementById("live");
+
+    document.querySelectorAll("[data-opt]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        let v = b.dataset.value;
+        if (b.dataset.opt === "scanInterval") v = parseFloat(v);
+        if (b.dataset.opt === "sound") v = v === "true";
+        setOption(b.dataset.opt, v);
+        b.blur();
+      });
+    });
+    const again = document.getElementById("restart");
+    if (again) again.addEventListener("click", function () { Sound.ensure(); restart(); again.blur(); });
+
+    window.addEventListener("keydown", function (e) {
+      if (e.key !== " " && e.key !== "Enter") return;
+      const tag = (document.activeElement && document.activeElement.tagName) || "";
+      if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
+      e.preventDefault();
+      if (e.repeat) return;
+      if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
+      press();
+    });
+
+    // The screen is the switch: a press on touch-down for a mouse, on a
+    // clean tap for a finger, so the page can still be scrolled.
+    let touchStart = null;
+    appEl.addEventListener("pointerdown", function (e) {
+      Sound.ensure();
+      if (e.target.closest(".topbar, .closingbar")) return;
+      if (settings.mode !== "scan" && !isAlwaysSwitch(e)) return;
+      if (e.pointerType === "touch") { touchStart = { x: e.clientX, y: e.clientY, t: Date.now() }; return; }
+      e.preventDefault();
+      press();
+    });
+    appEl.addEventListener("pointerup", function (e) {
+      if (!touchStart || e.pointerType !== "touch") return;
+      const moved = Math.abs(e.clientX - touchStart.x) + Math.abs(e.clientY - touchStart.y);
+      const quick = Date.now() - touchStart.t < 700;
+      touchStart = null;
+      if (moved < 12 && quick) press();
+    });
+    appEl.addEventListener("click", function (e) {
+      const ui = e.target.closest("[data-ui]");
+      if (ui && handleUI(ui)) return;
+      if (settings.mode !== "touch") return;
+      const act = e.target.closest("[data-act]");
+      if (!act) return;
+      touchAct(act.dataset.act, act.dataset.id);
+    });
+  }
+
+  /* In touch mode the one-press screens (step 1, the replay, the closing
+     choices and the head-turn panel) still answer to a tap anywhere. */
+  function isAlwaysSwitch(e) {
+    return S.step === "problem" && !!e.target.closest(".emptyreply");
+  }
+
+  function handleUI(el) {
+    const ui = el.dataset.ui;
+    const touch = settings.mode === "touch";
+    switch (ui) {
+      case "lang":
+        if (el.closest(".topbar, .closingbar") || touch) { Sound.ensure(); Sound.play("select"); toggleLanguage(); }
+        return true;
+      case "ask": Sound.ensure(); Sound.play("enter"); partnerAsks(el.dataset.id); return true;
+      case "new": Sound.ensure(); Sound.play("back"); newConversation(); return true;
+      case "again": Sound.ensure(); restart(); return true;
+      case "showme": Sound.ensure(); Sound.play("select"); showMe(); return true;
+      case "answer": if (touch) problemPressed(); return true;
+      case "continue": if (touch) replayPressed(); return true;
+      case "skip": if (touch) { Sound.play("select"); headTryDone(); } return true;
+      case "closing.keep": if (touch) { Sound.play("select"); keepTalking(); } return true;
+      case "closing.again": if (touch) { Sound.play("select"); restart(); } return true;
+      default: return false;
+    }
+  }
+
+  function init(icons) {
+    ICONS = icons;
+    if (window.innerWidth < 700) settings.device = "iphone";
+    document.querySelectorAll("[data-opt]").forEach(function (b) {
+      b.setAttribute("aria-pressed", String(b.dataset.value === String(settings[b.dataset.opt])));
+    });
+    bind();
+    Speaker.init();
+    fitDevice();
+    window.addEventListener("resize", function () { fitDevice(); cache = {}; layout = ""; changed(); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { cache = {}; changed(); });
+    restart();
+  }
+
+  window.HolosSketch = { init: init };
+})();
+
+</script>
+<script>
+HolosSketch.init({"ellipsis.bubble.fill":{"vb":"0 0 256 256","d":"<path d=\"M216,40H40A16,16,0,0,0,24,56V184a16,16,0,0,0,16,16h60.43l13.68,23.94a16,16,0,0,0,27.78,0L155.57,200H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40ZM84,132a12,12,0,1,1,12-12A12,12,0,0,1,84,132Zm44,0a12,12,0,1,1,12-12A12,12,0,0,1,128,132Zm44,0a12,12,0,1,1,12-12A12,12,0,0,1,172,132Z\"/>"},"bandage.fill":{"vb":"0 0 256 256","d":"<path d=\"M128,116a12,12,0,1,1-12,12A12,12,0,0,1,128,116Zm84.28,39.72a40,40,0,1,1-56.56,56.56L128,184.57l-27.72,27.71a40,40,0,1,1-56.56-56.56L71.43,128,43.72,100.28a40,40,0,1,1,56.56-56.56L128,71.43l27.72-27.71a40,40,0,1,1,56.56,56.56L184.57,128Zm-95.59,17.53L82.75,139.31,55,167A24,24,0,1,0,89,201ZM161.94,128,128,94.06,94.06,128,128,161.94Zm39-39A24,24,0,1,0,167,55L139.31,82.75l33.94,33.94Z\"/>"},"moon.zzz.fill":{"vb":"0 0 256 256","d":"<path d=\"M240,96a8,8,0,0,1-8,8H216v16a8,8,0,0,1-16,0V104H184a8,8,0,0,1,0-16h16V72a8,8,0,0,1,16,0V88h16A8,8,0,0,1,240,96ZM144,56h8v8a8,8,0,0,0,16,0V56h8a8,8,0,0,0,0-16h-8V32a8,8,0,0,0-16,0v8h-8a8,8,0,0,0,0,16Zm65.14,94.33A88.07,88.07,0,0,1,105.67,46.86a8,8,0,0,0-10.6-9.06A96,96,0,1,0,218.2,160.93a8,8,0,0,0-9.06-10.6Z\"/>"},"face.smiling":{"vb":"0 0 256 256","d":"<path d=\"M178.39,158c-11,19.06-29.39,30-50.39,30s-39.36-10.93-50.39-30a12,12,0,0,1,20.78-12c3.89,6.73,12.91,18,29.61,18s25.72-11.28,29.61-18a12,12,0,1,1,20.78,12ZM236,128A108,108,0,1,1,128,20,108.12,108.12,0,0,1,236,128Zm-24,0a84,84,0,1,0-84,84A84.09,84.09,0,0,0,212,128ZM92,124a16,16,0,1,0-16-16A16,16,0,0,0,92,124Zm72-32a16,16,0,1,0,16,16A16,16,0,0,0,164,92Z\"/>"},"cloud.rain.fill":{"vb":"0 0 256 256","d":"<path d=\"M158.66,196.44l-32,48a8,8,0,1,1-13.32-8.88l32-48a8,8,0,0,1,13.32,8.88ZM231.87,87.55a76,76,0,0,0-151.78.73A8.18,8.18,0,0,1,72,96l-.6,0A8.14,8.14,0,0,1,64,87.39a92.48,92.48,0,0,1,2.33-16.51,4,4,0,0,0-5-4.78A52.09,52.09,0,0,0,24,116.36C24.2,145.07,48.12,168,76.84,168h36.21L89.34,203.56a8,8,0,0,0,13.32,8.88L132.28,168H156A76.08,76.08,0,0,0,231.87,87.55Z\"/>"},"exclamationmark.triangle.fill":{"vb":"0 0 256 256","d":"<path d=\"M236.8,188.09,149.35,36.22h0a24.76,24.76,0,0,0-42.7,0L19.2,188.09a23.51,23.51,0,0,0,0,23.72A24.35,24.35,0,0,0,40.55,224h174.9a24.35,24.35,0,0,0,21.33-12.19A23.51,23.51,0,0,0,236.8,188.09ZM120,104a8,8,0,0,1,16,0v40a8,8,0,0,1-16,0Zm8,88a12,12,0,1,1,12-12A12,12,0,0,1,128,192Z\"/>"},"brain.head.profile":{"vb":"0 0 256 256","d":"<path d=\"M120,72a8,8,0,1,1,8,8A8,8,0,0,1,120,72Zm24,64a8,8,0,1,0,8-8A8,8,0,0,0,144,136Zm48.5,35.47A88.32,88.32,0,0,0,224,101.89q0-1.1-.09-2.19a4,4,0,0,0-4-3.75H195.75L172.62,123.7a24,24,0,1,1-12.28-10.25l25.51-30.62A8,8,0,0,1,192,80h23.14a4,4,0,0,0,3.77-5.35C207.27,42,176.86,18,140.74,16.08l-.59,0a4,4,0,0,0-4.15,4V49.33a24,24,0,1,1-16,0v-27a4,4,0,0,0-4.89-3.91A88.16,88.16,0,0,0,48,102L25.55,145.14l-.22.45a16,16,0,0,0,7.51,20.7l.25.12L56,176.9v31a16,16,0,0,0,16,16h40v8a8,8,0,0,0,8,8h71.77a8.42,8.42,0,0,0,4.06-1,8,8,0,0,0,4.11-8Z\"/>"},"lungs.fill":{"vb":"0 0 256 256","d":"<path d=\"M120 28h16v84l40 28c4-40 14-64 30-64 20 0 34 46 34 98 0 30-10 46-30 46-26 0-50-14-62-34l-4-8v-22l-16-10-16 10v22l-4 8c-12 20-36 34-62 34-20 0-30-16-30-46 0-52 14-98 34-98 16 0 26 24 30 64l40-28Z\"/>"},"figure.stand":{"vb":"0 0 256 256","d":"<path d=\"M100,36a28,28,0,1,1,28,28A28,28,0,0,1,100,36ZM215.42,140.78l-45.25-51.3a28,28,0,0,0-21-9.48H106.83a28,28,0,0,0-21,9.48l-45.25,51.3a16,16,0,0,0,22.56,22.69L89,142.7l-19.7,74.88a16,16,0,0,0,29.08,13.35L128,180l29.58,51a16,16,0,0,0,29.08-13.35L167,142.7l25.9,20.77a16,16,0,0,0,22.56-22.69Z\"/>"},"figure.walk":{"vb":"0 0 256 256","d":"<path d=\"M120,48a32,32,0,1,1,32,32A32,32,0,0,1,120,48Zm88,88c-28.64,0-41.81-13.3-55.75-27.37-3.53-3.57-7.18-7.26-11-10.58-37-32.14-96.22,22.73-98.72,25.08a8,8,0,0,0,10.95,11.66A163.88,163.88,0,0,1,84,113c13.78-7.38,25.39-10.23,34.7-8.58L64.66,228.81a8,8,0,0,0,4.15,10.52A7.84,7.84,0,0,0,72,240a8,8,0,0,0,7.34-4.81l33.59-77.27L144,180.12V232a8,8,0,0,0,16,0V176a8,8,0,0,0-3.35-6.51l-37.2-26.57L132.88,112c2.64,2.44,5.26,5.07,8,7.84C155.05,134.19,172.69,152,208,152a8,8,0,0,0,0-16Z\"/>"},"hand.raised.fill":{"vb":"0 0 256 256","d":"<path d=\"M216,104v48a88,88,0,0,1-176,0V64a16,16,0,0,1,32,0v56a8,8,0,0,0,16,0V32a16,16,0,0,1,32,0v80a8,8,0,0,0,16,0V48a16,16,0,0,1,32,0v80.67A48.08,48.08,0,0,0,128,176a8,8,0,0,0,16,0,32,32,0,0,1,32-32,8,8,0,0,0,8-8V104a16,16,0,0,1,32,0Z\"/>"},"shoeprints.fill":{"vb":"0 0 256 256","d":"<path d=\"M216.06,192v12A36,36,0,0,1,144,204V192a8,8,0,0,1,8-8h56A8,8,0,0,1,216.06,192ZM104,160h-56a8,8,0,0,0-8,8v12A36,36,0,0,0,112,180V168A8,8,0,0,0,104,160ZM76,16C64.36,16,53.07,26.31,44.2,45c-13.93,29.38-18.56,73,.29,96a8,8,0,0,0,6.2,2.93h50.55a8,8,0,0,0,6.2-2.93c18.85-23,14.22-66.65.29-96C98.85,26.31,87.57,16,76,16Zm78.8,152h50.55a8,8,0,0,0,6.2-2.93c18.85-23,14.22-66.65.29-96C202.93,50.31,191.64,40,180,40s-22.89,10.31-31.77,29c-13.93,29.38-18.56,73,.29,96A8,8,0,0,0,154.76,168Z\"/>"},"thermometer.medium":{"vb":"0 0 256 256","d":"<path d=\"M212,56a28,28,0,1,0,28,28A28,28,0,0,0,212,56Zm0,40a12,12,0,1,1,12-12A12,12,0,0,1,212,96Zm-60,50.08V40a32,32,0,0,0-64,0V146.08a56,56,0,1,0,64,0ZM136,104H104V40a16,16,0,0,1,32,0Z\"/>"},"drop.fill":{"vb":"0 0 256 256","d":"<path d=\"M174,47.75a254.19,254.19,0,0,0-41.45-38.3,8,8,0,0,0-9.18,0A254.19,254.19,0,0,0,82,47.75C54.51,79.32,40,112.6,40,144a88,88,0,0,0,176,0C216,112.6,201.49,79.32,174,47.75Zm9.85,105.59a57.6,57.6,0,0,1-46.56,46.55A8.75,8.75,0,0,1,136,200a8,8,0,0,1-1.32-15.89c16.57-2.79,30.63-16.85,33.44-33.45a8,8,0,0,1,15.78,2.68Z\"/>"},"pills.fill":{"vb":"0 0 256 256","d":"<path d=\"M216.43,39.6a53.27,53.27,0,0,0-75.33,0L39.6,141.09a53.26,53.26,0,0,0,75.32,75.31L216.43,114.91A53.32,53.32,0,0,0,216.43,39.6Zm-11.32,64-50.75,50.74-52.69-52.68,50.75-50.75a37.26,37.26,0,0,1,52.69,52.69ZM189.68,82.34a8,8,0,0,1,0,11.32l-24,24a8,8,0,1,1-11.31-11.32l24-24A8,8,0,0,1,189.68,82.34Z\"/>"},"toilet.fill":{"vb":"0 0 256 256","d":"<path d=\"M60,88H196a4,4,0,0,0,4-4V40a16,16,0,0,0-16-16H72A16,16,0,0,0,56,40V84A4,4,0,0,0,60,88ZM88,48h15.73A8.18,8.18,0,0,1,112,55.47,8,8,0,0,1,104,64H88.27A8.18,8.18,0,0,1,80,56.53,8,8,0,0,1,88,48Zm136,64.06a8,8,0,0,0-8-8.06H40a8,8,0,0,0-8,8.06,96.1,96.1,0,0,0,51.68,85.08l-3.47,24.27a16.43,16.43,0,0,0,1.63,10A16,16,0,0,0,96,240h63.66a16.52,16.52,0,0,0,9.72-3,16,16,0,0,0,6.46-15.23l-3.52-24.6A96.1,96.1,0,0,0,224,112.06ZM96,224l2.93-20.5a96.15,96.15,0,0,0,58.14,0L160,224Z\"/>"},"bed.double.fill":{"vb":"0 0 256 256","d":"<path d=\"M216,72H32V48a8,8,0,0,0-16,0V208a8,8,0,0,0,16,0V176H240v32a8,8,0,0,0,16,0V112A40,40,0,0,0,216,72ZM32,88h72v72H32Z\"/>"},"moon.fill":{"vb":"0 0 256 256","d":"<path d=\"M235.54,150.21a104.84,104.84,0,0,1-37,52.91A104,104,0,0,1,32,120,103.09,103.09,0,0,1,52.88,57.48a104.84,104.84,0,0,1,52.91-37,8,8,0,0,1,10,10,88.08,88.08,0,0,0,109.8,109.8,8,8,0,0,1,10,10Z\"/>"},"checkmark.circle.fill":{"vb":"0 0 256 256","d":"<path d=\"M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm45.66,85.66-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32Z\"/>"},"heart.circle.fill":{"vb":"0 0 256 256","d":"<path d=\"M240,102c0,70-103.79,126.66-108.21,129a8,8,0,0,1-7.58,0C119.79,228.66,16,172,16,102A62.07,62.07,0,0,1,78,40c20.65,0,38.73,8.88,50,23.89C139.27,48.88,157.35,40,178,40A62.07,62.07,0,0,1,240,102Z\"/>"},"person.crop.circle.fill":{"vb":"0 0 256 256","d":"<path d=\"M172,120a44,44,0,1,1-44-44A44.05,44.05,0,0,1,172,120Zm60,8A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88.09,88.09,0,0,0-91.47-87.93C77.43,41.89,39.87,81.12,40,128.25a87.65,87.65,0,0,0,22.24,58.16A79.71,79.71,0,0,1,84,165.1a4,4,0,0,1,4.83.32,59.83,59.83,0,0,0,78.28,0,4,4,0,0,1,4.83-.32,79.71,79.71,0,0,1,21.79,21.31A87.62,87.62,0,0,0,216,128Z\"/>"},"figure.and.child.holdinghands":{"vb":"0 0 256 256","d":"<path d=\"M134.16,24.1a4,4,0,0,0-3.56,1.81C120.3,41.48,120,55.79,120,56a8,8,0,0,0,9.68,7.79A8.24,8.24,0,0,0,136,55.68,8,8,0,0,1,144.8,48a8.14,8.14,0,0,1,7.2,8.23,24,24,0,0,1-48-.27c0-.63.09-10.78,5.44-24a4,4,0,0,0-4.59-5.39A104.16,104.16,0,0,0,24.07,131.66C26,186.72,71.23,231,126.32,231.9a104,104,0,0,0,7.84-207.8ZM80,127.91a12,12,0,1,1,12,12A12,12,0,0,1,80,127.91Zm80.27,54.77a61,61,0,0,1-64.54,0,8,8,0,0,1,8.54-13.54,45,45,0,0,0,47.46,0,8,8,0,0,1,8.54,13.54ZM164,139.91a12,12,0,1,1,12-12A12,12,0,0,1,164,139.91Z\"/>"},"figure.wave":{"vb":"0 0 256 256","d":"<path d=\"M219.31,98.46A88,88,0,1,1,67.08,186.77h0L26.15,115.88a16,16,0,0,1,27.69-16L72.4,132a8,8,0,0,0,13.86-8L47,56A16,16,0,0,1,74.69,40L114,108a8,8,0,1,0,13.85-8l-30-52a16,16,0,0,1,27.71-16L166,102.12A48.25,48.25,0,0,0,152,136a47.59,47.59,0,0,0,9.6,28.8,8,8,0,1,0,12.79-9.61A32,32,0,0,1,181,110.26a8,8,0,0,0,2.17-10.43L171.71,80a16,16,0,0,1,27.71-16l19.89,34.46Zm-29.37-57A43.74,43.74,0,0,1,216.74,62l.33.57a8,8,0,0,0,13.86-8L230.6,54a59.64,59.64,0,0,0-36.54-28,8,8,0,0,0-4.12,15.46ZM79.58,225.72A103.58,103.58,0,0,1,53.93,196a8,8,0,0,0-13.86,8,119.56,119.56,0,0,0,29.6,34.28,8,8,0,0,0,9.91-12.56Z\"/>"},"person.fill":{"vb":"0 0 256 256","d":"<path d=\"M230.93,220a8,8,0,0,1-6.93,4H32a8,8,0,0,1-6.92-12c15.23-26.33,38.7-45.21,66.09-54.16a72,72,0,1,1,73.66,0c27.39,8.95,50.86,27.83,66.09,54.16A8,8,0,0,1,230.93,220Z\"/>"},"person.2.fill":{"vb":"0 0 256 256","d":"<path d=\"M164.47,195.63a8,8,0,0,1-6.7,12.37H10.23a8,8,0,0,1-6.7-12.37,95.83,95.83,0,0,1,47.22-37.71,60,60,0,1,1,66.5,0A95.83,95.83,0,0,1,164.47,195.63Zm87.91-.15a95.87,95.87,0,0,0-47.13-37.56A60,60,0,0,0,144.7,54.59a4,4,0,0,0-1.33,6A75.83,75.83,0,0,1,147,150.53a4,4,0,0,0,1.07,5.53,112.32,112.32,0,0,1,29.85,30.83,23.92,23.92,0,0,1,3.65,16.47,4,4,0,0,0,3.95,4.64h60.3a8,8,0,0,0,7.73-5.93A8.22,8.22,0,0,0,252.38,195.48Z\"/>"},"lightbulb.fill":{"vb":"0 0 256 256","d":"<path d=\"M176,232a8,8,0,0,1-8,8H88a8,8,0,0,1,0-16h80A8,8,0,0,1,176,232Zm40-128a87.55,87.55,0,0,1-33.64,69.21A16.24,16.24,0,0,0,176,186v6a16,16,0,0,1-16,16H96a16,16,0,0,1-16-16v-6a16,16,0,0,0-6.23-12.66A87.59,87.59,0,0,1,40,104.49C39.74,56.83,78.26,17.14,125.88,16A88,88,0,0,1,216,104Zm-32.11-9.34a57.6,57.6,0,0,0-46.56-46.55,8,8,0,0,0-2.66,15.78c16.57,2.79,30.63,16.85,33.44,33.45A8,8,0,0,0,176,104a9,9,0,0,0,1.35-.11A8,8,0,0,0,183.89,94.66Z\"/>"},"speaker.slash.fill":{"vb":"0 0 256 256","d":"<path d=\"M213.92,210.62a8,8,0,1,1-11.84,10.76L160,175.09v48.6a8.29,8.29,0,0,1-3.91,7.18,8,8,0,0,1-9-.56l-65.55-51A4,4,0,0,1,80,176.18V87.09L42.08,45.38A8,8,0,1,1,53.92,34.62Zm-27.21-55.46a8,8,0,0,0,11.29-.7,40,40,0,0,0,0-52.88,8,8,0,1,0-12,10.57,24,24,0,0,1,0,31.72A8,8,0,0,0,186.71,155.16Zm40.92-80.49a8,8,0,1,0-11.92,10.66,64,64,0,0,1,0,85.34,8,8,0,1,0,11.92,10.66,80,80,0,0,0,0-106.66ZM153,119.87a4,4,0,0,0,7-2.7V32.25a8.27,8.27,0,0,0-2.88-6.4,8,8,0,0,0-10-.16L103.83,59.33a4,4,0,0,0-.5,5.85ZM60,80H32A16,16,0,0,0,16,96v64a16,16,0,0,0,16,16H60a4,4,0,0,0,4-4V84A4,4,0,0,0,60,80Z\"/>"},"chair.fill":{"vb":"0 0 256 256","d":"<path d=\"M208,136H176V104h16a16,16,0,0,0,16-16V40a16,16,0,0,0-16-16H64A16,16,0,0,0,48,40V88a16,16,0,0,0,16,16H80v32H48a16,16,0,0,0-16,16v16a16,16,0,0,0,16,16h8v40a8,8,0,0,0,16,0V184H184v40a8,8,0,0,0,16,0V184h8a16,16,0,0,0,16-16V152A16,16,0,0,0,208,136Zm-48,0H96V104h64Z\"/>"},"clock.fill":{"vb":"0 0 256 256","d":"<path d=\"M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm56,112H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h48a8,8,0,0,1,0,16Z\"/>"},"heart.fill":{"vb":"0 0 256 256","d":"<path d=\"M240,102c0,70-103.79,126.66-108.21,129a8,8,0,0,1-7.58,0C119.79,228.66,16,172,16,102A62.07,62.07,0,0,1,78,40c20.65,0,38.73,8.88,50,23.89C139.27,48.88,157.35,40,178,40A62.07,62.07,0,0,1,240,102Z\"/>"},"sun.max.fill":{"vb":"0 0 256 256","d":"<path d=\"M120,40V16a8,8,0,0,1,16,0V40a8,8,0,0,1-16,0Zm8,24a64,64,0,1,0,64,64A64.07,64.07,0,0,0,128,64ZM58.34,69.66A8,8,0,0,0,69.66,58.34l-16-16A8,8,0,0,0,42.34,53.66Zm0,116.68-16,16a8,8,0,0,0,11.32,11.32l16-16a8,8,0,0,0-11.32-11.32ZM192,72a8,8,0,0,0,5.66-2.34l16-16a8,8,0,0,0-11.32-11.32l-16,16A8,8,0,0,0,192,72Zm5.66,114.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32-11.32ZM48,128a8,8,0,0,0-8-8H16a8,8,0,0,0,0,16H40A8,8,0,0,0,48,128Zm80,80a8,8,0,0,0-8,8v24a8,8,0,0,0,16,0V216A8,8,0,0,0,128,208Zm112-88H216a8,8,0,0,0,0,16h24a8,8,0,0,0,0-16Z\"/>"},"house.fill":{"vb":"0 0 256 256","d":"<path d=\"M224,120v96a8,8,0,0,1-8,8H160a8,8,0,0,1-8-8V164a4,4,0,0,0-4-4H108a4,4,0,0,0-4,4v52a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V120a16,16,0,0,1,4.69-11.31l80-80a16,16,0,0,1,22.62,0l80,80A16,16,0,0,1,224,120Z\"/>"},"hand.thumbsup.fill":{"vb":"0 0 256 256","d":"<path d=\"M234,80.12A24,24,0,0,0,216,72H160V56a40,40,0,0,0-40-40,8,8,0,0,0-7.16,4.42L75.06,96H32a16,16,0,0,0-16,16v88a16,16,0,0,0,16,16H204a24,24,0,0,0,23.82-21l12-96A24,24,0,0,0,234,80.12ZM32,112H72v88H32Z\"/>"},"hand.thumbsdown.fill":{"vb":"0 0 256 256","d":"<path d=\"M239.82,157l-12-96A24,24,0,0,0,204,40H32A16,16,0,0,0,16,56v88a16,16,0,0,0,16,16H75.06l37.78,75.58A8,8,0,0,0,120,240a40,40,0,0,0,40-40V184h56a24,24,0,0,0,23.82-27ZM72,144H32V56H72Z\"/>"},"questionmark.circle.fill":{"vb":"0 0 256 256","d":"<path d=\"M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,168a12,12,0,1,1,12-12A12,12,0,0,1,128,192Zm8-48.72V144a8,8,0,0,1-16,0v-8a8,8,0,0,1,8-8c13.23,0,24-9,24-20s-10.77-20-24-20-24,9-24,20v4a8,8,0,0,1-16,0v-4c0-19.85,17.94-36,40-36s40,16.15,40,36C168,125.38,154.24,139.93,136,143.28Z\"/>"},"cup.and.saucer.fill":{"vb":"0 0 256 256","d":"<path d=\"M208,80H32a8,8,0,0,0-8,8v48a96.3,96.3,0,0,0,32.54,72H32a8,8,0,0,0,0,16H208a8,8,0,0,0,0-16H183.46a96.59,96.59,0,0,0,27-40.09A40,40,0,0,0,248,128v-8A40,40,0,0,0,208,80Zm24,48a24,24,0,0,1-17.2,23,95.78,95.78,0,0,0,1.2-15V97.38A24,24,0,0,1,232,120ZM112,56V24a8,8,0,0,1,16,0V56a8,8,0,0,1-16,0Zm32,0V24a8,8,0,0,1,16,0V56a8,8,0,0,1-16,0ZM80,56V24a8,8,0,0,1,16,0V56a8,8,0,0,1-16,0Z\"/>"},"phone.fill":{"vb":"0 0 256 256","d":"<path d=\"M231.88,175.08A56.26,56.26,0,0,1,176,224C96.6,224,32,159.4,32,80A56.26,56.26,0,0,1,80.92,24.12a16,16,0,0,1,16.62,9.52l21.12,47.15,0,.12A16,16,0,0,1,117.39,96c-.18.27-.37.52-.57.77L96,121.45c7.49,15.22,23.41,31,38.83,38.51l24.34-20.71a8.12,8.12,0,0,1,.75-.56,16,16,0,0,1,15.17-1.4l.13.06,47.11,21.11A16,16,0,0,1,231.88,175.08Z\"/>"},"hourglass":{"vb":"0 0 256 256","d":"<path d=\"M204,75.64V40a20,20,0,0,0-20-20H72A20,20,0,0,0,52,40V76a20.1,20.1,0,0,0,8,16l48,36L60,164a20.1,20.1,0,0,0-8,16v36a20,20,0,0,0,20,20H184a20,20,0,0,0,20-20V180.36a20.13,20.13,0,0,0-7.94-16L147.9,128l48.16-36.4A20.13,20.13,0,0,0,204,75.64ZM180,212H76V182l52-39,52,39.33Zm0-138.35L128,113,76,74V44H180Z\"/>"},"fork.knife":{"vb":"0 0 256 256","d":"<path d=\"M216,40V224a8,8,0,0,1-16,0V176H152a8,8,0,0,1-8-8,268.75,268.75,0,0,1,7.22-56.88c9.78-40.49,28.32-67.63,53.63-78.47A8,8,0,0,1,216,40Zm-96.11-1.31a8,8,0,1,0-15.78,2.63L111.89,88H88V40a8,8,0,0,0-16,0V88H48.11l7.78-46.68a8,8,0,1,0-15.78-2.63l-8,48A8.17,8.17,0,0,0,32,88a48.07,48.07,0,0,0,40,47.32V224a8,8,0,0,0,16,0V135.32A48.07,48.07,0,0,0,128,88a8.17,8.17,0,0,0-.11-1.31Z\"/>"},"shower.fill":{"vb":"0 0 256 256","d":"<path d=\"M64,236a12,12,0,1,1-12-12A12,12,0,0,1,64,236Zm20-44a12,12,0,1,0,12,12A12,12,0,0,0,84,192Zm-64,0a12,12,0,1,0,12,12A12,12,0,0,0,20,192Zm32-32a12,12,0,1,0,12,12A12,12,0,0,0,52,160ZM248,32H216a8,8,0,0,0-5.66,2.34l-30.2,30.2L53.38,86.19a16,16,0,0,0-8.69,27.1l98,98a16,16,0,0,0,27.09-8.66L191.46,75.86,219.31,48H248a8,8,0,0,0,0-16Z\"/>"},"thermometer.sun.fill":{"vb":"0 0 256 256","d":"<path d=\"M152,146.08V40a32,32,0,0,0-64,0V146.08a56,56,0,1,0,64,0ZM136,56H104V40a16,16,0,0,1,32,0Zm41.3,24.77a8,8,0,0,1,2.33-11.07c15-9.79,26.87-4.75,35.51-1.06C223,72,227.76,74,235.63,68.89a8,8,0,0,1,8.74,13.41C237.88,86.53,232,88,226.69,88c-7,0-12.92-2.54-17.83-4.63C201,80,196.24,78,188.37,83.11A8,8,0,0,1,177.3,80.77Zm69.4,22.46a8,8,0,0,1-2.33,11.07C237.88,118.53,232,120,226.69,120c-7,0-12.92-2.54-17.83-4.63-7.87-3.36-12.62-5.38-20.49-.25a8,8,0,0,1-8.74-13.41c15-9.79,26.87-4.75,35.51-1.06,7.87,3.36,12.62,5.39,20.49.25A8,8,0,0,1,246.7,103.23Z\"/>"},"thermometer.snowflake":{"vb":"0 0 256 256","d":"<path d=\"M248.91,77.72l-20,6.49,12.34,17a8,8,0,1,1-12.94,9.4L216,93.61l-12.34,17a8,8,0,0,1-12.94-9.4l12.34-17-20-6.49A8,8,0,0,1,188,62.5L208,69V48a8,8,0,0,1,16,0V69l20-6.49a8,8,0,0,1,4.95,15.22ZM176,192a56,56,0,1,1-88-46V40a32,32,0,0,1,64,0V146A56.23,56.23,0,0,1,176,192Zm-95.18-8h78.36A40.16,40.16,0,0,0,140,157.35a8,8,0,0,1-4-6.93V40a16,16,0,0,0-32,0V150.42a8,8,0,0,1-4,6.93A40.16,40.16,0,0,0,80.82,184Z\"/>"},"eyeglasses":{"vb":"0 0 256 256","d":"<path d=\"M200,36a12,12,0,0,0,0,24,12,12,0,0,1,12,12v50.46A47.94,47.94,0,0,0,142.75,148h-29.5A47.94,47.94,0,0,0,44,122.46V72A12,12,0,0,1,56,60a12,12,0,0,0,0-24A36,36,0,0,0,20,72v92a48,48,0,0,0,95.32,8h25.36A48,48,0,0,0,236,164V72A36,36,0,0,0,200,36ZM68,188a24,24,0,1,1,24-24A24,24,0,0,1,68,188Zm120,0a24,24,0,1,1,24-24A24,24,0,0,1,188,188Z\"/>"},"mouth.fill":{"vb":"0 0 256 256","d":"<path d=\"M24 120c24-30 56-46 80-46 12 0 18 6 24 6s12-6 24-6c24 0 56 16 80 46-22 40-62 66-104 66S46 160 24 120Zm34 2c14 10 40 18 70 18s56-8 70-18c-26-6-46-10-70-10s-44 4-70 10Z\"/>"},"3.circle.fill":{"vb":"0 0 256 256","d":"<path d=\"M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm-4,164a35.71,35.71,0,0,1-25.71-10.81A8,8,0,1,1,109.71,166,20,20,0,1,0,124,132a8,8,0,0,1-6.55-12.59L136.63,92H104a8,8,0,0,1,0-16h48a8,8,0,0,1,6.55,12.59l-21,30A36,36,0,0,1,124,188Z\"/>"},"8.circle.fill":{"vb":"0 0 256 256","d":"<path d=\"M148,152a20,20,0,1,1-20-20A20,20,0,0,1,148,152Zm-20-36a16,16,0,1,0-16-16A16,16,0,0,0,128,116Zm104,12A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-68,24a35.93,35.93,0,0,0-14.19-28.61,32,32,0,1,0-43.62,0A36,36,0,1,0,164,152Z\"/>"},"cross.case.fill":{"vb":"0 0 256 256","d":"<path d=\"M216,56H176V48a24,24,0,0,0-24-24H104A24,24,0,0,0,80,48v8H40A16,16,0,0,0,24,72V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V72A16,16,0,0,0,216,56Zm-64,88H136v16a8,8,0,0,1-16,0V144H104a8,8,0,0,1,0-16h16V112a8,8,0,0,1,16,0v16h16a8,8,0,0,1,0,16Zm8-88H96V48a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8Z\"/>"},"stethoscope":{"vb":"0 0 256 256","d":"<path d=\"M248,160a40,40,0,1,0-52.64,37.94A28,28,0,0,1,168,220H144a28,28,0,0,1-28-28V154.9c31.73-5.78,56-34.09,56-67.73V40a12,12,0,0,0-12-12H136a12,12,0,0,0,0,24h12V87.17c0,24.4-19.47,44.52-43.41,44.83A44,44,0,0,1,60,88V52H72a12,12,0,0,0,0-24H48A12,12,0,0,0,36,40V88a68,68,0,0,0,56,66.93V192a52.06,52.06,0,0,0,52,52h24a52.06,52.06,0,0,0,51.61-45.72A40.08,40.08,0,0,0,248,160Zm-40,16a16,16,0,1,1,16-16A16,16,0,0,1,208,176Z\"/>"},"xmark.circle.fill":{"vb":"0 0 256 256","d":"<path d=\"M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm37.66,130.34a8,8,0,0,1-11.32,11.32L128,139.31l-26.34,26.35a8,8,0,0,1-11.32-11.32L116.69,128,90.34,101.66a8,8,0,0,1,11.32-11.32L128,116.69l26.34-26.35a8,8,0,0,1,11.32,11.32L139.31,128Z\"/>"},"face.dashed":{"vb":"0 0 256 256","d":"<path d=\"M128,20A108,108,0,1,0,236,128,108.12,108.12,0,0,0,128,20Zm0,192a84,84,0,1,1,84-84A84.09,84.09,0,0,1,128,212ZM108,108A16,16,0,1,1,92,92,16,16,0,0,1,108,108Zm72,0a16,16,0,1,1-16-16A16,16,0,0,1,180,108Z\"/>"},"sparkles":{"vb":"0 0 256 256","d":"<path d=\"M208,144a15.78,15.78,0,0,1-10.42,14.94L146,178l-19,51.62a15.92,15.92,0,0,1-29.88,0L78,178l-51.62-19a15.92,15.92,0,0,1,0-29.88L78,110l19-51.62a15.92,15.92,0,0,1,29.88,0L146,110l51.62,19A15.78,15.78,0,0,1,208,144ZM152,48h16V64a8,8,0,0,0,16,0V48h16a8,8,0,0,0,0-16H184V16a8,8,0,0,0-16,0V32H152a8,8,0,0,0,0,16Zm88,32h-8V72a8,8,0,0,0-16,0v8h-8a8,8,0,0,0,0,16h8v8a8,8,0,0,0,16,0V96h8a8,8,0,0,0,0-16Z\"/>"},"hand.point.up.left.fill":{"vb":"0 0 256 256","d":"<path d=\"M224,104v50.93c0,46.2-36.85,84.55-83,85.06A83.71,83.71,0,0,1,80.6,215.4C58.79,192.33,34.15,136,34.15,136a16,16,0,0,1,6.53-22.23c7.66-4,17.1-.84,21.4,6.62l21,36.44a6.09,6.09,0,0,0,6,3.09l.12,0A8.19,8.19,0,0,0,96,151.74V32a16,16,0,0,1,16.77-16c8.61.4,15.23,7.82,15.23,16.43V104a8,8,0,0,0,8.53,8,8.17,8.17,0,0,0,7.47-8.25V88a16,16,0,0,1,16.77-16c8.61.4,15.23,7.82,15.23,16.43V112a8,8,0,0,0,8.53,8,8.17,8.17,0,0,0,7.47-8.25v-7.28c0-8.61,6.62-16,15.23-16.43A16,16,0,0,1,224,104Z\"/>"},"calendar":{"vb":"0 0 256 256","d":"<path d=\"M208,28H188V24a12,12,0,0,0-24,0v4H92V24a12,12,0,0,0-24,0v4H48A20,20,0,0,0,28,48V208a20,20,0,0,0,20,20H208a20,20,0,0,0,20-20V48A20,20,0,0,0,208,28ZM68,52a12,12,0,0,0,24,0h72a12,12,0,0,0,24,0h16V76H52V52ZM52,204V100H204V204Z\"/>"},"allergens":{"vb":"0 0 256 256","d":"<path d=\"M210.35,129.36c-.81-.47-1.7-.92-2.62-1.36.92-.44,1.81-.89,2.62-1.36a40,40,0,1,0-40-69.28c-.81.47-1.65,1-2.48,1.59.08-1,.13-2,.13-3a40,40,0,0,0-80,0c0,.94,0,1.94.13,3-.83-.57-1.67-1.12-2.48-1.59a40,40,0,1,0-40,69.28c.81.47,1.7.92,2.62,1.36-.92.44-1.81.89-2.62,1.36a40,40,0,1,0,40,69.28c.81-.47,1.65-1,2.48-1.59-.08,1-.13,2-.13,2.95a40,40,0,0,0,80,0c0-.94-.05-1.94-.13-2.95.83.57,1.67,1.12,2.48,1.59A39.79,39.79,0,0,0,190.29,204a40.43,40.43,0,0,0,10.42-1.38,40,40,0,0,0,9.64-73.28ZM128,156a28,28,0,1,1,28-28A28,28,0,0,1,128,156Z\"/>"},"person.3.fill":{"vb":"0 0 256 256","d":"<path d=\"M64.12,147.8a4,4,0,0,1-4,4.2H16a8,8,0,0,1-7.8-6.17,8.35,8.35,0,0,1,1.62-6.93A67.79,67.79,0,0,1,37,117.51a40,40,0,1,1,66.46-35.8,3.94,3.94,0,0,1-2.27,4.18A64.08,64.08,0,0,0,64,144C64,145.28,64,146.54,64.12,147.8Zm182-8.91A67.76,67.76,0,0,0,219,117.51a40,40,0,1,0-66.46-35.8,3.94,3.94,0,0,0,2.27,4.18A64.08,64.08,0,0,1,192,144c0,1.28,0,2.54-.12,3.8a4,4,0,0,0,4,4.2H240a8,8,0,0,0,7.8-6.17A8.33,8.33,0,0,0,246.17,138.89Zm-89,43.18a48,48,0,1,0-58.37,0A72.13,72.13,0,0,0,65.07,212,8,8,0,0,0,72,224H184a8,8,0,0,0,6.93-12A72.15,72.15,0,0,0,157.19,182.07Z\"/>"},"figure.arms.open":{"vb":"0 0 256 256","d":"<path d=\"M100,36a28,28,0,1,1,28,28A28,28,0,0,1,100,36ZM227.6,92.57A15.7,15.7,0,0,0,212,80H44a16,16,0,0,0-6.7,30.53l.06,0,53.89,23.73-21.92,83.3a16,16,0,0,0,7.9,20.91A15.83,15.83,0,0,0,84,240a16,16,0,0,0,14.44-9.06L128,180l29.58,51a16,16,0,0,0,29.07-13.35l-21.92-83.3,54-23.76A15.7,15.7,0,0,0,227.6,92.57Z\"/>"},"person.wave.2.fill":{"vb":"0 0 256 256","d":"<path d=\"M198.13,202.85A8,8,0,0,1,192,216H24a8,8,0,0,1-6.12-13.15c14.94-17.78,33.52-30.41,54.17-37.17a68,68,0,1,1,71.9,0C164.6,172.44,183.18,185.07,198.13,202.85ZM196.86,61.39a8,8,0,0,0-4.22,10.5,92.26,92.26,0,0,1,0,72.22,8,8,0,1,0,14.72,6.29,108.36,108.36,0,0,0,0-84.8A8,8,0,0,0,196.86,61.39Zm39.85-8.54a8,8,0,1,0-14.7,6.3,124.43,124.43,0,0,1,0,97.7,8,8,0,1,0,14.7,6.3,140.34,140.34,0,0,0,0-110.3Z\"/>"},"face.smiling.inverse":{"vb":"0 0 256 256","d":"<path d=\"M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24ZM92,96a12,12,0,1,1-12,12A12,12,0,0,1,92,96Zm82.92,60c-10.29,17.79-27.39,28-46.92,28s-36.63-10.2-46.92-28a8,8,0,1,1,13.84-8c7.47,12.91,19.21,20,33.08,20s25.61-7.1,33.08-20a8,8,0,1,1,13.84,8ZM164,120a12,12,0,1,1,12-12A12,12,0,0,1,164,120Z\"/>"},"zzz":{"vb":"0 0 256 256","d":"<path d=\"M40 112h64v16l-40 48h40v16H40v-16l40-48H40Zm84-48h56v14l-34 42h34v14h-56v-14l34-42h-34Zm76-36h44v12l-26 32h26v12h-44v-12l26-32h-26Z\"/>"},"bolt.fill":{"vb":"0 0 256 256","d":"<path d=\"M213.85,125.46l-112,120a8,8,0,0,1-13.69-7l14.66-73.33L45.19,143.49a8,8,0,0,1-3-13l112-120a8,8,0,0,1,13.69,7L153.18,90.9l57.63,21.61a8,8,0,0,1,3,12.95Z\"/>"},"flame.fill":{"vb":"0 0 256 256","d":"<path d=\"M173.79,51.48a221.25,221.25,0,0,0-41.67-34.34,8,8,0,0,0-8.24,0A221.25,221.25,0,0,0,82.21,51.48C54.59,80.48,40,112.47,40,144a88,88,0,0,0,176,0C216,112.47,201.41,80.48,173.79,51.48ZM96,184c0-27.67,22.53-47.28,32-54.3,9.48,7,32,26.63,32,54.3a32,32,0,0,1-64,0Z\"/>"},"tv.fill":{"vb":"0 0 256 256","d":"<path d=\"M216,64H147.31l34.35-34.34a8,8,0,1,0-11.32-11.32L128,60.69,85.66,18.34A8,8,0,0,0,74.34,29.66L108.69,64H40A16,16,0,0,0,24,80V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V80A16,16,0,0,0,216,64Zm0,136H160V80h56V200Zm-16-84a12,12,0,1,1-12-12A12,12,0,0,1,200,116Zm0,48a12,12,0,1,1-12-12A12,12,0,0,1,200,164Z\"/>"},"heart.slash.fill":{"vb":"0 0 256 256","d":"<path d=\"M239.81,107.5c-5.19,67.42-103.7,121.23-108,123.54a8,8,0,0,1-7.58,0C119.8,228.67,16,172,16,102a62,62,0,0,1,96.47-51.55,4,4,0,0,1,.61,6.17L99.72,70a8,8,0,0,0,0,11.31l32.53,32.53L111,135a8,8,0,1,0,11.31,11.31l26.88-26.87a8,8,0,0,0,0-11.31L116.7,75.63l17.47-17.47h0A61.63,61.63,0,0,1,178.41,40C214.73,40.23,242.59,71.29,239.81,107.5Z\"/>"},"cloud.fill":{"vb":"0 0 256 256","d":"<path d=\"M160.06,40A88.1,88.1,0,0,0,81.29,88.67h0A87.48,87.48,0,0,0,72,127.73,8.18,8.18,0,0,1,64.57,136,8,8,0,0,1,56,128a103.66,103.66,0,0,1,5.34-32.92,4,4,0,0,0-4.75-5.18A64.09,64.09,0,0,0,8,152c0,35.19,29.75,64,65,64H160a88.09,88.09,0,0,0,87.93-91.48C246.11,77.54,207.07,40,160.06,40Z\"/>"},"arrow.up":{"vb":"0 0 256 256","d":"<path d=\"M208.49,120.49a12,12,0,0,1-17,0L140,69V216a12,12,0,0,1-24,0V69L64.49,120.49a12,12,0,0,1-17-17l72-72a12,12,0,0,1,17,0l72,72A12,12,0,0,1,208.49,120.49Z\"/>"},"arrow.down":{"vb":"0 0 256 256","d":"<path d=\"M208.49,152.49l-72,72a12,12,0,0,1-17,0l-72-72a12,12,0,0,1,17-17L116,187V40a12,12,0,0,1,24,0V187l51.51-51.52a12,12,0,0,1,17,17Z\"/>"},"bubble.left.and.bubble.right.fill":{"vb":"0 0 256 256","d":"<path d=\"M232,96a16,16,0,0,0-16-16H184V48a16,16,0,0,0-16-16H40A16,16,0,0,0,24,48V176a8,8,0,0,0,13,6.22L72,154V184a16,16,0,0,0,16,16h93.59L219,230.22a8,8,0,0,0,5,1.78,8,8,0,0,0,8-8Zm-42.55,89.78a8,8,0,0,0-5-1.78H88V152h80a16,16,0,0,0,16-16V96h32V207.25Z\"/>"},"tortoise.fill":{"vb":"0 0 256 256","d":"<path d=\"M44 160c0-48 38-84 84-84s84 36 84 84H44Zm168-28c6-14 18-24 30-24 8 0 14 6 14 14s-8 16-20 18l-20 4Zm-160 40h36l-6 30H48Zm116 0h36l-6 30h-24Z\"/>"},"repeat":{"vb":"0 0 256 256","d":"<path d=\"M20,128A76.08,76.08,0,0,1,96,52h99l-3.52-3.51a12,12,0,1,1,17-17l24,24a12,12,0,0,1,0,17l-24,24a12,12,0,0,1-17-17L195,76H96a52.06,52.06,0,0,0-52,52,12,12,0,0,1-24,0Zm204-12a12,12,0,0,0-12,12,52.06,52.06,0,0,1-52,52H61l3.52-3.51a12,12,0,1,0-17-17l-24,24a12,12,0,0,0,0,17l24,24a12,12,0,1,0,17-17L61,204h99a76.08,76.08,0,0,0,76-76A12,12,0,0,0,224,116Z\"/>"},"hand.wave.fill":{"vb":"0 0 256 256","d":"<path d=\"M219.31,98.46A88,88,0,1,1,67.08,186.77h0L26.15,115.88a16,16,0,0,1,27.69-16L72.4,132a8,8,0,0,0,13.86-8L47,56A16,16,0,0,1,74.69,40L114,108a8,8,0,1,0,13.85-8l-30-52a16,16,0,0,1,27.71-16L166,102.12A48.25,48.25,0,0,0,152,136a47.59,47.59,0,0,0,9.6,28.8,8,8,0,1,0,12.79-9.61A32,32,0,0,1,181,110.26a8,8,0,0,0,2.17-10.43L171.71,80a16,16,0,0,1,27.71-16l19.89,34.46Zm-29.37-57A43.74,43.74,0,0,1,216.74,62l.33.57a8,8,0,0,0,13.86-8L230.6,54a59.64,59.64,0,0,0-36.54-28,8,8,0,0,0-4.12,15.46ZM79.58,225.72A103.58,103.58,0,0,1,53.93,196a8,8,0,0,0-13.86,8,119.56,119.56,0,0,0,29.6,34.28,8,8,0,0,0,9.91-12.56Z\"/>"},"door.left.hand.open":{"vb":"0 0 256 256","d":"<path d=\"M232,216H208V40a16,16,0,0,0-16-16H64A16,16,0,0,0,48,40V216H24a8,8,0,0,0,0,16H232a8,8,0,0,0,0-16Zm-64,0H64V40H168Zm-40-84a12,12,0,1,1,12,12A12,12,0,0,1,128,132Z\"/>"},"arrow.counterclockwise":{"vb":"0 0 256 256","d":"<path d=\"M228,128a100,100,0,0,1-98.66,100H128a99.39,99.39,0,0,1-68.62-27.29,12,12,0,0,1,16.48-17.45,76,76,0,1,0-1.57-109c-.13.13-.25.25-.39.37L54.89,92H72a12,12,0,0,1,0,24H24a12,12,0,0,1-12-12V56a12,12,0,0,1,24,0V76.72L57.48,57.06A100,100,0,0,1,228,128Z\"/>"},"play.fill":{"vb":"0 0 256 256","d":"<path d=\"M240,128a15.74,15.74,0,0,1-7.6,13.51L88.32,229.65a16,16,0,0,1-16.2.3A15.86,15.86,0,0,1,64,216.13V39.87a15.86,15.86,0,0,1,8.12-13.82,16,16,0,0,1,16.2.3L232.4,114.49A15.74,15.74,0,0,1,240,128Z\"/>"},"bubble.left.fill":{"vb":"0 0 256 256","d":"<path d=\"M232,64V192a16,16,0,0,1-16,16H83l-32.6,28.16-.09.07A15.89,15.89,0,0,1,40,240a16.05,16.05,0,0,1-6.79-1.52A15.84,15.84,0,0,1,24,224V64A16,16,0,0,1,40,48H216A16,16,0,0,1,232,64Z\"/>"},"speaker.wave.2.fill":{"vb":"0 0 256 256","d":"<path d=\"M160,32.25V223.69a8.29,8.29,0,0,1-3.91,7.18,8,8,0,0,1-9-.56l-65.57-51A4,4,0,0,1,80,176.16V79.84a4,4,0,0,1,1.55-3.15l65.57-51a8,8,0,0,1,10,.16A8.27,8.27,0,0,1,160,32.25ZM60,80H32A16,16,0,0,0,16,96v64a16,16,0,0,0,16,16H60a4,4,0,0,0,4-4V84A4,4,0,0,0,60,80Zm126.77,20.84a8,8,0,0,0-.72,11.3,24,24,0,0,1,0,31.72,8,8,0,1,0,12,10.58,40,40,0,0,0,0-52.88A8,8,0,0,0,186.74,100.84Zm40.89-26.17a8,8,0,1,0-11.92,10.66,64,64,0,0,1,0,85.34,8,8,0,1,0,11.92,10.66,80,80,0,0,0,0-106.66Z\"/>"},"arrow.uturn.backward":{"vb":"0 0 256 256","d":"<path d=\"M236,144a68.07,68.07,0,0,1-68,68H80a12,12,0,0,1,0-24h88a44,44,0,0,0,0-88H61l27.52,27.51a12,12,0,0,1-17,17l-48-48a12,12,0,0,1,0-17l48-48a12,12,0,1,1,17,17L61,76H168A68.08,68.08,0,0,1,236,144Z\"/>"},"delete.left.fill":{"vb":"0 0 256 256","d":"<path d=\"M216,40H68.53a16.12,16.12,0,0,0-13.72,7.77L9.14,123.88a8,8,0,0,0,0,8.24l45.67,76.11h0A16.11,16.11,0,0,0,68.53,216H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40ZM165.66,146.34a8,8,0,0,1-11.32,11.32L136,139.31l-18.35,18.35a8,8,0,0,1-11.31-11.32L124.69,128l-18.35-18.34a8,8,0,1,1,11.31-11.32L136,116.69l18.34-18.35a8,8,0,0,1,11.32,11.32L147.31,128Z\"/>"},"xmark":{"vb":"0 0 256 256","d":"<path d=\"M208.49,191.51a12,12,0,0,1-17,17L128,145,64.49,208.49a12,12,0,0,1-17-17L111,128,47.51,64.49a12,12,0,0,1,17-17L128,111l63.51-63.52a12,12,0,0,1,17,17L145,128Z\"/>"},"globe":{"vb":"0 0 256 256","d":"<path d=\"M128,20A108,108,0,1,0,236,128,108.12,108.12,0,0,0,128,20Zm0,187a113.4,113.4,0,0,1-20.39-35h40.82a116.94,116.94,0,0,1-10,20.77A108.61,108.61,0,0,1,128,207Zm-26.49-59a135.42,135.42,0,0,1,0-40h53a135.42,135.42,0,0,1,0,40ZM44,128a83.49,83.49,0,0,1,2.43-20H77.25a160.63,160.63,0,0,0,0,40H46.43A83.49,83.49,0,0,1,44,128Zm84-79a113.4,113.4,0,0,1,20.39,35H107.59a116.94,116.94,0,0,1,10-20.77A108.61,108.61,0,0,1,128,49Zm50.73,59h30.82a83.52,83.52,0,0,1,0,40H178.75a160.63,160.63,0,0,0,0-40Zm20.77-24H173.71a140.82,140.82,0,0,0-15.5-34.36A84.51,84.51,0,0,1,199.52,84ZM97.79,49.64A140.82,140.82,0,0,0,82.29,84H56.48A84.51,84.51,0,0,1,97.79,49.64ZM56.48,172H82.29a140.82,140.82,0,0,0,15.5,34.36A84.51,84.51,0,0,1,56.48,172Zm101.73,34.36A140.82,140.82,0,0,0,173.71,172h25.81A84.51,84.51,0,0,1,158.21,206.36Z\"/>"},"hand.raised.slash.fill":{"vb":"0 0 256 256","d":"<path d=\"M200,128a71.69,71.69,0,0,1-15.78,44.91L83.09,71.78A71.95,71.95,0,0,1,200,128ZM56,128a71.95,71.95,0,0,0,116.91,56.22L71.78,83.09A71.69,71.69,0,0,0,56,128Zm180,0A108,108,0,1,1,128,20,108.12,108.12,0,0,1,236,128Zm-20,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z\"/>"},"chevron.right":{"vb":"0 0 256 256","d":"<path d=\"M184.49,136.49l-80,80a12,12,0,0,1-17-17L159,128,87.51,56.49a12,12,0,1,1,17-17l80,80A12,12,0,0,1,184.49,136.49Z\"/>"},"lock.fill":{"vb":"0 0 256 256","d":"<path d=\"M208,80H176V56a48,48,0,0,0-96,0V80H48A16,16,0,0,0,32,96V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V96A16,16,0,0,0,208,80Zm-80,84a12,12,0,1,1,12-12A12,12,0,0,1,128,164Zm32-84H96V56a32,32,0,0,1,64,0Z\"/>"}});
+</script>
+</body>
+</html>

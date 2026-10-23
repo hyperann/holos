@@ -27,7 +27,8 @@ tag over a picture, a page that runs below the fold. Those are listed in
 | [Holos Room](#holos-room) — point at the world | 7 |
 | [Holos Compass](#holos-compass) — four choices, any body | 7 |
 | [Holos Words](#holos-words) — find the word | 8 |
-| [Settings, shared by all five](#settings-shared-by-all-five) | 2 |
+| [Holos Bedside + Grid](HolosBedsideGrid/sketch.html) — ask first, the whole board behind it | a playable browser sketch instead ([about it](../Prototypes/HolosBedsideGrid.md)) |
+| [Settings, shared by all six](#settings-shared-by-all-six) | 2 |
 
 ## Holos Grid
 
@@ -102,7 +103,7 @@ Find the word. [About this prototype](../Prototypes/HolosWords.md) · [What the 
 | <a href="HolosWords/07-closing.png"><img src="HolosWords/07-closing.png" width="320" alt="Holos Words 7: A voice that offers the word"></a> | **7 · A voice that offers the word** (Closing)<br>Who Holos is for and why it is free, private and open source, with “Keep talking” lit to open the board for free use. |
 | <a href="HolosWords/08-iphone.png"><img src="HolosWords/08-iphone.png" width="150" alt="Holos Words 8: The board on iPhone"></a> | **8 · The board on iPhone** (Step 2)<br>The same board on an iPhone in portrait, mid-scan: “I feel pain.” is built, “I need \_\_\_\_” waits, and “Medicine” is lit in a row of small cells whose labels shrink, or truncate, to fit. |
 
-## Settings, shared by all five
+## Settings, shared by all six
 
 The sheet every prototype opens from its gear button, drawn over a board.
 
