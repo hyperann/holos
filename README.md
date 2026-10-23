@@ -42,8 +42,12 @@ controller, or just tap anywhere on the board.
 
 > **Not yet compiled.** These prototypes were written and reviewed in a Linux environment with no
 > Swift toolchain, so nothing here has been built yet. Every file went through independent review
-> passes for Swift 6 and API correctness, but expect the first build in Xcode to surface a few
-> errors to fix.
+> passes for Swift 6 and API correctness, then a final audit that found no errors or warnings in
+> any Swift file — but expect the first build in Xcode to surface a few things to fix anyway.
+>
+> One expected warning: each `Package.swift` uses `swiftLanguageVersions:`, which SwiftPM 6
+> deprecates in favour of `swiftLanguageModes:`. It is left as is on purpose, because that is the
+> line Xcode and Swift Playgrounds themselves write into an app playground's generated manifest.
 
 ## How the code is organised
 
