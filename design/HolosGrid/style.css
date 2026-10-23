@@ -157,11 +157,6 @@ body { background: var(--grid-paper); }
   border-radius: 30px; background: var(--navy); color: #fff; font: 700 20px/1.193 var(--rounded); white-space: nowrap; }
 .continue > .sf { font-size: 18px; }
 
-/* ---------- Press flash (Core .switchPressFlash) ---------- */
-
-/* 14 pt keyline with a 10 pt yellow band inset by 2, round the whole screen. */
-.pressflash { box-shadow: inset 0 0 0 2px var(--keyline), inset 0 0 0 12px var(--highlight), inset 0 0 0 14px var(--keyline); }
-
 /* ---------- Step 1 · ProblemStep ---------- */
 
 /* ScrollView { VStack(spacing: 28) .frame(maxWidth: 720) .padding(24) } over BigSwitch().padding(.vertical, 20). */

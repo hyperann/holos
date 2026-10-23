@@ -18,7 +18,7 @@
   function measure(el, size, lines, maxHeight) {
     var h = el.getBoundingClientRect().height;
     var n = Math.round(h / (size * LH));
-    return n <= lines && el.scrollWidth <= el.clientWidth + 0.5 && (!maxHeight || h <= maxHeight + 0.5);
+    return n <= lines && el.scrollWidth <= el.clientWidth + 0.5 && (!maxHeight || h <= maxHeight + 0.01);
   }
   function fit(el) {
     var p = el.dataset.fit.split(" ").map(Number);
@@ -32,7 +32,7 @@
       if (measure(el, base * s, lines, maxHeight)) return;
     }
     var size = base * min;
-    var shown = maxHeight ? Math.max(1, Math.min(lines, Math.floor((maxHeight + 0.5) / (size * LH)))) : lines;
+    var shown = maxHeight ? Math.max(1, Math.min(lines, Math.floor((maxHeight + 0.01) / (size * LH)))) : lines;
     el.style.fontSize = size + "px";
     el.style.overflow = "hidden";
     if (shown === 1) {

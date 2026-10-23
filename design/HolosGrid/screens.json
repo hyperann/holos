@@ -1,0 +1,50 @@
+[
+  {
+    "file": "01-problem.png",
+    "title": "The problem",
+    "step": "Step 1",
+    "caption": "The nurse has asked “How are you feeling?”; the first press on the big round switch only knocks dully, and all she gets is “…”."
+  },
+  {
+    "file": "02-board-pain.png",
+    "title": "Row by row",
+    "step": "Step 2",
+    "caption": "One press has entered the first Pain & body row, so the other rows dim while “I’m in pain” is lit under the navy Next tag."
+  },
+  {
+    "file": "03-board-speak.png",
+    "title": "Then Speak",
+    "step": "Step 2",
+    "caption": "Seven presses in, “I’m in pain” and “Medicine” are in the message bar, the scan has entered the message row and Speak is lit."
+  },
+  {
+    "file": "04-family.png",
+    "title": "Recognised, not recalled",
+    "step": "Step 3",
+    "caption": "Yuriy cannot recall “wife”, so the goal card sends the judge to the Family board, where “Wife” is lit and says the whole sentence."
+  },
+  {
+    "file": "05-head-try.png",
+    "title": "No hands at all",
+    "step": "Step 3",
+    "caption": "After the success card, Core’s head-turn panel sits over the stopped board with Skip lit first, so one press moves on."
+  },
+  {
+    "file": "06-ukrainian.png",
+    "title": "Hear it in Ukrainian",
+    "step": "Step 4",
+    "caption": "The board turns Ukrainian and says «Мені боляче. Ліки, будь ласка.», while the card that explains it stays in English."
+  },
+  {
+    "file": "07-closing.png",
+    "title": "Who Holos is for",
+    "step": "Closing",
+    "caption": "After a first press “Keep talking” is lit; on an 11-inch iPad the three pillars stack, so the third runs below the fold."
+  },
+  {
+    "file": "08-iphone.png",
+    "title": "On an iPhone",
+    "step": "Step 2",
+    "caption": "On a phone the board adds a sentence strip, keeps each row at its minimum size and scrolls; the scan is passing the quick phrases."
+  }
+]
