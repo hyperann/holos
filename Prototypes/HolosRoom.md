@@ -47,6 +47,20 @@ Timings assume the default scan speed: 1.4 s per step, with the first step after
 
 Golden path: 16 presses, about 2:19. With a missed pass in parts 2 and 3 it comes to about 2:42. The worst realistic case is a judge who reads every word and misses twice in each guided step, which is about 3:05, just over. Cutting the 1b card (8 s) brings that to about 2:57, so if testing shows it running over, cut the 1b card first and keep the 1a press-into-silence beat. Never cut the arc.
 
+## Screens
+
+Design mockups of this flow, redrawn from the code — not device screenshots, since nothing has been
+built yet. The [gallery](../design/README.md#holos-room) captions each one, and
+[FINDINGS.md](../design/FINDINGS.md#holos-room) lists the layout problems the redraw turned up.
+
+<a href="../design/HolosRoom/01-problem.png"><img src="../design/HolosRoom/01-problem.png" height="140" alt="1. The problem"></a>
+<a href="../design/HolosRoom/02-ward-scan.png"><img src="../design/HolosRoom/02-ward-scan.png" height="140" alt="2. Scan the room"></a>
+<a href="../design/HolosRoom/03-bed-ring.png"><img src="../design/HolosRoom/03-bed-ring.png" height="140" alt="3. The bed's phrases"></a>
+<a href="../design/HolosRoom/04-home-photo.png"><img src="../design/HolosRoom/04-home-photo.png" height="140" alt="4. The photo offers the word"></a>
+<a href="../design/HolosRoom/05-ukrainian.png"><img src="../design/HolosRoom/05-ukrainian.png" height="140" alt="5. Hear it in Ukrainian"></a>
+<a href="../design/HolosRoom/06-closing.png"><img src="../design/HolosRoom/06-closing.png" height="140" alt="6. Closing"></a>
+<a href="../design/HolosRoom/07-iphone.png"><img src="../design/HolosRoom/07-iphone.png" height="140" alt="7. On an iPhone"></a>
+
 ## How one switch drives every screen
 
 There is one owner, `Experience.refresh()`, and it routes every press for the current stage:

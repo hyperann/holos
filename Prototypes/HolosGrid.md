@@ -44,6 +44,21 @@ Notes on the table:
 
 **Why step 3 uses one cell ("Wife" says "Please call my wife.") rather than "Call" + "Wife".** It is two presses and about 3 s faster, and it is the point of the step: one recognised word, one whole sentence. It also avoids a grammar trap — "Call" followed by a standalone "Wife" would need the dative in Ukrainian ("Подзвоніть … моїй дружині"), which a cell that also stands alone cannot say.
 
+## Screens
+
+Design mockups of this flow, redrawn from the code — not device screenshots, since nothing has been
+built yet. The [gallery](../design/README.md#holos-grid) captions each one, and
+[FINDINGS.md](../design/FINDINGS.md#holos-grid) lists the layout problems the redraw turned up.
+
+<a href="../design/HolosGrid/01-problem.png"><img src="../design/HolosGrid/01-problem.png" height="140" alt="1. The problem"></a>
+<a href="../design/HolosGrid/02-board-pain.png"><img src="../design/HolosGrid/02-board-pain.png" height="140" alt="2. Row by row"></a>
+<a href="../design/HolosGrid/03-board-speak.png"><img src="../design/HolosGrid/03-board-speak.png" height="140" alt="3. Then Speak"></a>
+<a href="../design/HolosGrid/04-family.png"><img src="../design/HolosGrid/04-family.png" height="140" alt="4. Recognised, not recalled"></a>
+<a href="../design/HolosGrid/05-head-try.png"><img src="../design/HolosGrid/05-head-try.png" height="140" alt="5. No hands at all"></a>
+<a href="../design/HolosGrid/06-ukrainian.png"><img src="../design/HolosGrid/06-ukrainian.png" height="140" alt="6. Hear it in Ukrainian"></a>
+<a href="../design/HolosGrid/07-closing.png"><img src="../design/HolosGrid/07-closing.png" height="140" alt="7. Who Holos is for"></a>
+<a href="../design/HolosGrid/08-iphone.png"><img src="../design/HolosGrid/08-iphone.png" height="140" alt="8. On an iPhone"></a>
+
 ## How one switch drives every screen
 
 - Every input (tap, Space/Enter, controller button, head turn) becomes `SwitchHub.press`, routed to one place: `Experience.press(_:)`. What a press means depends on the step: on narrative screens it continues (after a 0.9–2 s read gate, so a double press never skips a screen unread); on the board it goes to the board's `Scanner`; on the closing screen the first press after its read gate starts a small two-choice scan and the next one picks; during the head-turn panel, Core's panel borrows the switch and `headTryFinished()` takes it back. Step 3's success card is a screen of its own with its own read gate, and the head-turn panel appears only after a press on it, so a quick second press can never skip both.

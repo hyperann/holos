@@ -38,6 +38,21 @@ Default scan speed is 1.4 s per step, and the first item of each new level is li
 
 The margin is thin: a judge who also listens through step 4 before reading lands at about 2:49, or about 3:00 with the head turn tried. If testing runs long, cut in this order: the closing personas line (`Copy.closingPeople`, about 7 s), then the help text in the banners, then the persona line in step 1. Never cut the arc.
 
+## Screens
+
+Design mockups of this flow, redrawn from the code — not device screenshots, since nothing has been
+built yet. The [gallery](../design/README.md#holos-words) captions each one, and
+[FINDINGS.md](../design/FINDINGS.md#holos-words) lists the layout problems the redraw turned up.
+
+<a href="../design/HolosWords/01-problem.png"><img src="../design/HolosWords/01-problem.png" height="140" alt="1. The problem"></a>
+<a href="../design/HolosWords/02-starters.png"><img src="../design/HolosWords/02-starters.png" height="140" alt="2. Two choices, one sentence"></a>
+<a href="../design/HolosWords/03-fillers.png"><img src="../design/HolosWords/03-fillers.png" height="140" alt="3. Only the words that fit"></a>
+<a href="../design/HolosWords/04-find-a-word.png"><img src="../design/HolosWords/04-find-a-word.png" height="140" alt="4. Find a word: describe it"></a>
+<a href="../design/HolosWords/05-candidates.png"><img src="../design/HolosWords/05-candidates.png" height="140" alt="5. Find a word: recognise it"></a>
+<a href="../design/HolosWords/06-ukrainian.png"><img src="../design/HolosWords/06-ukrainian.png" height="140" alt="6. Hear it in Ukrainian"></a>
+<a href="../design/HolosWords/07-closing.png"><img src="../design/HolosWords/07-closing.png" height="140" alt="7. A voice that offers the word"></a>
+<a href="../design/HolosWords/08-iphone.png"><img src="../design/HolosWords/08-iphone.png" height="140" alt="8. The board on iPhone"></a>
+
 ## How one switch drives every screen
 
 - **Step 1.** Every press goes to the scene through `hub.route`. Before 5 s a press knocks (`Feedback.unavailable`), the blank shakes (or doesn't, under Reduce Motion) and the screen edge flashes. After 5 s, a press continues. In touch or VoiceOver mode the copy says "Try to answer", a tap on the scene gets the same knock, and a **Begin** button appears after 5 s (announced as "Ready. Choose Begin.").

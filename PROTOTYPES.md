@@ -13,6 +13,10 @@ board and the story around it, which is exactly what is being chosen.
 > Every timing below is an estimate from counting scan steps at the default 1.4 s per step plus
 > reading time, taken from each prototype's own doc. Try them on a device before trusting any of it.
 
+To see the five before building them, **[design/README.md](design/README.md)** redraws each
+judged flow from its code as design mockups (not device screenshots), and
+[design/FINDINGS.md](design/FINDINGS.md) lists the layout problems that redraw turned up.
+
 ## At a glance
 
 | | [Grid](Prototypes/HolosGrid.md) | [Bedside](Prototypes/HolosBedside.md) | [Room](Prototypes/HolosRoom.md) | [Compass](Prototypes/HolosCompass.md) | [Words](Prototypes/HolosWords.md) |
@@ -26,6 +30,7 @@ board and the story around it, which is exactly what is being chosen.
 | **Novelty for judges** | lowest, by design | high (story and emotion) | highest (visual) | high (head pointing) | high (language insight) |
 | **Judged flow (estimate)** | ~2:11 | ~2:22 (2:35 with a missed pass) | ~2:19 (2:42 likely) | ~2:03–2:32 (~2:24–2:53 with head pointing tried) | ~2:44 (up to ~3:00) |
 | **Own code** (Swift, excluding Core/ and Package.swift) | 20 files, ~3,700 lines | 22 files, ~3,800 lines | 29 files, ~4,700 lines | 25 files, ~4,200 lines | 26 files, ~3,800 lines |
+| **Screens** (design mockups) | [8](design/README.md#holos-grid) | [8](design/README.md#holos-bedside) | [7](design/README.md#holos-room) | [7](design/README.md#holos-compass) | [8](design/README.md#holos-words) |
 
 The shared engine adds 27 files and about 3,400 lines to each.
 

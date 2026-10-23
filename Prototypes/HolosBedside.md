@@ -35,6 +35,21 @@ About 2:22 if each target is caught on its first pass. Step 3's goal text is the
 
 A missed pass costs one loop of the current board, n × 1.4 s: 12.6 s on the 9-item boards (pain scale, "anything else"), 14 s on "How are you feeling?" (10), 15.4 s on the 11-item boards (body map, needs) and 16.8 s once Show me joins them; the "Something else" board's top level is 7 items, 9.8 s. From 2:22 that leaves room for about two misses inside 3:00 — about one, if step 3 already took its second pass.
 
+## Screens
+
+Design mockups of this flow, redrawn from the code — not device screenshots, since nothing has been
+built yet. The [gallery](../design/README.md#holos-bedside) captions each one, and
+[FINDINGS.md](../design/FINDINGS.md#holos-bedside) lists the layout problems the redraw turned up.
+
+<a href="../design/HolosBedside/01-problem.png"><img src="../design/HolosBedside/01-problem.png" height="140" alt="1. The problem"></a>
+<a href="../design/HolosBedside/02-feeling.png"><img src="../design/HolosBedside/02-feeling.png" height="140" alt="2. One switch, a whole conversation"></a>
+<a href="../design/HolosBedside/03-body-map.png"><img src="../design/HolosBedside/03-body-map.png" height="140" alt="3. Where does it hurt?"></a>
+<a href="../design/HolosBedside/04-pain-scale.png"><img src="../design/HolosBedside/04-pain-scale.png" height="140" alt="4. How bad is it?"></a>
+<a href="../design/HolosBedside/05-something-else.png"><img src="../design/HolosBedside/05-something-else.png" height="140" alt="5. When the word won't come"></a>
+<a href="../design/HolosBedside/06-ukrainian.png"><img src="../design/HolosBedside/06-ukrainian.png" height="140" alt="6. Hear it in Ukrainian"></a>
+<a href="../design/HolosBedside/07-closing.png"><img src="../design/HolosBedside/07-closing.png" height="140" alt="7. Who it is for"></a>
+<a href="../design/HolosBedside/08-iphone.png"><img src="../design/HolosBedside/08-iphone.png" height="140" alt="8. On iPhone"></a>
+
 ## How one switch drives every screen
 
 - **Step 1:** every press goes to `Experience.problemPressed()`. Before the card it knocks (haptic + low tone + the grey box darkening); in the card's first 1.5 s a press gets the same gentle "not yet" knock; after that a press continues, with the select feel. The card's button is drawn lit from the start: lit means "a press does this". The card covers only the area under the top bar, so Settings and the language toggle stay tappable, and VoiceOver treats it as modal. On a small phone or with very large text the card scrolls, and a clean tap on it still presses.

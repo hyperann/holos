@@ -36,6 +36,20 @@ On the skip path that leaves about 28–57 s of slack under 3:00 for hesitation.
 
 The only screens that can still rest (and need a press to wake) are the boards, after three quiet loops at home (about 30 s), and step 3's panel while pointing is on. Both say "Resting. Press to start again."
 
+## Screens
+
+Design mockups of this flow, redrawn from the code — not device screenshots, since nothing has been
+built yet. The [gallery](../design/README.md#holos-compass) captions each one, and
+[FINDINGS.md](../design/FINDINGS.md#holos-compass) lists the layout problems the redraw turned up.
+
+<a href="../design/HolosCompass/01-problem.png"><img src="../design/HolosCompass/01-problem.png" height="140" alt="1. The problem"></a>
+<a href="../design/HolosCompass/02-home.png"><img src="../design/HolosCompass/02-home.png" height="140" alt="2. Four choices"></a>
+<a href="../design/HolosCompass/03-how-much.png"><img src="../design/HolosCompass/03-how-much.png" height="140" alt="3. How much?"></a>
+<a href="../design/HolosCompass/04-head-pointing.png"><img src="../design/HolosCompass/04-head-pointing.png" height="140" alt="4. Point with your head"></a>
+<a href="../design/HolosCompass/05-ukrainian.png"><img src="../design/HolosCompass/05-ukrainian.png" height="140" alt="5. Hear it in Ukrainian"></a>
+<a href="../design/HolosCompass/06-closing.png"><img src="../design/HolosCompass/06-closing.png" height="140" alt="6. Who it is for"></a>
+<a href="../design/HolosCompass/07-iphone.png"><img src="../design/HolosCompass/07-iphone.png" height="140" alt="7. On an iPhone"></a>
+
 ## How one switch drives every screen
 
 - Every input (tap anywhere, Space/Enter, any controller button, head turn) arrives through Core's `SwitchHub`. Each screen calls `hub.route` when it appears, so the newest screen always owns the switch.

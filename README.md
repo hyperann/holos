@@ -18,7 +18,9 @@ than by imagining them.
 | [Holos Compass](Prototypes/HolosCompass.md) | Four huge choices at the compass points — and the head can point at them, no scanning at all. |
 | [Holos Words](Prototypes/HolosWords.md) | Find the word: sentence starters, and a way to *describe* a word you cannot recall. |
 
-**[PROTOTYPES.md](PROTOTYPES.md)** compares them side by side and suggests what to look for.
+**[PROTOTYPES.md](PROTOTYPES.md)** compares them side by side and suggests what to look for, and
+**[design/](design/README.md)** shows each one's key screens as design mockups, redrawn from the
+code before anything has been built.
 
 ## Running a prototype
 
@@ -75,6 +77,10 @@ Shared/HolosCore/       The engine every prototype shares (edit here, never in a
 Prototypes/
   <Name>.swiftpm/       One app playground per concept; Core/ is a copy of Shared/HolosCore
   <Name>.md             What the prototype is, who it serves, its 3-minute flow and timing
+design/
+  <Name>/               Design mockups of one prototype's key screens (HTML, rendered to PNG)
+  shared/               The Settings sheet all five share
+  kit/                  HTML and CSS stand-ins for Core's views, and the renderer
 tools/sync-core.sh      Copies Shared/HolosCore into every prototype's Core/
 ```
 
