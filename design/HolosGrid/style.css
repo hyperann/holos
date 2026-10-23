@@ -254,7 +254,7 @@ body[data-device="iphone"] .brand .stepline { font-size: 10.5px; }
 .compact .topicsrow > .in { flex-direction: column; gap: 6px; }
 .compact .topicsrow .line { display: flex; gap: 6px; height: 46px; }
 .compact .topicsrow .line > .slot, .compact .topicsrow .line > .cell { flex: 1 1 0; }
-.compact .prow { height: 100px; }                     /* cellRowHeight 84 (its minimum) + 2 × 8 */
+.compact.board > .prow { flex: none; height: 100px; } /* cellRowHeight 84 (its minimum) + 2 × 8 */
 .compact .in > .backcell { flex: 0 0 56px; }          /* backWidth 56 */
 .compact .theader { height: 28px; }
 .compact .theader > .sf { font-size: 23px; }

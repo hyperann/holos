@@ -1,15 +1,23 @@
 /* Holos Grid — stands in for SwiftUI's Text(...).lineLimit(n).minimumScaleFactor(m)
- * on the iPhone board, where cells are about 52 pt wide.
+ * on the iPhone board, where a cell is about 52 pt wide.
  *
- * A label marked data-fit="<size px> <minimum scale> <lines> [<max height px>]"
- * keeps its size if it fits in n lines (breaking a word wider than the line, as
- * Text does), else shrinks in 1 % steps down to the minimum scale, else stays at
- * the minimum and is truncated. It runs once the fonts are in, before the shot.
+ * A label marked data-fit="<size px> <minimum scale> <lines> [<height px>]" is
+ * laid out the way Text is: it keeps its size if it fits in n lines (breaking a
+ * word that is wider than the line, as Text does) within the width and the
+ * height it is offered, else shrinks in 1 % steps down to the minimum scale,
+ * else stays at the minimum and is truncated to the lines that fit.
+ *
+ * The height is what the cell's VStack offers the label: Text is less flexible
+ * than the resizable symbol above it, so it is offered an equal share — half of
+ * the cell's inner height less the 6 pt spacing.
+ *
+ * It runs once the fonts are in, before render.cjs takes the shot.
  */
 (function () {
-  function fits(el, size, lines, maxHeight) {
+  var LH = 1.193;
+  function measure(el, size, lines, maxHeight) {
     var h = el.getBoundingClientRect().height;
-    var n = Math.round(h / (size * 1.193));
+    var n = Math.round(h / (size * LH));
     return n <= lines && el.scrollWidth <= el.clientWidth + 0.5 && (!maxHeight || h <= maxHeight + 0.5);
   }
   function fit(el) {
@@ -18,17 +26,23 @@
     el.style.display = "block";
     el.style.webkitLineClamp = "none";
     el.style.overflowWrap = "anywhere";
-    el.style.lineHeight = "1.193";
+    el.style.lineHeight = String(LH);
     for (var s = 1; s >= min - 1e-9; s -= 0.01) {
       el.style.fontSize = base * s + "px";
-      if (fits(el, base * s, lines, maxHeight)) return;
+      if (measure(el, base * s, lines, maxHeight)) return;
     }
-    el.style.fontSize = base * min + "px";
-    el.style.display = "-webkit-box";
-    el.style.webkitBoxOrient = "vertical";
-    el.style.webkitLineClamp = String(lines);
+    var size = base * min;
+    var shown = maxHeight ? Math.max(1, Math.min(lines, Math.floor((maxHeight + 0.5) / (size * LH)))) : lines;
+    el.style.fontSize = size + "px";
     el.style.overflow = "hidden";
-    el.style.maxHeight = lines * base * min * 1.193 + "px";
+    if (shown === 1) {
+      el.style.whiteSpace = "nowrap";
+      el.style.textOverflow = "ellipsis";
+    } else {
+      el.style.display = "-webkit-box";
+      el.style.webkitBoxOrient = "vertical";
+      el.style.webkitLineClamp = String(shown);
+    }
   }
   var faces = ["700 20px Nunito", "800 20px Nunito"];
   Promise.all(faces.map(function (f) { return document.fonts.load(f, "Aa Дд"); }))

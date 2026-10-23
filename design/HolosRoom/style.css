@@ -153,4 +153,4 @@ body { background: var(--backdrop); }
 /* ClosingCard.paragraph: a describing-ink symbol on the first baseline. */
 .para { display: flex; align-items: baseline; gap: 10px; }
 .para > .sf { flex: none; font-size: 17px; color: var(--describing-ink); }
-.source { margin: 0; font: 400 13px/var(--lh-footnote) var(--sf); color: rgba(18, 20, 26, .7); }
+.card p.source { margin: 0; font: 400 13px/var(--lh-footnote) var(--sf); color: rgba(18, 20, 26, .7); }

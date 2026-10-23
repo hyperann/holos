@@ -52,10 +52,4 @@
   var triangle = '<path d="M236.8,188.09,149.35,36.22h0a24.76,24.76,0,0,0-42.7,0L19.2,188.09a23.51,23.51,0,0,0,0,23.72A24.35,24.35,0,0,0,40.55,224h174.9a24.35,24.35,0,0,0,21.33-12.19A23.51,23.51,0,0,0,236.8,188.09Z"/>';
   var bang = '<path d="M118,102a10,10,0,0,1,20,0v42a10,10,0,0,1-20,0ZM128,194a14,14,0,1,1,14-14A14,14,0,0,1,128,194Z"/>';
   both("exclamationmark.triangle.fill", kitPath("exclamationmark.triangle.fill"), bang, triangle);
-
-  // chevron.right and arrow.down are stroked glyphs in SF Symbols; the kit's
-  // stand-ins are Phosphor's filled caret and arrow. Phosphor's bold outlines
-  // are closer to the bold chevron (ContinueButton) and the heavy arrow (Next tag).
-  I["chevron.right"] = { vb: "0 0 256 256", d: '<path d="M184.49,136.49l-80,80a12,12,0,0,1-17-17L159,128,87.51,56.49a12,12,0,1,1,17-17l80,80A12,12,0,0,1,184.49,136.49Z"/>' };
-  I["arrow.down"] = { vb: "0 0 256 256", d: '<path d="M208.49,152.49l-72,72a12,12,0,0,1-17,0l-72-72a12,12,0,0,1,17-17L116,187V40a12,12,0,0,1,24,0V187l51.51-51.52a12,12,0,0,1,17,17Z"/>' };
 })();
