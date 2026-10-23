@@ -21,7 +21,7 @@
     "file": "04-family.png",
     "title": "Recognised, not recalled",
     "step": "Step 3",
-    "caption": "Yuriy cannot recall “wife”, so the goal card sends the judge to the Family board, where “Wife” is lit and says the whole sentence."
+    "caption": "Yuriy cannot recall “wife”, so the goal card points to the Family board, where “Wife” — the cell that says “Please call my wife.” — is lit."
   },
   {
     "file": "05-head-try.png",
@@ -45,6 +45,6 @@
     "file": "08-iphone.png",
     "title": "On an iPhone",
     "step": "Step 2",
-    "caption": "On a phone the board adds a sentence strip, keeps each row at its minimum size and scrolls; the scan is passing the quick phrases."
+    "caption": "On a phone the board adds a large sentence strip (“I’m in pain.”), keeps each row at its minimum size and scrolls; the scan is passing the quick phrases."
   }
 ]
