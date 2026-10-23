@@ -142,7 +142,7 @@ body[data-device="iphone"] .homeindicator { width: 134px; bottom: 8px; }
 }
 .cell.small > b { font-size: 16px; }   /* stands in for minimumScaleFactor on long labels */
 .cell.xsmall > b { font-size: 13px; }
-.backcell { --tint: var(--control-tint); --kind-ink: var(--control-ink); justify-content: center; align-items: center; color: var(--control-ink); box-shadow: none; }
+.backcell { --tint: var(--control-tint); --kind-ink: var(--control-ink); justify-content: center; align-items: center; color: var(--control-ink); box-shadow: none; padding: 8px; }
 .backcell > .sf { flex: none; width: 30px; height: 30px; padding: 0; }
 .backcell > b { font: 700 var(--headline)/1.2 var(--rounded); color: var(--control-ink); -webkit-line-clamp: 1; }
 
@@ -171,7 +171,8 @@ body[data-device="iphone"] .homeindicator { width: 134px; bottom: 8px; }
 /* ---------- LanguageToggle ---------- */
 
 .langtoggle { display: inline-flex; padding: 4px; background: var(--paper); border-radius: 999px; box-shadow: inset 0 0 0 2px var(--ink); position: relative; }
-.langtoggle > span { font: 900 var(--headline)/1 var(--rounded); padding: 10px 14px; border-radius: 999px; color: var(--ink); }
+/* .headline rounded .heavy (800); SwiftUI's line box is ~1.19 × the point size. */
+.langtoggle > span { font: 800 var(--headline)/1.194 var(--rounded); padding: 10px 14px; border-radius: 999px; color: var(--ink); }
 .langtoggle > span.on { background: var(--ink); color: #fff; }
 
 /* ---------- VoiceNotice ---------- */
