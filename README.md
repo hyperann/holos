@@ -19,7 +19,9 @@ than by imagining them. The sixth combines two of the first five.
 | [Holos Words](Prototypes/HolosWords.md) | Find the word: sentence starters, and a way to *describe* a word you cannot recall. |
 | [Holos Bedside + Grid](Prototypes/HolosBedsideGrid.md) | Bedside's conversation first, and Grid's whole board one press away — and home, when nobody is asking. |
 
-**[PROTOTYPES.md](PROTOTYPES.md)** compares them side by side and suggests what to look for, and
+**[PLAN.md](PLAN.md)** is the plan from here: one decision first, then the path to a real app
+or a Challenge entry. **[PROTOTYPES.md](PROTOTYPES.md)** compares the prototypes side by side
+and suggests what to look for, and
 **[design/](design/README.md)** shows the first five's key screens as design mockups, redrawn from
 the code before anything has been built. The sixth has a playable browser sketch instead:
 [design/HolosBedsideGrid/sketch.html](design/HolosBedsideGrid/sketch.html).
